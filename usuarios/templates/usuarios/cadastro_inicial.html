@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de {{ tipo|title }}</title>
+    <style>
+        body {
+            background-color: #F7F5F2;
+            font-family: 'Jaldi', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .caixa-branca {
+            background: white;
+            width: 100%;
+            max-width: 600px; /* Limita a largura no computador, mas ocupa a tela no celular */
+            padding: 50px;
+            border-radius: 38px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            box-sizing: border-box;
+            position: relative; /* Para o botão de voltar */
+        }
+
+        /* O botão de voltar falso (aquela setinha do seu design) */
+        .btn-voltar {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            font-size: 24px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        .caixa-branca h1 {
+            font-size: 28px;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        .caixa-branca p {
+            font-size: 20px;
+            color: #555;
+            margin: 0 0 40px 0;
+        }
+
+        /* Estilizando o Formulário */
+        .form-grupo {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .form-grupo label {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+            padding-left: 15px;
+        }
+
+        .asterisco {
+            color: #FF0000;
+        }
+
+        /* Estilizando os inputs gerados pelo Django */
+        .form-grupo input {
+            width: 100%;
+            padding: 15px;
+            background-color: #F3F3F3;
+            border: 1px solid #ddd;
+            border-radius: 90px;
+            font-size: 18px;
+            box-sizing: border-box;
+        }
+
+        /* Quando o usuário clica no input */
+        .form-grupo input:focus {
+            outline: none;
+            border-color: #2563EB;
+        }
+
+        .btn-cadastrar {
+            background: #D9D9D9; /* A cor cinza do seu botão */
+            color: black;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 90px;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-cadastrar:hover {
+            background: #c4c4c4;
+        }
+
+        /* Mostra os erros do Django (ex: senha curta, email errado) em vermelho */
+        .errorlist {
+            color: red;
+            list-style: none;
+            padding: 0;
+            font-size: 14px;
+            margin-top: 5px;
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="caixa-branca">
+        <a href="{% url 'home' %}" class="btn-voltar">←</a>
+
+        <h1>CADASTRO - {{ tipo }}</h1>
+        <p>Entre com suas credenciais</p>
+
+        <form method="POST">
+            {% csrf_token %} <div class="form-grupo">
+                <label>Nome <span class="asterisco">*</span></label>
+                {{ form.nome }}
+                {{ form.nome.errors }}
+            </div>
+
+            <div class="form-grupo">
+                <label>Email Institucional <span class="asterisco">*</span></label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+
+            <div class="form-grupo">
+                <label>Senha <span class="asterisco">*</span></label>
+                {{ form.senha }}
+                {{ form.senha.errors }}
+            </div>
+
+            <button type="submit" class="btn-cadastrar">CADASTRAR</button>
+        </form>
+
+    </div>
+
+</body>
+</html>
