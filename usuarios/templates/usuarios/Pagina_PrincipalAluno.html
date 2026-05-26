@@ -122,6 +122,8 @@
 
             font-size: 20px;
             font-weight: 400;
+
+            transition: 0.3s;
         }
 
         .botao-card:hover {
@@ -166,7 +168,9 @@
                     </p>
                 </div>
 
-                <a href="#" class="botao-card">Seguir para perfil</a>
+                <a href="{% url 'perfil_aluno' %}" class="botao-card">
+                    Seguir para perfil
+                </a>
 
             </div>
 
@@ -185,7 +189,9 @@
                     </p>
                 </div>
 
-                <a href="#" class="botao-card">Seguir para vagas</a>
+                <a href="#" class="botao-card">
+                    Seguir para vagas
+                </a>
 
             </div>
 

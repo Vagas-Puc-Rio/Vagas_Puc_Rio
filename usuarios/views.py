@@ -70,3 +70,6 @@ def login_geral(request):
 ##Funcião para a página de primeiros passos do aluno
 def primeiros_passos(request):
     return render(request, 'usuarios/Pagina_PrincipalAluno.html')
+
+def perfil_aluno(request):
+    return render(request, 'usuarios/perfil_aluno.html')

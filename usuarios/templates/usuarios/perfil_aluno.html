@@ -1,0 +1,538 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Perfil - Aluno</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #F7F5F2;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .pagina {
+            min-height: 100vh;
+            padding: 55px 70px;
+            position: relative;
+        }
+
+        .caixa {
+            background: white;
+            max-width: 1324px;
+            margin: 0 auto;
+            border: 1px solid #D8D4CC;
+            border-radius: 16px;
+            padding: 20px 36px 45px;
+            position: relative;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 34px;
+            color: black;
+            text-decoration: none;
+            font-weight: 400;
+        }
+
+        .logo-topo {
+            width: 50px;
+            display: block;
+            margin: 0 auto 6px;
+        }
+
+        .titulo-logo {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            margin-bottom: 14px;
+        }
+
+        .avatar {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: #EDEAE4;
+            border: 1px solid #D8D4CC;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 24px;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+        }
+
+        .avatar:hover {
+            opacity: 0.8;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 17px;
+            margin: 0;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 12px;
+            color: #888780;
+            margin: 16px 0 18px;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid #E5E2DC;
+            margin: 12px 0;
+        }
+
+        .secao {
+            margin-top: 14px;
+        }
+
+        .titulo-secao {
+            font-size: 12px;
+            font-weight: 700;
+            color: #888780;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: #888780;
+            margin-bottom: 5px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            border: 1px solid #D8D4CC;
+            background: #F7F5F2;
+            border-radius: 8px;
+            padding: 10px 13px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            outline: none;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #888780;
+        }
+
+        textarea {
+            height: 80px;
+            resize: none;
+        }
+
+        .linha {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .linha-uma {
+            margin-bottom: 10px;
+        }
+
+        .opcoes-vaga {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-box {
+            border: 1px solid #D8D4CC;
+            background: #F7F5F2;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            border: 1px solid #D8D4CC;
+            background: #F7F5F2;
+            color: #555;
+            border-radius: 999px;
+            padding: 6px 13px;
+            font-size: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .tag.ativo {
+            background: #0086A9;
+            color: white;
+            border-color: #0086A9;
+        }
+
+        .upload {
+            border: 1px dashed #C8C4BC;
+            background: #F7F5F2;
+            border-radius: 10px;
+            padding: 22px;
+            text-align: center;
+            color: #B0ACA5;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .upload input {
+            display: none;
+        }
+
+        .btn-salvar {
+            width: 100%;
+            background: #1A1A1A;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 22px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-salvar:hover {
+            background: #333;
+        }
+
+        .observacao {
+            text-align: center;
+            color: #B0ACA5;
+            font-size: 11px;
+            margin-top: 14px;
+        }
+
+        .logo-puc {
+            position: fixed;
+            right: 45px;
+            bottom: 25px;
+            width: 95px;
+        }
+
+        @media (max-width: 800px) {
+            .pagina {
+                padding: 25px;
+            }
+
+            .linha {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-puc {
+                width: 70px;
+                right: 20px;
+            }
+        }
+    
+    </style>
+</head>
+
+<body>
+
+<div class="pagina">
+
+    <div class="caixa">
+
+        <a href="{% url 'primeiros_passos' %}" class="btn-voltar">←</a>
+
+        <img src="{% static 'img/image4.png' %}" class="logo-topo">
+        <div class="titulo-logo">VAGAS PUC-RIO</div>
+
+        <label for="foto-perfil" class="avatar">
+            📷
+        </label>
+
+        <input type="file" id="foto-perfil" accept="image/*" hidden>
+
+        <h1>Criar perfil — aluno</h1>
+        <p class="subtitulo">Preencha suas informações para encontrar vagas de IC / Estágio</p>
+
+        <hr>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="secao">
+                <div class="titulo-secao">Dados pessoais</div>
+
+                <div class="linha-uma">
+                    <label>Nome completo</label>
+                    <input type="text" name="nome_completo" placeholder="Ex: João da Silva" required>
+                </div>
+
+                <div class="linha">
+                    <div>
+                        <label>CPF</label>
+                        <input type="text" name="cpf" placeholder="000.000.000-00" required>
+                    </div>
+
+                    <div>
+                        <label>Telefone</label>
+                        <input type="text" name="telefone" placeholder="(21) 99999-0000">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="secao">
+                <div class="titulo-secao">Dados acadêmicos</div>
+
+                <div class="linha">
+                    <div>
+                        <label>Matrícula</label>
+                        <input type="text" name="matricula" placeholder="Ex: 2210123" required>
+                    </div>
+
+                    <div>
+                        <label>Período atual</label>
+                        <select name="periodo" required>
+                            <option value="">Selecione</option>
+                            <option>1º Período</option>
+                            <option>2º Período</option>
+                            <option>3º Período</option>
+                            <option>4º Período</option>
+                            <option>5º Período</option>
+                            <option>6º Período</option>
+                            <option>7º Período</option>
+                            <option>8º Período</option>
+                            <option>9º Período</option>
+                            <option>10º Período</option>
+                            <option>11º Período</option>
+                            <option>12º Período</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="linha-uma">
+                    <label>Curso</label>
+                    <select name="curso" required>
+                        <option value="">Selecione seu curso</option>
+                        <option>Física</option>
+                        <option>Química</option>
+                        <option>Estatística</option>
+                        <option>Ciência da Computação</option>
+                        <option>Engenharia da Computação</option>
+                        <option>Engenharia Elétrica</option>
+                        <option>Engenharia Mecânica</option>
+                        <option>Engenharia Civil</option>
+                        <option>Engenharia de Produção</option>
+                        <option>Engenharia Química</option>
+                        <option>Engenharia de Controle e Automação</option>
+                        <option>Engenharia de Materiais</option>
+                        <option>Engenharia Ambiental</option>
+                        <option>Engenharia de Petróleo</option>
+                        <option>Engenharia de Telecomunicações</option>
+                        <option>Matemática</option>
+                        <option>Economia</option>
+                        <option>Matemática Aplicada</option>
+                        <option>Inteligência Artificial</option>
+                    </select>
+                </div>
+
+                <label>Tipo de vaga de interesse</label>
+
+                <div class="opcoes-vaga">
+
+                    <label class="checkbox-box">
+                        <input type="checkbox" name="tipo_vaga" value="Estágio">
+                        Estágio
+                    </label>
+
+                    <label class="checkbox-box">
+                        <input type="checkbox" name="tipo_vaga" value="Iniciação Científica">
+                        Iniciação Científica
+                    </label>
+
+                    <label class="checkbox-box">
+                        <input type="checkbox" name="tipo_vaga" value="Ambos">
+                        Ambos
+                    </label>
+
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="secao">
+
+                <div class="titulo-secao">Linguagens de programação</div>
+
+                <div class="tags">
+                    <span class="tag">Python</span>
+                    <span class="tag">Java</span>
+                    <span class="tag">JavaScript</span>
+                    <span class="tag">TypeScript</span>
+                    <span class="tag">Kotlin</span>
+                    <span class="tag">Go</span>
+                    <span class="tag">Ruby</span>
+                    <span class="tag">C</span>
+                    <span class="tag">C++</span>
+                </div>
+
+                <div class="titulo-secao">Tecnologias & Frameworks</div>
+
+                <div class="tags">
+                    <span class="tag">React</span>
+                    <span class="tag">Node.js</span>
+                    <span class="tag">Spring Boot</span>
+                    <span class="tag">Django</span>
+                    <span class="tag">Flutter</span>
+                    <span class="tag">Docker</span>
+                    <span class="tag">Git</span>
+                    <span class="tag">SQL</span>
+                    <span class="tag">AWS</span>
+                </div>
+
+                <div class="titulo-secao">Áreas de atuação</div>
+
+                <div class="tags">
+                    <span class="tag">Front-end</span>
+                    <span class="tag">Back-end</span>
+                    <span class="tag">Dados</span>
+                    <span class="tag">Inteligência Artificial</span>
+                    <span class="tag">Mobile</span>
+                    <span class="tag">Segurança</span>
+                    <span class="tag">Pesquisa (IC)</span>
+                    <span class="tag">DevOps</span>
+                    <span class="tag">UX / Design</span>
+                </div>
+
+                <div class="titulo-secao">Exatas</div>
+
+                <div class="tags">
+                    <span class="tag">Cálculo</span>
+                    <span class="tag">Modelagem</span>
+                    <span class="tag">Simulação</span>
+                    <span class="tag">Álgebra Linear</span>
+                    <span class="tag">Otimização</span>
+                    <span class="tag">Matemática Aplicada</span>
+                    <span class="tag">Pesquisa Operacional</span>
+                    <span class="tag">Física</span>
+                </div>
+
+                <div class="titulo-secao">Engenharia</div>
+
+                <div class="tags">
+                    <span class="tag">CAD</span>
+                    <span class="tag">Energia</span>
+                    <span class="tag">Telecom</span>
+                    <span class="tag">Robótica</span>
+                    <span class="tag">Eletrônica</span>
+                    <span class="tag">Sistemas Embarcados</span>
+                    <span class="tag">Automação</span>
+                    <span class="tag">Desenho</span>
+                </div>
+
+                <div class="titulo-secao">Soft Skills</div>
+
+                <div class="tags">
+                    <span class="tag">Comunicação</span>
+                    <span class="tag">Trabalho em equipe</span>
+                    <span class="tag">Proatividade</span>
+                    <span class="tag">Criatividade</span>
+                    <span class="tag">Gestão de tempo</span>
+                    <span class="tag">Liderança</span>
+                    <span class="tag">Adaptabilidade</span>
+                    <span class="tag">Pensamento crítico</span>
+                </div>
+
+                <div class="titulo-secao">Idiomas</div>
+
+                <div class="tags">
+                    <span class="tag">Inglês</span>
+                    <span class="tag">Espanhol</span>
+                    <span class="tag">Francês</span>
+                    <span class="tag">Alemão</span>
+                    <span class="tag">Mandarim</span>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <div class="secao">
+
+                <div class="titulo-secao">Sobre você</div>
+
+                <textarea name="sobre" placeholder="Conte um pouco sobre seus objetivos e habilidades..."></textarea>
+
+            </div>
+
+            <hr>
+
+            <div class="secao">
+
+                <div class="titulo-secao">Currículo</div>
+
+                <label class="upload">
+                    📄 Clique para enviar ou arraste aqui · PDF
+                    <input type="file" name="curriculo" accept=".pdf">
+                </label>
+
+            </div>
+
+            <button type="submit" class="btn-salvar">
+                Salvar perfil
+            </button>
+
+            <p class="observacao">
+                Você pode editar essas informações depois
+            </p>
+
+        </form>
+
+    </div>
+
+    <img src="{% static 'img/image4.png' %}" class="logo-puc">
+
+</div>
+
+<script>
+
+    const tags = document.querySelectorAll('.tag');
+
+    tags.forEach(tag => {
+
+        tag.addEventListener('click', () => {
+
+            tag.classList.toggle('ativo');
+
+        });
+
+    });
+
+</script>
+
+</body>
+</html>
