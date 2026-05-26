@@ -118,3 +118,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 # Faz o Django imprimir os e-mails no terminal em vez de tentar enviar de verdade
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / "usuarios/static",
+]

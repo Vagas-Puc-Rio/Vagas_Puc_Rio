@@ -26,26 +26,41 @@ from django import forms
 from .models import Usuario
 
 class CadastroInicialForm(forms.ModelForm):
-    # Criamos as opções para o usuário escolher
+
     ESCOLHAS_TIPO = [
         ('aluno', 'Sou Aluno'),
         ('professor', 'Sou Professor')
     ]
-    
-    # Campo extra que só aparece no HTML, não vai pro banco direto
+
     tipo_conta = forms.ChoiceField(
-        choices=ESCOLHAS_TIPO, 
-        widget=forms.RadioSelect, # Cria aquelas "bolinhas" de marcar
+        choices=ESCOLHAS_TIPO,
+        widget=forms.RadioSelect,
         label="Você é:"
+    )
+
+    confirmar_senha = forms.CharField(
+        widget=forms.PasswordInput(),
+        label="Confirmar senha"
     )
 
     class Meta:
         model = Usuario
-        fields = ['nome', 'email', 'senha']
+        fields = ['nome', 'email', 'senha', 'confirmar_senha']
+
         widgets = {
-            'senha': forms.PasswordInput() # Esconde a senha com asteriscos
+            'senha': forms.PasswordInput()
         }
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        senha = cleaned_data.get("senha")
+        confirmar = cleaned_data.get("confirmar_senha")
+
+        if senha != confirmar:
+            raise forms.ValidationError("As senhas não coincidem.")
+
+        return cleaned_data
 
 
 

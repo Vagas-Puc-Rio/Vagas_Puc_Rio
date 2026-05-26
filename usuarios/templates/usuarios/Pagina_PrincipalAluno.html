@@ -1,0 +1,199 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiros Passos</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap');
+
+        body {
+            background-color: #F7F5F2;
+            font-family: 'Jaldi', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .caixa-branca {
+            background: white;
+            width: 100%;
+            max-width: 1325px;
+            min-height: 820px;
+
+            border-radius: 38px;
+            border: 2px solid #0095ff;
+
+            position: relative;
+            text-align: center;
+
+            padding: 70px 80px;
+            box-sizing: border-box;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 26px;
+            left: 28px;
+
+            font-size: 34px;
+            color: black;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subtitulo {
+            font-size: 32px;
+            margin: 5px 0 90px 0;
+        }
+
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            gap: 180px;
+            flex-wrap: wrap;
+        }
+
+        .card-opcao {
+            background-color: #0086A9;
+            width: 360px;
+            min-height: 440px;
+
+            border-radius: 15px;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+            color: white;
+            text-align: left;
+
+            padding: 55px 40px 30px 40px;
+            box-sizing: border-box;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .topo-card {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .icone-card {
+            font-size: 45px;
+        }
+
+        .titulo-card {
+            font-size: 30px;
+            font-weight: 400;
+        }
+
+        .texto-card {
+            font-size: 24px;
+            line-height: 1.45;
+            margin: 0 0 25px 0;
+        }
+
+        .botao-card {
+            background-color: #FFBC08;
+            color: black;
+
+            width: fit-content;
+
+            padding: 6px 22px;
+
+            border-radius: 30px;
+
+            font-size: 20px;
+            font-weight: 400;
+        }
+
+        .botao-card:hover {
+            opacity: 0.85;
+        }
+
+        .logo-puc {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+
+            width: 85px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="caixa-branca">
+
+        <a href="{% url 'home' %}" class="btn-voltar">←</a>
+
+        <h1>PRIMEIROS PASSOS</h1>
+
+        <p class="subtitulo">Encontre a vaga perfeita para você!</p>
+
+        <div class="cards-container">
+
+            <div class="card-opcao">
+
+                <div>
+                    <div class="topo-card">
+                        <span class="icone-card">🔗</span>
+                        <span class="titulo-card">MATCH</span>
+                    </div>
+
+                    <p class="texto-card">
+                        Siga para completar seu perfil e entre no sistema de match,
+                        no qual de acordo com suas características indicamos a melhor
+                        vaga para você.
+                    </p>
+                </div>
+
+                <a href="#" class="botao-card">Seguir para perfil</a>
+
+            </div>
+
+            <div class="card-opcao">
+
+                <div>
+                    <div class="topo-card">
+                        <span class="icone-card">💼</span>
+                        <span class="titulo-card">VAGAS</span>
+                    </div>
+
+                    <p class="texto-card">
+                        Siga direto para a página de vagas e inicie sua procura,
+                        utilize os filtros e fique atento aos requisitos. Em detalhes
+                        você fica por dentro do que se trata a oportunidade.
+                    </p>
+                </div>
+
+                <a href="#" class="botao-card">Seguir para vagas</a>
+
+            </div>
+
+        </div>
+
+        <img src="{% static 'img/image4.png' %}" class="logo-puc">
+
+    </div>
+
+</body>
+</html>

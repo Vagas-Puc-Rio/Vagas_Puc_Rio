@@ -8,8 +8,9 @@ admin.site.register(Professor)
 admin.site.register(Funcionario)
 admin.site.register(Instituicao)
 admin.site.register(Vaga)
-admin.site.register(Bolsa)
-admin.site.register(Estagio)
+
 admin.site.register(Caracteristicas)
+##admin.site.register(Bolsa)
+##admin.site.register(Estagio)
 
 

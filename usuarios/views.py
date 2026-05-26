@@ -12,7 +12,7 @@ def pagina_inicial(request):
 def cadastro_inicial(request, tipo):
     if request.method == 'POST':
         form = CadastroInicialForm(request.POST)
-        
+
         if form.is_valid():
             # commit=False significa: "Cria o objeto, mas espera, não salva no banco ainda!"
             usuario = form.save(commit=False) 
@@ -31,7 +31,7 @@ def cadastro_inicial(request, tipo):
             
             if tipo == 'aluno':
                 # Manda para a URL de completar perfil do aluno, passando o ID do usuário criado
-                return redirect('completar_perfil_aluno', usuario_id=usuario.id)
+                return redirect('primeiros_passos')
             else:
                 # Manda para a URL de completar perfil do professor
                 return redirect('completar_perfil_professor', usuario_id=usuario.id)
@@ -49,24 +49,24 @@ def login_geral(request):
         # 1. Tenta achar o usuário pelo e-mail
         usuario = Usuario.objects.filter(email=email).first()
         
-        # 2. Se o usuário existir E a senha digitada bater com a criptografada no banco
+        # 2. Verifica se o usuário existe E se a senha está correta
         if usuario and check_password(senha_digitada, usuario.senha):
             
-            # 3. O "Pulo do Gato": Salva o ID dele na sessão (Isso é o que mantém ele logado!)
+            # 3. Salva o ID do usuário na sessão (mantém ele logado)
             request.session['usuario_id'] = usuario.id
             
-            # 4. A sua lógica excelente para descobrir quem é quem
-            if hasattr(usuario, 'aluno'):
-                return redirect('dashboard_aluno')
-            elif hasattr(usuario, 'professor'):
-                return redirect('dashboard_professor')
-            else:
-                # Cai aqui se ele fez o cadastro inicial, mas não completou o perfil ainda
-                return render(request, 'usuarios/login.html', {'error': 'Termine seu cadastro primeiro.'})
+            # 4. Redireciona para a página de primeiros passos
+            return redirect('primeiros_passos')
                 
         else:
-            # Mensagem genérica por segurança (não diga se o erro foi no email ou na senha)
-            return render(request, 'usuarios/login.html', {'error': 'E-mail ou senha inválidos.'})
+            # 5. Caso email ou senha estejam errados
+            return render(request, 'usuarios/LoginAluno.html', {
+                'error': 'E-mail ou senha incorretos.'
+            })
             
-    # Se ele só acessou a página (GET), mostra o formulário vazio
-    return render(request, 'usuarios/login.html')
+    # 6. Se ele só abriu a página de login
+    return render(request, 'usuarios/LoginAluno.html')
+
+##Funcião para a página de primeiros passos do aluno
+def primeiros_passos(request):
+    return render(request, 'usuarios/Pagina_PrincipalAluno.html')

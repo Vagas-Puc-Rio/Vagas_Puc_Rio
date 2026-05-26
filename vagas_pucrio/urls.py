@@ -23,4 +23,6 @@ urlpatterns = [
     path('', views.pagina_inicial, name='home'),
     path('cadastro/<str:tipo>/', views.cadastro_inicial, name='cadastro'),
     path('cadastro/aluno/', views.cadastro_inicial, name='cadastro_aluno'),
+    path('login/', views.login_geral, name='login'),
+    path('primeiros-passos/', views.primeiros_passos, name='primeiros_passos'),
 ]
