@@ -25,4 +25,5 @@ urlpatterns = [
     path('cadastro/aluno/', views.cadastro_inicial, name='cadastro_aluno'),
     path('login/', views.login_geral, name='login'),
     path('primeiros-passos/', views.primeiros_passos, name='primeiros_passos'),
+    path('confirmar-email/<str:uid>/<str:token>/', views.confirmar_email, name='confirmar_email'),
 ]
