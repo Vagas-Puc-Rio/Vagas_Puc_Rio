@@ -40,6 +40,7 @@ urlpatterns = [
 
     path('primeiros-passos/', views.primeiros_passos,
          name='primeiros_passos'),
+    path('confirmar-email/<str:uid>/<str:token>/', views.confirmar_email, name='confirmar_email'),
 
     path('perfil-aluno/', views.perfil_aluno,
          name='perfil_aluno'),
