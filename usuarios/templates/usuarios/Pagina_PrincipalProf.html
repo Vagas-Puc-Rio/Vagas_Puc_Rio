@@ -1,0 +1,197 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primeiros Passos Professor</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap');
+
+        body {
+            background-color: #F7F5F2;
+            font-family: 'Jaldi', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .caixa-branca {
+            background: white;
+            width: 100%;
+            max-width: 1325px;
+            min-height: 820px;
+            border-radius: 38px;
+            border: 1px solid rgba(0, 0, 0, 0.28);
+            position: relative;
+            text-align: center;
+            padding: 70px 50px;
+            box-sizing: border-box;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 26px;
+            left: 28px;
+
+            font-size: 34px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subtitulo {
+            font-size: 32px;
+            margin: 5px 0 120px 0;
+        }
+
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .card-opcao {
+            background-color: #0086A9;
+            width: 330px;
+            min-height: 390px;
+            border-radius: 15px;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            color: white;
+            text-align: left;
+            padding: 45px 35px 25px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .topo-card {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .icone-card {
+            font-size: 45px;
+        }
+
+        .titulo-card {
+            font-size: 30px;
+            font-weight: 400;
+        }
+
+        .texto-card {
+            font-size: 24px;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        .botao-card {
+            background-color: #FFBC08;
+            color: black;
+            width: fit-content;
+            padding: 5px 24px;
+            border-radius: 30px;
+            font-size: 20px;
+            align-self: center;
+            transition: 0.3s;
+        }
+
+        .botao-card:hover {
+            opacity: 0.85;
+        }
+
+        .logo-puc {
+            position: absolute;
+            bottom: 20px;
+            right: 25px;
+            width: 85px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="caixa-branca">
+
+        <a href="{% url 'home' %}" class="btn-voltar">←</a>
+
+        <h1>PRIMEIROS PASSOS PROFESSORES</h1>
+
+        <p class="subtitulo">Cadastre suas vagas</p>
+
+        <div class="cards-container">
+
+            <div class="card-opcao">
+                <div>
+                    <div class="topo-card">
+                        <span class="icone-card">🔗</span>
+                        <span class="titulo-card">PERFIL</span>
+                    </div>
+
+                    <p class="texto-card">
+                        Siga para completar seu perfil.
+                    </p>
+                </div>
+
+                <a href="#" class="botao-card">Seguir para perfil</a>
+            </div>
+
+            <div class="card-opcao">
+                <div>
+                    <div class="topo-card">
+                        <span class="icone-card">💼</span>
+                        <span class="titulo-card">VAGAS</span>
+                    </div>
+
+                    <p class="texto-card">
+                        Siga direto para a página de vagas e inicie sua procura,
+                        utilize os filtros e fique atento aos requisitos.
+                    </p>
+                </div>
+
+                <a href="#" class="botao-card">Seguir para vagas</a>
+            </div>
+
+            <div class="card-opcao">
+                <div>
+                    <div class="topo-card">
+                        <span class="icone-card">📋</span>
+                        <span class="titulo-card">CADASTRO VAGAS</span>
+                    </div>
+
+                    <p class="texto-card">
+                        Siga direto para a página de cadastro de vagas e inicie
+                        sua procura por excelentes alunos.
+                    </p>
+                </div>
+
+                <a href="{% url 'cadastro_vaga' %}" class="botao-card">Seguir para cadastro</a>
+            </div>
+
+        </div>
+
+        <img src="{% static 'img/image4.png' %}" class="logo-puc">
+
+    </div>
+
+</body>
+</html>

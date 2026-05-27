@@ -19,12 +19,36 @@ from django.urls import path
 from usuarios import views
 
 urlpatterns = [
+
     path('admin/', admin.site.urls),
+
     path('', views.pagina_inicial, name='home'),
+
     path('cadastro/<str:tipo>/', views.cadastro_inicial, name='cadastro'),
-    path('cadastro/aluno/', views.cadastro_inicial, name='cadastro_aluno'),
-    path('login/', views.login_geral, name='login'),
-    path('primeiros-passos/', views.primeiros_passos, name='primeiros_passos'),
-    path('perfil-aluno/', views.perfil_aluno, name='perfil_aluno'),
+
+    path('cadastro/aluno/', views.cadastro_inicial,
+         {'tipo': 'aluno'}, name='cadastro_aluno'),
+
+    path('cadastro/professor/', views.cadastro_inicial,
+         {'tipo': 'professor'}, name='cadastro_professor'),
+
+    path('login/aluno/', views.login_geral,
+         {'tipo': 'aluno'}, name='login_aluno'),
+
+    path('login/professor/', views.login_geral,
+         {'tipo': 'professor'}, name='login_professor'),
+
+    path('primeiros-passos/', views.primeiros_passos,
+         name='primeiros_passos'),
+
+    path('perfil-aluno/', views.perfil_aluno,
+         name='perfil_aluno'),
+
+    path('primeiros-passos-professor/',views.primeiros_passos_professor,
+         name='primeiros_passos_professor'),
+
+    path('cadastro-vaga/', views.cadastro_vaga,
+         name='cadastro_vaga'),
+
     path('vagas/', views.lista_vagas, name='vagas'),
 ]

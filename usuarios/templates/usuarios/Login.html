@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Aluno</title>
+    <title>Login {{ tipo|title }}</title>
 
     <style>
         @import url("https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css");
@@ -66,6 +66,7 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 5px;
+            text-transform: uppercase;
         }
 
         .subtitulo {
@@ -164,16 +165,19 @@
 </head>
 
 <body>
+
     <div class="caixa-branca">
 
         <img src="{% static 'img/image4.png' %}" class="logo-puc">
 
         <a href="{% url 'home' %}" class="btn-voltar">←</a>
 
-        <h1>LOGIN - ALUNO</h1>
+        <h1>LOGIN - {{ tipo }}</h1>
+
         <p class="subtitulo">Entre com suas credenciais</p>
 
         <form method="POST" class="form-login">
+
             {% csrf_token %}
 
             {% if error %}
@@ -183,32 +187,57 @@
             {% endif %}
 
             <div class="form-grupo">
+
                 <label>Email <span class="asterisco">*</span></label>
+
                 <input 
-                    type="email" 
-                    name="email" 
-                    value=""
-                    placeholder="nome@aluno.puc-rio.br"
+                    type="email"
+                    name="email"
+                    placeholder="nome@{{ tipo|lower }}.puc-rio.br"
                     required
                 >
+
             </div>
 
             <div class="form-grupo">
+
                 <label>Senha <span class="asterisco">*</span></label>
+
                 <input 
-                    type="password" 
-                    name="senha" 
+                    type="password"
+                    name="senha"
                     required
                 >
+
             </div>
 
-            <button type="submit" class="btn-entrar">ENTRAR</button>
+            <button type="submit" class="btn-entrar">
+                ENTRAR
+            </button>
 
             <p class="cadastro">
+
                 <span>Não tem conta?</span>
-                <a href="{% url 'cadastro' 'aluno' %}">Cadastre-se</a>
+
+                {% if tipo|lower == 'professor' %}
+
+                    <a href="{% url 'cadastro_professor' %}">
+                        Cadastre-se
+                    </a>
+
+                {% else %}
+
+                    <a href="{% url 'cadastro_aluno' %}">
+                        Cadastre-se
+                    </a>
+
+                {% endif %}
+
             </p>
+
         </form>
+
     </div>
+
 </body>
 </html>
