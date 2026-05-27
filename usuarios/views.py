@@ -15,6 +15,8 @@ def pagina_inicial(request):
     return render(request, 'usuarios/home.html')
 
 
+from .models import Usuario, Aluno, Professor  # adiciona os dois no import
+
 def cadastro_inicial(request, tipo):
     if request.method == 'POST':
         form = CadastroInicialForm(request.POST)
@@ -26,11 +28,16 @@ def cadastro_inicial(request, tipo):
             usuario.ativo = False
             usuario.save()
 
+            # Cria Aluno ou Professor dependendo do tipo
+            if tipo == 'aluno':
+                Aluno.objects.create(dados_usuario=usuario)
+            elif tipo == 'professor':
+                Professor.objects.create(dados_usuario=usuario)
+
             uid = urlsafe_base64_encode(force_bytes(usuario.pk))
             token = urlsafe_base64_encode(force_bytes(usuario.email))
 
-            # Pega o domínio automaticamente da requisição
-            dominio = request.build_absolute_uri('/')[:-1]  # ex: http://192.168.1.5:8000
+            dominio = request.build_absolute_uri('/')[:-1]
             link = f"{dominio}/confirmar-email/{uid}/{token}/"
 
             send_mail(
@@ -42,6 +49,11 @@ def cadastro_inicial(request, tipo):
             )
 
             return render(request, 'usuarios/email_enviado.html', {'email': usuario.email})
+
+    else:
+        form = CadastroInicialForm()
+
+    return render(request, 'usuarios/cadastro_inicial.html', {'form': form, 'tipo': tipo})
 
 def confirmar_email(request, uid, token):
     try:
