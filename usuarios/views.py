@@ -41,35 +41,54 @@ def cadastro_inicial(request, tipo):
     return render(request, 'usuarios/cadastro_inicial.html', {'form': form, 'tipo': tipo})
 
 
-def login_geral(request):
+def login_geral(request, tipo='aluno'):
+
     if request.method == 'POST':
+
         email = request.POST.get('email')
         senha_digitada = request.POST.get('senha')
-        
+
         # 1. Tenta achar o usuário pelo e-mail
         usuario = Usuario.objects.filter(email=email).first()
-        
+
         # 2. Verifica se o usuário existe E se a senha está correta
         if usuario and check_password(senha_digitada, usuario.senha):
-            
-            # 3. Salva o ID do usuário na sessão (mantém ele logado)
-            request.session['usuario_id'] = usuario.id
-            
-            # 4. Redireciona para a página de primeiros passos
-            return redirect('primeiros_passos')
-                
-        else:
-            # 5. Caso email ou senha estejam errados
-            return render(request, 'usuarios/LoginAluno.html', {
-                'error': 'E-mail ou senha incorretos.'
-            })
-            
-    # 6. Se ele só abriu a página de login
-    return render(request, 'usuarios/LoginAluno.html')
 
-##Funcião para a página de primeiros passos do aluno
+            # 3. Salva o ID do usuário na sessão
+            request.session['usuario_id'] = usuario.id
+
+            # 4. Redireciona depois do login
+            if tipo == 'professor':
+                return redirect('primeiros_passos_professor')
+
+            else:
+                return redirect('primeiros_passos')
+
+        else:
+
+            # 5. Caso email ou senha estejam errados
+            return render(request, 'usuarios/Login.html', {
+                'error': 'E-mail ou senha incorretos.',
+                'tipo': tipo
+            })
+
+    # 6. Se ele só abriu a página de login
+    return render(request, 'usuarios/Login.html', {
+        'tipo': tipo
+    })
+
+
+##Função para a página de primeiros passos do aluno
 def primeiros_passos(request):
     return render(request, 'usuarios/Pagina_PrincipalAluno.html')
 
+
 def perfil_aluno(request):
     return render(request, 'usuarios/perfil_aluno.html')
+
+
+def primeiros_passos_professor(request):
+    return render(request, 'usuarios/Pagina_PrincipalProf.html')
+
+def cadastro_vaga(request):
+    return render(request, 'usuarios/cadastro_vagas.html')

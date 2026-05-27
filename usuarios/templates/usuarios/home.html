@@ -195,6 +195,8 @@
 
         <div class="container">
 
+            <!-- CARD ALUNO -->
+
             <div class="card">
 
                 <div class="icone">🎓</div>
@@ -203,15 +205,17 @@
 
                 <p>Encontre suas vagas de IC/Estágio</p>
 
-                <a href="{% url 'login' %}" class="btn-entrar">
+                <a href="{% url 'login_aluno' %}" class="btn-entrar">
                     Entrar
                 </a>
 
-                <a href="{% url 'cadastro' 'aluno' %}" class="btn-cadastrar">
+                <a href="{% url 'cadastro_aluno' %}" class="btn-cadastrar">
                     Cadastrar
                 </a>
 
             </div>
+
+            <!-- CARD PROFESSOR -->
 
             <div class="card">
 
@@ -221,15 +225,17 @@
 
                 <p>Cadastre suas vagas</p>
 
-                <a href="#" class="btn-entrar">
+                <a href="{% url 'login_professor' %}" class="btn-entrar">
                     Entrar
                 </a>
 
-                <a href="{% url 'cadastro' 'professor' %}" class="btn-cadastrar">
+                <a href="{% url 'cadastro_professor' %}" class="btn-cadastrar">
                     Cadastrar
                 </a>
 
             </div>
+
+            <!-- CARD COLABORADOR -->
 
             <div class="card">
 
@@ -243,7 +249,7 @@
                     Entrar
                 </a>
 
-                <a href="{% url 'cadastro' 'colaborador' %}" class="btn-cadastrar">
+                <a href="#" class="btn-cadastrar">
                     Cadastrar
                 </a>
 
