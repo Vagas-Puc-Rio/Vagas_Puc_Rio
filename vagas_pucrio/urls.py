@@ -26,4 +26,5 @@ urlpatterns = [
     path('login/', views.login_geral, name='login'),
     path('primeiros-passos/', views.primeiros_passos, name='primeiros_passos'),
     path('perfil-aluno/', views.perfil_aluno, name='perfil_aluno'),
+    path('vagas/', views.lista_vagas, name='vagas'),
 ]

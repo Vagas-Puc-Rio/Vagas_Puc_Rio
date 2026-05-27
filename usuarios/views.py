@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import check_password, make_password
+from django.db.models import Q
 
-from usuarios.models import Usuario # Ferramenta nativa para criptografar
+from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
 from .forms import CadastroInicialForm
 
 
@@ -73,3 +74,28 @@ def primeiros_passos(request):
 
 def perfil_aluno(request):
     return render(request, 'usuarios/perfil_aluno.html')
+
+def lista_vagas(request):
+    q = request.GET.get('q', '').strip()
+    tipo = request.GET.get('tipo', '').strip()
+
+    vagas = Vaga.objects.select_related(
+        'instituicao', 'professor', 'professor__dados_usuario'
+    ).all()
+
+    if q:
+        vagas = vagas.filter(
+            Q(descricao__icontains=q) |
+            Q(instituicao__nome_instituicao__icontains=q) |
+            Q(tipo_vaga__icontains=q)
+        )
+    if tipo:
+        vagas = vagas.filter(tipo_vaga=tipo)
+
+    contexto = {
+        'vagas': vagas,
+        'total': vagas.count(),
+        'q': q,
+        'tipo_atual': tipo,
+    }
+    return render(request, 'usuarios/lista_vagas.html', contexto)
