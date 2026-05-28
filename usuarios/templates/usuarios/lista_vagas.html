@@ -1,0 +1,802 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas PUC-Rio</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #F7F5F2;
+            font-family: 'Inter', sans-serif;
+            color: #1A1A1A;
+        }
+
+        .pagina {
+            min-height: 100vh;
+            padding: 48px 70px;
+            position: relative;
+        }
+
+        .caixa {
+            max-width: 1180px;
+            min-height: 820px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 2px;
+            padding: 20px 28px 35px;
+            position: relative;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 28px;
+            left: 28px;
+            color: black;
+            font-size: 34px;
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .topo-logo {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .logo-vagas {
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+        }
+
+        .nome-logo {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: .7px;
+            margin-top: 2px;
+        }
+
+        .conteudo {
+            border: 1px solid #D8D4CC;
+            border-radius: 28px;
+            min-height: 680px;
+            padding: 26px 36px 110px;
+            position: relative;
+        }
+
+        .hamburguer {
+            position: absolute;
+            top: 47px;
+            left: 26px;
+            width: 34px;
+            height: 34px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px;
+            transition: .2s;
+            z-index: 30;
+        }
+
+        .hamburguer:hover {
+            background: #F0F0F0;
+        }
+
+        .hamburguer span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background: #1A1A1A;
+            border-radius: 999px;
+        }
+
+        .menu-lateral {
+            position: absolute;
+            left: 25px;
+            top: 88px;
+            background: white;
+            border: 1px solid #C8C4BC;
+            border-radius: 8px;
+            width: 145px;
+            font-size: 13px;
+            display: none;
+            z-index: 25;
+            overflow: hidden;
+            box-shadow: 0 8px 18px rgba(0,0,0,.08);
+        }
+
+        .menu-lateral.aberto {
+            display: block;
+        }
+
+        .menu-lateral a {
+            display: block;
+            padding: 9px 10px;
+            text-decoration: none;
+            color: #1A1A1A;
+        }
+
+        .menu-lateral a:hover {
+            background: #F7F5F2;
+        }
+
+        .acoes-direita {
+            position: absolute;
+            top: 25px;
+            right: 38px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .botao-icone {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .sino {
+            width: 24px;
+            height: 24px;
+            color: #888780;
+            transition: .2s;
+        }
+
+        .botao-icone:hover .sino {
+            color: #1A1A1A;
+        }
+
+        .notificacao-box {
+            position: absolute;
+            top: 52px;
+            right: 0;
+            width: 235px;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 12px;
+            color: #888780;
+            display: none;
+            box-shadow: 0 8px 18px rgba(0,0,0,.08);
+            z-index: 40;
+            text-align: center;
+        }
+
+        .notificacao-box.aberto {
+            display: block;
+        }
+
+        .foto {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: #EDEAE4;
+            border: 1px solid #D8D4CC;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: .2s;
+            text-decoration: none;
+        }
+
+        .foto:hover {
+            transform: scale(1.03);
+            background: #E5E2DC;
+        }
+
+        .banner-busca {
+            width: 76%;
+            margin: 0 auto 22px;
+            background: #008BA8;
+            border-radius: 13px;
+            padding: 22px 22px 15px;
+            color: white;
+        }
+
+        .banner-busca h1 {
+            margin: 0;
+            font-size: 22px;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        .banner-busca p {
+            margin: 5px 0 18px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .barra-busca {
+            display: flex;
+            background: white;
+            border-radius: 6px;
+            padding: 7px 8px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .barra-busca input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 12px;
+            font-family: Inter, sans-serif;
+        }
+
+        .barra-busca button {
+            border: none;
+            background: #008BA8;
+            color: white;
+            border-radius: 999px;
+            padding: 5px 13px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .area-principal {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 28px;
+        }
+
+        .filtros {
+            padding-top: 8px;
+        }
+
+        .titulo-filtro {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .grupo-filtro {
+            margin-bottom: 16px;
+        }
+
+        .grupo-filtro h3 {
+            font-size: 10px;
+            margin: 0 0 7px;
+            color: #555;
+        }
+
+        .opcao-filtro {
+            display: block;
+            width: fit-content;
+            border: 1px solid #C8C4BC;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 10px;
+            margin-bottom: 5px;
+            background: #F7F5F2;
+            color: #555;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .opcao-filtro:hover,
+        .opcao-filtro.ativo {
+            background: #008BA8;
+            border-color: #008BA8;
+            color: white;
+        }
+
+        .limpar {
+            border: none;
+            background: none;
+            font-size: 9px;
+            color: #B0ACA5;
+            cursor: pointer;
+        }
+
+        .limpar:hover {
+            color: #1A1A1A;
+            text-decoration: underline;
+        }
+
+        .topo-lista {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .total-vagas {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .ordenar {
+            position: relative;
+        }
+
+        .ordenar-botao {
+            border: none;
+            background: transparent;
+            color: #B0ACA5;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: Inter, sans-serif;
+        }
+
+        .ordenar-botao strong {
+            color: #1A1A1A;
+        }
+
+        .ordenar-menu {
+            position: absolute;
+            right: 0;
+            top: 24px;
+            width: 150px;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 8px;
+            box-shadow: 0 8px 18px rgba(0,0,0,.08);
+            display: none;
+            z-index: 30;
+            overflow: hidden;
+        }
+
+        .ordenar-menu.aberto {
+            display: block;
+        }
+
+        .ordenar-menu button {
+            width: 100%;
+            border: none;
+            background: white;
+            padding: 9px 10px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: Inter, sans-serif;
+        }
+
+        .ordenar-menu button:hover {
+            background: #F7F5F2;
+        }
+
+        .lista-vagas {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .vaga-card {
+            background: #F0F0F0;
+            border-radius: 36px;
+            padding: 22px 28px;
+            min-height: 120px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            align-items: center;
+            position: relative;
+        }
+
+        .vaga-tag {
+            display: inline-block;
+            background: #DCC8FF;
+            color: #6E39B5;
+            border-radius: 999px;
+            padding: 4px 9px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .vaga-tempo {
+            font-size: 11px;
+            color: #888780;
+            margin-left: 5px;
+        }
+
+        .vaga-card h2 {
+            font-size: 18px;
+            margin: 0 0 4px;
+            font-weight: 700;
+        }
+
+        .empresa {
+            font-size: 14px;
+            color: #555;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            font-size: 11px;
+            color: #888780;
+            margin-bottom: 10px;
+        }
+
+        .descricao {
+            font-size: 11px;
+            max-width: 620px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .mini-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .mini-tags span {
+            background: #D8D4CC;
+            color: #767676;
+            border-radius: 999px;
+            padding: 3px 9px;
+            font-size: 8px;
+        }
+
+        .ver-detalhes {
+            border: none;
+            background: transparent;
+            font-size: 12px;
+            font-weight: 700;
+            color: #1A1A1A;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .salvar-icon {
+            position: absolute;
+            right: 28px;
+            top: 18px;
+            width: 14px;
+            color: #888780;
+        }
+
+        .estado-vazio {
+            background: #F0F0F0;
+            border-radius: 36px;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+            color: #888780;
+        }
+
+        .estado-vazio h2 {
+            color: #1A1A1A;
+            font-size: 20px;
+            margin: 14px 0 8px;
+        }
+
+        .estado-vazio p {
+            font-size: 13px;
+            max-width: 420px;
+            line-height: 1.5;
+        }
+
+        .logo-puc {
+            position: absolute;
+            right: 32px;
+            bottom: 26px;
+            width: 88px;
+        }
+
+        svg {
+            flex-shrink: 0;
+        }
+
+        @media(max-width: 900px) {
+            .pagina {
+                padding: 25px;
+            }
+
+            .conteudo {
+                padding: 24px 18px 100px;
+            }
+
+            .banner-busca {
+                width: 100%;
+            }
+
+            .area-principal {
+                grid-template-columns: 1fr;
+            }
+
+            .filtros {
+                display: none;
+            }
+
+            .acoes-direita {
+                display: none;
+            }
+
+            .vaga-card {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="pagina">
+
+    <main class="caixa">
+
+        <a href="javascript:history.back()" class="btn-voltar">←</a>
+
+        <div class="topo-logo">
+            <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo-vagas" alt="Logo Vagas PUC-Rio">
+            <div class="nome-logo">VAGAS PUC-RIO</div>
+        </div>
+
+        <section class="conteudo">
+
+            <button class="hamburguer" id="hamburguer" type="button" aria-label="Abrir menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="menu-lateral" id="menuLateral">
+                <a href="{% url 'perfil_alunopronta' %}">Perfil</a>
+                <a href="#">Vagas Salvas</a>
+                <a href="#">Publicar Vaga</a>
+                <a href="#">Candidaturas</a>
+                <a href="#">Ajuda/FAQ</a>
+                <a href="{% url 'configuracoes' %}">Configurações</a>
+                <a href="{% url 'home' %}">Sair</a>
+            </nav>
+
+            <div class="acoes-direita">
+                <button class="botao-icone" type="button" id="botaoNotificacao" aria-label="Notificações">
+                    <svg class="sino" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/>
+                    </svg>
+                </button>
+
+                <div class="notificacao-box" id="notificacaoBox">
+                    Você não possui notificações no momento.
+                </div>
+
+                <a class="foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+                        <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                </a>
+            </div>
+
+            <section class="banner-busca">
+                <h1>Encontre a sua próxima oportunidade</h1>
+                <p>Explore vagas de estágio, trainee e projetos de pesquisa</p>
+
+                <form class="barra-busca" method="GET">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.3-4.3"/>
+                    </svg>
+
+                    <input type="text" name="q" placeholder="Cargo, empresa ou palavra-chave...">
+                    <button type="submit">Buscar</button>
+                </form>
+            </section>
+
+            <section class="area-principal">
+
+                <aside class="filtros">
+
+                    <div class="titulo-filtro">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 5h18l-7 8v5l-4 2v-7z"/>
+                        </svg>
+                        Filtros
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <h3>Tipo de vaga</h3>
+                        <button class="opcao-filtro" type="button">Estágio</button>
+                        <button class="opcao-filtro" type="button">Trainee</button>
+                        <button class="opcao-filtro" type="button">Inic. Cient.</button>
+                    </div>
+
+                    <div class="grupo-filtro">
+                        <h3>Modalidade</h3>
+                        <button class="opcao-filtro" type="button">Remoto</button>
+                        <button class="opcao-filtro" type="button">Híbrido</button>
+                        <button class="opcao-filtro" type="button">Presencial</button>
+                    </div>
+
+                    <button class="limpar" id="limparFiltros" type="button">Limpar filtros</button>
+
+                </aside>
+
+                <section>
+
+                    <div class="topo-lista">
+                        <div class="total-vagas">
+                            {% if vagas %}
+                                {{ vagas|length }} vagas encontradas
+                            {% else %}
+                                0 vagas encontradas
+                            {% endif %}
+                        </div>
+
+                        <div class="ordenar">
+                            <button class="ordenar-botao" id="botaoOrdenar" type="button">
+                                Ordenar por: <strong id="textoOrdenacao">Mais recentes ↓</strong>
+                            </button>
+
+                            <div class="ordenar-menu" id="ordenarMenu">
+                                <button type="button" data-ordem="Mais recentes ↓">Mais recentes</button>
+                                <button type="button" data-ordem="Mais antigas ↑">Mais antigas</button>
+                                <button type="button" data-ordem="A-Z">A-Z</button>
+                                <button type="button" data-ordem="Z-A">Z-A</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lista-vagas">
+
+                        {% if vagas %}
+
+                            {% for vaga in vagas %}
+                                <article class="vaga-card">
+
+                                    <svg class="salvar-icon" xmlns="http://www.w3.org/2000/svg" fill="#888780" viewBox="0 0 24 24">
+                                        <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
+                                    </svg>
+
+                                    <div>
+                                        <span class="vaga-tag">{{ vaga.tipo }}</span>
+                                        <span class="vaga-tempo">Há pouco tempo</span>
+
+                                        <h2>{{ vaga.titulo }}</h2>
+
+                                        <div class="empresa">{{ vaga.empresa }}</div>
+
+                                        <div class="meta">
+                                            <span>{{ vaga.area }}</span>
+                                            <span>{{ vaga.local }}</span>
+                                            <span>{{ vaga.bolsa }}</span>
+                                        </div>
+
+                                        <p class="descricao">
+                                            {{ vaga.descricao }}
+                                        </p>
+
+                                        <div class="mini-tags">
+                                            {% for tag in vaga.tags.all %}
+                                                <span>{{ tag.nome }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <button class="ver-detalhes">
+                                        Ver detalhes ›
+                                    </button>
+
+                                </article>
+                            {% endfor %}
+
+                        {% else %}
+
+                            <div class="estado-vazio">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 7h16"/>
+                                    <path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>
+                                    <rect x="3" y="7" width="18" height="13" rx="2"/>
+                                    <path d="M9 13h6"/>
+                                </svg>
+
+                                <h2>Nenhuma vaga cadastrada ainda</h2>
+
+                                <p>
+                                    Assim que novas vagas forem publicadas, elas aparecerão aqui no formato de cards.
+                                </p>
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+            </section>
+
+            <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+    const hamburguer = document.getElementById('hamburguer');
+    const menuLateral = document.getElementById('menuLateral');
+    const botaoNotificacao = document.getElementById('botaoNotificacao');
+    const notificacaoBox = document.getElementById('notificacaoBox');
+    const botaoOrdenar = document.getElementById('botaoOrdenar');
+    const ordenarMenu = document.getElementById('ordenarMenu');
+    const textoOrdenacao = document.getElementById('textoOrdenacao');
+    const limparFiltros = document.getElementById('limparFiltros');
+    const filtros = document.querySelectorAll('.opcao-filtro');
+
+    hamburguer.addEventListener('click', function(event) {
+        event.stopPropagation();
+        menuLateral.classList.toggle('aberto');
+        notificacaoBox.classList.remove('aberto');
+        ordenarMenu.classList.remove('aberto');
+    });
+
+    botaoNotificacao.addEventListener('click', function(event) {
+        event.stopPropagation();
+        notificacaoBox.classList.toggle('aberto');
+        menuLateral.classList.remove('aberto');
+        ordenarMenu.classList.remove('aberto');
+    });
+
+    botaoOrdenar.addEventListener('click', function(event) {
+        event.stopPropagation();
+        ordenarMenu.classList.toggle('aberto');
+        menuLateral.classList.remove('aberto');
+        notificacaoBox.classList.remove('aberto');
+    });
+
+    ordenarMenu.querySelectorAll('button').forEach(function(botao) {
+        botao.addEventListener('click', function() {
+            textoOrdenacao.textContent = botao.dataset.ordem;
+            ordenarMenu.classList.remove('aberto');
+        });
+    });
+
+    filtros.forEach(function(filtro) {
+        filtro.addEventListener('click', function() {
+            filtro.classList.toggle('ativo');
+        });
+    });
+
+    limparFiltros.addEventListener('click', function() {
+        filtros.forEach(function(filtro) {
+            filtro.classList.remove('ativo');
+        });
+    });
+
+    document.addEventListener('click', function() {
+        menuLateral.classList.remove('aberto');
+        notificacaoBox.classList.remove('aberto');
+        ordenarMenu.classList.remove('aberto');
+    });
+</script>
+
+</body>
+</html>

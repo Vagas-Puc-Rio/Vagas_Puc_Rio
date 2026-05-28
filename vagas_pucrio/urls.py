@@ -44,11 +44,16 @@ urlpatterns = [
 
     path('perfil-aluno/', views.perfil_aluno,
          name='perfil_aluno'),
-    
+
     path('primeiros-passos-professor/',views.primeiros_passos_professor,
          name='primeiros_passos_professor'),
-    
-    path('cadastro-vaga/', views.cadastro_vaga, 
+
+    path('cadastro-vaga/', views.cadastro_vaga,
          name='cadastro_vaga'),
 
+    path('vagas/', views.lista_vagas, name='vagas'),
+
+    path('perfil/aluno/pronto/', views.perfil_alunopronta, name='perfil_alunopronta'),
+
+    path('configuracoes/', views.configuracoes, name='configuracoes'),
 ]

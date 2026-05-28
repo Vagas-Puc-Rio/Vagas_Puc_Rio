@@ -1,0 +1,770 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #F7F5F2;
+            font-family: Inter, Arial, sans-serif;
+            color: #1A1A1A;
+        }
+
+        .pagina {
+            min-height: 100vh;
+            padding: 35px 55px;
+            position: relative;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 28px;
+            left: 30px;
+            font-size: 34px;
+            text-decoration: none;
+            color: #1A1A1A;
+        }
+
+        .logo-topo {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .logo-topo img {
+            width: 58px;
+        }
+
+        .logo-topo p {
+            margin: 0;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .8px;
+        }
+
+        .caixa {
+            max-width: 1280px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 32px;
+            padding: 55px 38px 140px;
+            position: relative;
+        }
+
+        .sino-btn {
+            position: absolute;
+            top: 38px;
+            right: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .sino {
+            color: #888780;
+        }
+
+        .notificacao-box {
+            position: absolute;
+            top: 75px;
+            right: 38px;
+            width: 250px;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 12px;
+            color: #888780;
+            box-shadow: 0 8px 18px rgba(0,0,0,.08);
+            display: none;
+            z-index: 20;
+        }
+
+        .notificacao-box.aberto {
+            display: block;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 42px;
+        }
+
+        .menu-config {
+            padding-top: 15px;
+        }
+
+        .menu-config h3 {
+            font-size: 13px;
+            color: #B0ACA5;
+            letter-spacing: 1.4px;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+
+        .item-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #888780;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .item-menu svg {
+            width: 25px;
+            height: 25px;
+            flex-shrink: 0;
+        }
+
+        .item-menu strong {
+            display: block;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .item-menu span {
+            display: block;
+            font-size: 9px;
+            letter-spacing: .8px;
+            color: #888780;
+        }
+
+        .item-menu.ativo {
+            color: #008BA8;
+        }
+
+        .item-menu.ativo::before {
+            content: "";
+            position: absolute;
+            left: -12px;
+            width: 3px;
+            height: 42px;
+            background: #008BA8;
+            border-radius: 999px;
+        }
+
+        .conteudo h1 {
+            font-size: 32px;
+            margin: 0;
+        }
+
+        .descricao {
+            font-size: 13px;
+            color: #888780;
+            letter-spacing: 1px;
+            margin-top: 8px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            border: 1px solid #888780;
+            border-radius: 22px;
+            padding: 26px 30px;
+            margin-bottom: 22px;
+            background: white;
+        }
+
+        .card-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 22px;
+        }
+
+        .card h2 {
+            margin: 0;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+
+        .card-sub {
+            margin-top: 5px;
+            font-size: 11px;
+            color: #B0ACA5;
+            letter-spacing: 1px;
+        }
+
+        .btn-pequeno {
+            border: 1px solid #008BA8;
+            background: white;
+            color: #008BA8;
+            border-radius: 999px;
+            padding: 6px 15px;
+            font-size: 11px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .perfil-box {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .perfil-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar {
+            width: 105px;
+            height: 105px;
+            border-radius: 28px;
+            border: 1px solid #D8D4CC;
+            background: #F7F5F2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dados-perfil strong {
+            display: block;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .dados-perfil p {
+            margin: 0 0 4px;
+            font-size: 12px;
+        }
+
+        .membro {
+            text-align: right;
+            font-size: 12px;
+            color: #888780;
+            letter-spacing: 1px;
+        }
+
+        .linha-config {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 18px;
+            align-items: center;
+            margin: 18px 0;
+        }
+
+        .linha-info {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .linha-info svg {
+            width: 26px;
+            height: 26px;
+            color: #888780;
+            flex-shrink: 0;
+        }
+
+        .linha-info strong {
+            display: block;
+            font-size: 13px;
+            letter-spacing: .8px;
+        }
+
+        .linha-info span {
+            display: block;
+            font-size: 10px;
+            color: #B0ACA5;
+            letter-spacing: .8px;
+        }
+
+        .switch {
+            width: 30px;
+            height: 16px;
+            border-radius: 999px;
+            background: #AAA59E;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            transition: .2s;
+        }
+
+        .switch::after {
+            content: "";
+            display: block;
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            transition: .2s;
+        }
+
+        .switch.ativo {
+            background: #008BA8;
+        }
+
+        .switch.ativo::after {
+            transform: translateX(14px);
+        }
+
+        .select-fake {
+            border: 1px solid #888780;
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 11px;
+            background: white;
+            color: #888780;
+            cursor: pointer;
+            min-width: 125px;
+        }
+
+        .btn-alterar {
+            border: 1px solid #888780;
+            border-radius: 999px;
+            background: white;
+            padding: 5px 18px;
+            font-size: 11px;
+            color: #008BA8;
+            cursor: pointer;
+        }
+
+        .idioma-wrapper,
+        .tema-wrapper {
+            position: relative;
+        }
+
+        .idioma-menu,
+        .tema-menu {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            width: 180px;
+            background: white;
+            border: 1px solid #D8D4CC;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, .08);
+            z-index: 10;
+        }
+
+        .idioma-menu.aberto,
+        .tema-menu.aberto {
+            display: block;
+        }
+
+        .idioma-menu button,
+        .tema-menu button {
+            width: 100%;
+            border: none;
+            background: white;
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 11px;
+            cursor: pointer;
+            font-family: Inter, Arial, sans-serif;
+        }
+
+        .idioma-menu button:hover,
+        .tema-menu button:hover {
+            background: #F7F5F2;
+        }
+
+        .logo-puc {
+            position: absolute;
+            right: 28px;
+            bottom: 28px;
+            width: 95px;
+            z-index: 20;
+        }
+
+        @media(max-width: 950px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .menu-config {
+                display: none;
+            }
+
+            .perfil-box {
+                grid-template-columns: 1fr;
+            }
+
+            .membro {
+                text-align: left;
+            }
+
+            .pagina {
+                padding: 20px;
+            }
+
+            .caixa {
+                padding: 40px 20px 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="pagina">
+
+        <a href="{% url 'vagas' %}" class="btn-voltar">←</a>
+
+        <div class="logo-topo">
+            <img src="{% static 'img/logo_vagas_pucrio1.png' %}" alt="Logo">
+            <p>VAGAS PUC-RIO</p>
+        </div>
+
+        <main class="caixa">
+
+            <button class="sino-btn" id="botaoSino" type="button">
+                <svg class="sino" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="1.8">
+                    <path
+                        d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" />
+                    <path d="M9 17a3 3 0 0 0 6 0" />
+                </svg>
+            </button>
+
+            <div class="notificacao-box" id="notificacaoBox">
+                Você não possui notificações no momento.
+            </div>
+
+            <div class="layout">
+
+                <aside class="menu-config">
+
+                    <h3>Configurações</h3>
+
+                    <a href="#perfil" class="item-menu ativo">
+                        <div>
+                            <strong>Meu perfil</strong>
+                            <span>Informações pessoais</span>
+                        </div>
+                    </a>
+
+                    <a href="#notificacoes" class="item-menu">
+                        <div>
+                            <strong>Notificações</strong>
+                            <span>Preferências de alertas</span>
+                        </div>
+                    </a>
+
+                    <a href="#preferencias" class="item-menu">
+                        <div>
+                            <strong>Preferências</strong>
+                            <span>Ajustes da plataforma</span>
+                        </div>
+                    </a>
+
+                    <a href="#conta" class="item-menu">
+                        <div>
+                            <strong>Conta</strong>
+                            <span>Segurança e acesso</span>
+                        </div>
+                    </a>
+
+                </aside>
+
+                <section class="conteudo">
+
+                    <h1>Configurações</h1>
+
+                    <p class="descricao">
+                        Gerencie suas informações e preferências da sua conta no Vagas PUC-Rio
+                    </p>
+
+                    <section class="card" id="perfil">
+
+                        <div class="card-topo">
+
+                            <div>
+                                <h2>Meu perfil</h2>
+
+                                <p class="card-sub">
+                                    Atualize suas informações pessoais e como elas aparecem para os usuários.
+                                </p>
+                            </div>
+
+                            <a class="btn-pequeno" href="{% url 'perfil_aluno' %}">
+                                Editar perfil
+                            </a>
+
+                        </div>
+
+                        <div class="perfil-box">
+
+                            <div class="perfil-info">
+
+                                <div class="avatar">
+
+                                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none"
+                                        stroke="#888780" stroke-width="1.8">
+                                        <path d="M4 7h3l2-2h6l2 2h3v12H4z" />
+                                        <circle cx="12" cy="13" r="4" />
+                                    </svg>
+
+                                </div>
+
+                                <div class="dados-perfil">
+
+                                    <strong>
+                                        {{ perfil.nome|default:"Maria Clara De Oliveira Miller" }}
+                                    </strong>
+
+                                    <p>
+                                        {{ perfil.email|default:"mariaclaramiller@icloud.com" }}
+                                    </p>
+
+                                    <p>
+                                        Estudante de
+                                        {{ perfil.curso|default:"Ciência da Computação" }}
+                                    </p>
+
+                                    <p>
+                                        Pontifícia Universidade Católica do Rio de Janeiro
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            <div class="membro">
+                                Membro desde<br>
+                                Mai 2026
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="card" id="notificacoes">
+
+                        <h2>Notificações</h2>
+
+                        <p class="card-sub">
+                            Escolha sobre o que e como você deseja receber notificações.
+                        </p>
+
+                        <div class="linha-config">
+                            <div class="linha-info">
+                                <div>
+                                    <strong>Novas vagas compatíveis</strong>
+                                    <span>Receba notificações sobre novas vagas compatíveis.</span>
+                                </div>
+                            </div>
+
+                            <button class="switch ativo" type="button"></button>
+                        </div>
+
+                        <div class="linha-config">
+                            <div class="linha-info">
+                                <div>
+                                    <strong>Mensagens</strong>
+                                    <span>Receba mensagens de recrutadores.</span>
+                                </div>
+                            </div>
+
+                            <button class="switch" type="button"></button>
+                        </div>
+
+                    </section>
+
+                    <section class="card" id="preferencias">
+
+                        <h2>Preferências da plataforma</h2>
+
+                        <p class="card-sub">
+                            Personalize sua experiência no Vagas PUC-Rio.
+                        </p>
+
+                        <div class="linha-config">
+
+                            <div class="linha-info">
+                                <strong>Idioma</strong>
+                            </div>
+
+                            <div class="idioma-wrapper">
+
+                                <button class="select-fake" id="botaoIdioma" type="button">
+                                    Português (Brasil)⌄
+                                </button>
+
+                                <div class="idioma-menu" id="menuIdioma">
+
+                                    <button type="button">Português (Brasil)</button>
+                                    <button type="button">Inglês</button>
+                                    <button type="button">Espanhol</button>
+                                    <button type="button">Francês</button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="linha-config">
+
+                            <div class="linha-info">
+                                <strong>Tema</strong>
+                            </div>
+
+                            <div class="tema-wrapper">
+
+                                <button class="select-fake" id="botaoTema" type="button">
+                                    Claro⌄
+                                </button>
+
+                                <div class="tema-menu" id="menuTema">
+
+                                    <button type="button">Claro</button>
+                                    <button type="button">Escuro</button>
+                                    <button type="button">Sistema</button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    <section class="card" id="conta">
+
+                        <h2>Login e acesso</h2>
+
+                        <p class="card-sub">
+                            Gerencie seu e-mail, senha e métodos de acesso.
+                        </p>
+
+                        <div class="linha-config">
+
+                            <div class="linha-info">
+
+                                <div>
+
+                                    <strong>E-mail</strong>
+
+                                    <span>
+                                        {{ perfil.email|default:"mariaclaramiller@icloud.com" }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <button class="btn-alterar" type="button">
+                                Alterar ›
+                            </button>
+
+                        </div>
+
+                        <div class="linha-config">
+
+                            <div class="linha-info">
+
+                                <div>
+
+                                    <strong>Senha</strong>
+
+                                    <span>
+                                        Última alteração há 3 meses
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <button class="btn-alterar" type="button">
+                                Alterar ›
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                </section>
+
+            </div>
+
+            <img src="{% static 'img/image4.png' %}" class="logo-puc">
+
+        </main>
+
+    </div>
+
+    <script>
+
+        const switches = document.querySelectorAll('.switch');
+
+        switches.forEach(botao => {
+            botao.addEventListener('click', () => {
+                botao.classList.toggle('ativo');
+            });
+        });
+
+        const botaoSino = document.getElementById('botaoSino');
+        const notificacaoBox = document.getElementById('notificacaoBox');
+
+        botaoSino.addEventListener('click', function (event) {
+            event.stopPropagation();
+            notificacaoBox.classList.toggle('aberto');
+            menuIdioma.classList.remove('aberto');
+            menuTema.classList.remove('aberto');
+        });
+
+        const botaoIdioma = document.getElementById('botaoIdioma');
+        const menuIdioma = document.getElementById('menuIdioma');
+
+        botaoIdioma.addEventListener('click', function (event) {
+            event.stopPropagation();
+            menuIdioma.classList.toggle('aberto');
+            menuTema.classList.remove('aberto');
+            notificacaoBox.classList.remove('aberto');
+        });
+
+        menuIdioma.querySelectorAll('button').forEach(function (opcao) {
+            opcao.addEventListener('click', function () {
+                botaoIdioma.textContent = opcao.textContent + '⌄';
+                menuIdioma.classList.remove('aberto');
+            });
+        });
+
+        const botaoTema = document.getElementById('botaoTema');
+        const menuTema = document.getElementById('menuTema');
+
+        botaoTema.addEventListener('click', function (event) {
+            event.stopPropagation();
+            menuTema.classList.toggle('aberto');
+            menuIdioma.classList.remove('aberto');
+            notificacaoBox.classList.remove('aberto');
+        });
+
+        menuTema.querySelectorAll('button').forEach(function (opcao) {
+            opcao.addEventListener('click', function () {
+                botaoTema.textContent = opcao.textContent + '⌄';
+                menuTema.classList.remove('aberto');
+            });
+        });
+
+        document.addEventListener('click', function () {
+            menuIdioma.classList.remove('aberto');
+            menuTema.classList.remove('aberto');
+            notificacaoBox.classList.remove('aberto');
+        });
+
+    </script>
+
+</body>
+
+</html>

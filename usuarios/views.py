@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import check_password, make_password
+<<<<<<< HEAD
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -8,6 +9,11 @@ from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
 
 from usuarios.models import Usuario
+=======
+from django.db.models import Q
+
+from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
+>>>>>>> reconhecimento
 from .forms import CadastroInicialForm
 
 
@@ -115,7 +121,59 @@ def primeiros_passos(request):
 
 
 def perfil_aluno(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+
+    if request.method == 'POST':
+        request.session['perfil_aluno'] = {
+            'nome': request.POST.get('nome') or request.POST.get('nome_completo'),
+            'email': usuario.email if usuario else '',
+            'telefone': request.POST.get('telefone'),
+            'matricula': request.POST.get('matricula'),
+            'periodo': request.POST.get('periodo'),
+            'curso': request.POST.get('curso'),
+            'interesse': request.POST.getlist('interesse') or request.POST.getlist('tipo_vaga'),
+            'linguagens': request.POST.getlist('linguagens'),
+            'tecnologias': request.POST.getlist('tecnologias'),
+            'areas': request.POST.getlist('areas'),
+            'softskills': request.POST.getlist('softskills'),
+            'idiomas': request.POST.getlist('idiomas'),
+            'sobre': request.POST.get('sobre'),
+        }
+
+        return redirect('perfil_alunopronta')
+
     return render(request, 'usuarios/perfil_aluno.html')
+
+
+def perfil_alunopronta(request):
+    perfil = request.session.get('perfil_aluno', {})
+    return render(request, 'usuarios/perfil_alunopronta.html', {'perfil': perfil})
+
+def lista_vagas(request):
+    q = request.GET.get('q', '').strip()
+    tipo = request.GET.get('tipo', '').strip()
+
+    vagas = Vaga.objects.select_related(
+        'instituicao', 'professor', 'professor__dados_usuario'
+    ).all()
+
+    if q:
+        vagas = vagas.filter(
+            Q(descricao__icontains=q) |
+            Q(instituicao__nome_instituicao__icontains=q) |
+            Q(tipo_vaga__icontains=q)
+        )
+    if tipo:
+        vagas = vagas.filter(tipo_vaga=tipo)
+
+    contexto = {
+        'vagas': vagas,
+        'total': vagas.count(),
+        'q': q,
+        'tipo_atual': tipo,
+    }
+    return render(request, 'usuarios/lista_vagas.html', contexto)
 
 
 def primeiros_passos_professor(request):
@@ -123,3 +181,7 @@ def primeiros_passos_professor(request):
 
 def cadastro_vaga(request):
     return render(request, 'usuarios/cadastro_vagas.html')
+
+def configuracoes(request):
+    perfil = request.session.get('perfil_aluno', {})
+    return render(request, 'usuarios/configuracoes.html', {'perfil': perfil})
