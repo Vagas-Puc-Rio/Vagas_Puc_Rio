@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vagas - PUC-Rio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: #F7F5F2;
+            font-family: 'Jaldi', sans-serif;
+            margin: 0;
+            color: #1f1f1f;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        .topo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 18px 0;
+        }
+
+        .topo .voltar {
+            position: absolute;
+            left: 28px;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .topo .marca { text-align: center; font-weight: 700; letter-spacing: 1px; }
+        .topo .marca .compass { font-size: 26px; display: block; }
+
+        .conteudo {
+            background: #fff;
+            max-width: 1100px;
+            margin: 0 auto 50px auto;
+            border-radius: 26px;
+            padding: 28px 34px 50px 34px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        }
+
+        .hero {
+            background: linear-gradient(90deg, #0086A9, #0a93b8);
+            border-radius: 16px;
+            padding: 26px 30px;
+            color: #fff;
+        }
+        .hero h1 { margin: 0; font-size: 30px; }
+        .hero p { margin: 4px 0 18px 0; font-size: 16px; opacity: 0.9; }
+
+        .barra-busca { display: flex; background: #fff; border-radius: 30px; overflow: hidden; }
+        .barra-busca input {
+            flex: 1; border: none; padding: 12px 20px; font-size: 16px;
+            font-family: inherit; outline: none;
+        }
+        .barra-busca button {
+            border: none; background: #0086A9; color: #fff;
+            padding: 0 26px; font-size: 16px; font-weight: 700; cursor: pointer;
+            font-family: inherit;
+        }
+
+        .linha-resultados {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 22px 4px 12px 4px; font-size: 15px; color: #555;
+        }
+        .linha-resultados strong { color: #1f1f1f; }
+
+        .layout { display: flex; gap: 26px; }
+
+        .filtros { width: 170px; flex-shrink: 0; font-size: 14px; }
+        .filtros h2 { font-size: 15px; margin: 0 0 14px 0; }
+        .filtros .grupo { margin-bottom: 18px; }
+        .filtros .grupo-titulo { color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; }
+        .filtros .opcao { display: block; padding: 5px 0; color: #333; }
+        .filtros .opcao.ativo { font-weight: 700; color: #0086A9; }
+        .filtros .limpar { color: #aaa; font-size: 12px; margin-top: 8px; display: inline-block; }
+
+        .cards { flex: 1; display: flex; flex-direction: column; gap: 18px; }
+
+        .card {
+            background: #f4f4f4;
+            border-radius: 16px;
+            padding: 20px 24px;
+            position: relative;
+        }
+        .card .tag {
+            display: inline-block; background: #cfe9f3; color: #0a6a86;
+            font-size: 12px; padding: 3px 12px; border-radius: 20px; font-weight: 700;
+        }
+        .card .tag.ic { background: #e3d7f5; color: #6a3fb0; }
+        .card .titulo { font-size: 22px; font-weight: 700; margin: 10px 0 2px 0; }
+        .card .empresa { color: #444; margin-bottom: 8px; }
+        .card .meta { color: #666; font-size: 14px; margin-bottom: 10px; }
+        .card .meta span { margin-right: 16px; }
+        .card .desc { color: #555; font-size: 14px; max-width: 70%; }
+        .card .rodape {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 14px;
+        }
+        .card .valor { color: #0a6a86; font-weight: 700; font-size: 14px; }
+        .card .ver-detalhes { color: #0086A9; font-weight: 700; }
+        .vazio { color: #888; padding: 40px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="topo">
+        <a href="{% url 'primeiros_passos' %}" class="voltar">&larr;</a>
+        <div class="marca">
+            <span class="compass">&#129517;</span>
+            VAGAS PUC-RIO
+        </div>
+    </div>
+
+    <div class="conteudo">
+
+        <div class="hero">
+            <h1>Encontre a sua próxima oportunidade</h1>
+            <p>Explore vagas de estágio, trainee e projetos de pesquisa</p>
+            <form class="barra-busca" method="get" action="{% url 'vagas' %}">
+                <input type="text" name="q" value="{{ q }}" placeholder="Cargo, empresa ou palavra-chave...">
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+
+        <div class="linha-resultados">
+            <span><strong>{{ total }}</strong> vaga{{ total|pluralize }} encontrada{{ total|pluralize }}</span>
+        </div>
+
+        <div class="layout">
+
+            <aside class="filtros">
+                <h2>&#9783; Filtros</h2>
+                <div class="grupo">
+                    <div class="grupo-titulo">Tipo de vaga</div>
+                    <a class="opcao {% if tipo_atual == 'Estágio' %}ativo{% endif %}" href="?tipo=Estágio{% if q %}&q={{ q }}{% endif %}">Estágio</a>
+                    <a class="opcao {% if tipo_atual == 'Trainee' %}ativo{% endif %}" href="?tipo=Trainee{% if q %}&q={{ q }}{% endif %}">Trainee</a>
+                    <a class="opcao {% if tipo_atual == 'Iniciação Científica' %}ativo{% endif %}" href="?tipo=Iniciação Científica{% if q %}&q={{ q }}{% endif %}">Iniciação Científica</a>
+                </div>
+                <a class="limpar" href="{% url 'vagas' %}">Limpar Filtros</a>
+            </aside>
+
+            <div class="cards">
+                {% for vaga in vagas %}
+                <div class="card">
+                    <span class="tag {% if 'Inicia' in vaga.tipo_vaga %}ic{% endif %}">{{ vaga.tipo_vaga|default:"Vaga" }}</span>
+                    <div class="titulo">{{ vaga.descricao|truncatechars:60 }}</div>
+                    <div class="empresa">{{ vaga.instituicao.nome_instituicao }}</div>
+                    <div class="meta">
+                        <span>&#127891; {{ vaga.professor.disciplina }}</span>
+                        <span>&#128205; {{ vaga.instituicao.endereco }}</span>
+                        {% if vaga.periodo_min %}<span>Período mín.: {{ vaga.periodo_min }}º</span>{% endif %}
+                    </div>
+                    <div class="desc">{{ vaga.descricao }}</div>
+                    <div class="rodape">
+                        <span class="valor">
+                            {% if vaga.valor %}R$ {{ vaga.valor }}{% endif %}
+                            {% if vaga.beneficios %} &middot; {{ vaga.beneficios }}{% endif %}
+                            {% if vaga.carga_horaria %} &middot; {{ vaga.carga_horaria }}h/sem{% endif %}
+                        </span>
+                        <span class="ver-detalhes">Ver detalhes &rsaquo;</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="vazio">Nenhuma vaga encontrada.</div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
