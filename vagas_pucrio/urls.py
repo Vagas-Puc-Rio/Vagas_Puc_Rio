@@ -51,4 +51,6 @@ urlpatterns = [
          name='cadastro_vaga'),
 
     path('vagas/', views.lista_vagas, name='vagas'),
+
+    path('perfil/aluno/pronto/', views.perfil_alunopronta, name='perfil_alunopronta'),
 ]

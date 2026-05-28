@@ -1,0 +1,543 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil pronto</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, Arial, sans-serif;
+    }
+
+    body {
+      background: #f7f5f2;
+      color: #1a1a1a;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 45px 24px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 1180px;
+      background: #fff;
+      border: 1px solid #d8d4cc;
+      border-radius: 10px;
+      padding: 22px 28px 30px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .back {
+      text-decoration: none;
+      color: #1a1a1a;
+      font-size: 30px;
+      line-height: 1;
+    }
+
+    .logo-area {
+      text-align: center;
+      flex: 1;
+      margin-right: 30px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 4px;
+    }
+
+    .brand {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+    }
+
+    .title {
+      text-align: center;
+      margin: 18px 0 18px;
+    }
+
+    .title h1 {
+      font-size: 22px;
+      margin-bottom: 4px;
+    }
+
+    .title p {
+      font-size: 14px;
+      color: #888780;
+    }
+
+    .separator {
+      height: 1px;
+      background: #e5e2dc;
+      margin: 14px 0;
+    }
+
+    .profile-box {
+      background: #f7f5f2;
+      border: 1px solid #d8d4cc;
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      min-height: 135px;
+    }
+
+    .avatar {
+      width: 105px;
+      height: 105px;
+      border-radius: 26px;
+      border: 1px solid #d8d4cc;
+      background: #edeae4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .profile-info h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .profile-info p {
+      font-size: 12px;
+      margin-bottom: 5px;
+      color: #1a1a1a;
+    }
+
+    .contact {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+      margin-top: 12px;
+      font-size: 10px;
+      color: #555;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .section-card {
+      background: #f7f5f2;
+      border: 1px solid #d8d4cc;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 16px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon {
+      width: 14px;
+      height: 14px;
+      stroke: #888780;
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .section-line {
+      border-top: 1px solid #888;
+      margin: 8px 0 12px;
+    }
+
+    .academic-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-bottom: 12px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: #888780;
+      margin-bottom: 6px;
+    }
+
+    .info-value {
+      font-size: 12px;
+      color: #1a1a1a;
+    }
+
+    .interest {
+      margin-top: 10px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .tag {
+      background: #b0aca5;
+      color: white;
+      border-radius: 999px;
+      padding: 6px 13px;
+      font-size: 11px;
+    }
+
+    .about {
+      background: #f7f5f2;
+      border: 1px solid #d8d4cc;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #1a1a1a;
+      margin-top: 16px;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .skills-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      border-top: 1px solid #888;
+      margin-top: 14px;
+      padding-top: 12px;
+    }
+
+    .curriculo {
+      margin-top: 16px;
+    }
+
+    .upload-box {
+      border: 1px dashed #c8c4bc;
+      background: #f7f5f2;
+      border-radius: 8px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #b0aca5;
+      font-size: 11px;
+      margin-top: 8px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      background: #1a1a1a;
+      color: white;
+      border-radius: 8px;
+      padding: 13px;
+      font-weight: 700;
+      margin-top: 26px;
+      cursor: pointer;
+    }
+
+    .hint {
+      text-align: center;
+      color: #b0aca5;
+      font-size: 10px;
+      margin-top: 12px;
+    }
+
+    .logo-puc {
+      position: fixed;
+      right: 45px;
+      bottom: 25px;
+      width: 95px;
+    }
+
+    @media(max-width: 800px) {
+      .profile-box {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .academic-grid,
+      .skills-grid,
+      .skills-bottom {
+        grid-template-columns: 1fr;
+      }
+
+      .contact {
+        justify-content: center;
+      }
+
+      .logo-puc {
+        width: 70px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <main class="card">
+
+      <div class="top">
+        <a href="javascript:history.back()" class="back">←</a>
+
+        <div class="logo-area">
+          <img class="logo" src="{% static 'img/logo_vagas_pucrio1.png' %}" alt="Logo Vagas PUC-Rio">
+          <div class="brand">VAGAS PUC-RIO</div>
+        </div>
+      </div>
+
+      <div class="title">
+        <h1>Seu perfil está pronto!</h1>
+        <p>Confira como será visto.</p>
+      </div>
+
+      <div class="separator"></div>
+
+      <section class="profile-box">
+        <div class="avatar">
+          <svg class="icon" style="width:42px;height:42px;" viewBox="0 0 24 24">
+            <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </div>
+
+        <div class="profile-info">
+          <h2>{{ perfil.nome }}</h2>
+
+          <p>Estudante de {{ perfil.curso }}</p>
+          <p>{{ perfil.periodo }}</p>
+
+          <div class="contact">
+            <span class="contact-item">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M4 4h16v16H4z"/>
+                <path d="m22 6-10 7L2 6"/>
+              </svg>
+              {{ perfil.email }}
+            </span>
+
+            <span class="contact-item">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.79 19.79 0 0 1 11.19 18.85a19.5 19.5 0 0 1-6-6A19.79 19.79 0 0 1 2.12 4.18A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+              {{ perfil.telefone }}
+            </span>
+
+            <span class="contact-item">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              Niterói - RJ
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-card">
+        <div class="section-title">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M22 10 12 5 2 10l10 5 10-5z"/>
+            <path d="M6 12v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>
+          </svg>
+          Dados acadêmicos
+        </div>
+
+        <div class="section-line"></div>
+
+        <div class="academic-grid">
+          <div>
+            <div class="info-label">Matrícula</div>
+            <div class="info-value">{{ perfil.matricula }}</div>
+          </div>
+
+          <div>
+            <div class="info-label">Curso</div>
+            <div class="info-value">{{ perfil.curso }}</div>
+          </div>
+
+          <div>
+            <div class="info-label">Período Atual</div>
+            <div class="info-value">{{ perfil.periodo }}</div>
+          </div>
+        </div>
+
+        <div class="section-line"></div>
+
+        <div class="interest">
+          <div class="info-label">Tipo de Interesse</div>
+
+          <div class="tags">
+            {% for item in perfil.interesse %}
+              <span class="tag">{{ item }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="about">
+        <div class="section-title">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M4 4h16v16H4z"/>
+            <path d="M8 8h8"/>
+            <path d="M8 12h8"/>
+            <path d="M8 16h5"/>
+          </svg>
+          Sobre você
+        </div>
+        <p>{{ perfil.sobre }}</p>
+      </section>
+
+      <section class="section-card">
+        <div class="skills-grid">
+
+          <div>
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M8 9 4 12l4 3"/>
+                <path d="m16 9 4 3-4 3"/>
+                <path d="m14 5-4 14"/>
+              </svg>
+              Linguagens de programação
+            </div>
+
+            <div class="tags">
+              {% for linguagem in perfil.linguagens %}
+                <span class="tag">{{ linguagem }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5z"/>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1v.17a2 2 0 1 1-4 0V21a1.7 1.7 0 0 0-.4-1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1-.4H2.8a2 2 0 1 1 0-4H3a1.7 1.7 0 0 0 1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1V2.8a2 2 0 1 1 4 0V3a1.7 1.7 0 0 0 .4 1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.2.36.4.64.6 1 .2.2.6.4 1 .4h.2a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1 .4 1.7 1.7 0 0 0-.6.2z"/>
+              </svg>
+              Tecnologias & Frameworks
+            </div>
+
+            <div class="tags">
+              {% for tecnologia in perfil.tecnologias %}
+                <span class="tag">{{ tecnologia }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M3 12h18"/>
+                <path d="M12 3v18"/>
+                <path d="M6 6l12 12"/>
+                <path d="M18 6 6 18"/>
+              </svg>
+              Áreas de atuação
+            </div>
+
+            <div class="tags">
+              {% for area in perfil.areas %}
+                <span class="tag">{{ area }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+
+        <div class="skills-bottom">
+          <div>
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 4a4 4 0 0 0-4 4c0 1.5.8 2.8 2 3.5V14h4v-2.5c1.2-.7 2-2 2-3.5a4 4 0 0 0-4-4z"/>
+                <path d="M10 18h4"/>
+                <path d="M10.5 21h3"/>
+              </svg>
+              Soft skills
+            </div>
+
+            <div class="tags">
+              {% for skill in perfil.softskills %}
+                <span class="tag">{{ skill }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div>
+            <div class="section-title">
+              <svg class="icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M3 12h18"/>
+                <path d="M12 3c2.5 2.5 4 5.5 4 9s-1.5 6.5-4 9"/>
+                <path d="M12 3c-2.5 2.5-4 5.5-4 9s1.5 6.5 4 9"/>
+              </svg>
+              Idiomas
+            </div>
+
+            <div class="tags">
+              {% for idioma in perfil.idiomas %}
+                <span class="tag">{{ idioma }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="curriculo">
+        <div class="section-title">
+          <svg class="icon" viewBox="0 0 24 24">
+            <path d="M6 2h9l5 5v15H6z"/>
+            <path d="M14 2v6h6"/>
+          </svg>
+          Currículo
+        </div>
+
+        <div class="upload-box">Clique para enviar ou arraste aqui · PDF</div>
+      </section>
+
+      <button class="btn" onclick="window.location.href='/perfil-aluno/'">
+        Confimar Perfil
+      </button>
+
+      <p class="hint">Você pode editar essas informações depois</p>
+
+    </main>
+
+    <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
+  </div>
+</body>
+</html>
+

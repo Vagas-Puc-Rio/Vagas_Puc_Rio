@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -67,15 +68,10 @@
             border-radius: 50%;
             background: #EDEAE4;
             border: 1px solid #D8D4CC;
-
             display: flex;
             justify-content: center;
             align-items: center;
-
-            font-size: 24px;
-
             cursor: pointer;
-
             transition: 0.3s;
         }
 
@@ -168,6 +164,11 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+        }
+
+        .checkbox-box input {
+            width: auto;
         }
 
         .tags {
@@ -186,9 +187,16 @@
             font-size: 12px;
             cursor: pointer;
             user-select: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .tag.ativo {
+        .tag input {
+            display: none;
+        }
+
+        .tag:has(input:checked) {
             background: #0086A9;
             color: white;
             border-color: #0086A9;
@@ -253,7 +261,6 @@
                 right: 20px;
             }
         }
-    
     </style>
 </head>
 
@@ -265,14 +272,27 @@
 
         <a href="{% url 'primeiros_passos' %}" class="btn-voltar">←</a>
 
-        <img src="{% static 'img/image4.png' %}" class="logo-topo">
+        <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo-topo">
         <div class="titulo-logo">VAGAS PUC-RIO</div>
 
         <label for="foto-perfil" class="avatar">
-            📷
+            <svg 
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#888780"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+                <circle cx="12" cy="13" r="4"/>
+            </svg>
         </label>
 
-        <input type="file" id="foto-perfil" accept="image/*" hidden>
+        <input type="file" id="foto-perfil" name="foto_perfil" accept="image/*" hidden>
 
         <h1>Criar perfil — aluno</h1>
         <p class="subtitulo">Preencha suas informações para encontrar vagas de IC / Estágio</p>
@@ -287,7 +307,7 @@
 
                 <div class="linha-uma">
                     <label>Nome completo</label>
-                    <input type="text" name="nome_completo" placeholder="Ex: João da Silva" required>
+                    <input type="text" name="nome" placeholder="Ex: João da Silva" required>
                 </div>
 
                 <div class="linha">
@@ -363,22 +383,20 @@
                 <label>Tipo de vaga de interesse</label>
 
                 <div class="opcoes-vaga">
-
                     <label class="checkbox-box">
-                        <input type="checkbox" name="tipo_vaga" value="Estágio">
+                        <input type="checkbox" name="interesse" value="Estágio">
                         Estágio
                     </label>
 
                     <label class="checkbox-box">
-                        <input type="checkbox" name="tipo_vaga" value="Iniciação Científica">
+                        <input type="checkbox" name="interesse" value="Iniciação Científica">
                         Iniciação Científica
                     </label>
 
                     <label class="checkbox-box">
-                        <input type="checkbox" name="tipo_vaga" value="Ambos">
+                        <input type="checkbox" name="interesse" value="Ambos">
                         Ambos
                     </label>
-
                 </div>
             </div>
 
@@ -389,92 +407,82 @@
                 <div class="titulo-secao">Linguagens de programação</div>
 
                 <div class="tags">
-                    <span class="tag">Python</span>
-                    <span class="tag">Java</span>
-                    <span class="tag">JavaScript</span>
-                    <span class="tag">TypeScript</span>
-                    <span class="tag">Kotlin</span>
-                    <span class="tag">Go</span>
-                    <span class="tag">Ruby</span>
-                    <span class="tag">C</span>
-                    <span class="tag">C++</span>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="Python">Python</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="Java">Java</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="JavaScript">JavaScript</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="TypeScript">TypeScript</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="Kotlin">Kotlin</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="Go">Go</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="Ruby">Ruby</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="C">C</label>
+                    <label class="tag"><input type="checkbox" name="linguagens" value="C++">C++</label>
                 </div>
 
                 <div class="titulo-secao">Tecnologias & Frameworks</div>
 
                 <div class="tags">
-                    <span class="tag">React</span>
-                    <span class="tag">Node.js</span>
-                    <span class="tag">Spring Boot</span>
-                    <span class="tag">Django</span>
-                    <span class="tag">Flutter</span>
-                    <span class="tag">Docker</span>
-                    <span class="tag">Git</span>
-                    <span class="tag">SQL</span>
-                    <span class="tag">AWS</span>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="React">React</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Node.js">Node.js</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Spring Boot">Spring Boot</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Django">Django</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Flutter">Flutter</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Docker">Docker</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="Git">Git</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="SQL">SQL</label>
+                    <label class="tag"><input type="checkbox" name="tecnologias" value="AWS">AWS</label>
                 </div>
 
                 <div class="titulo-secao">Áreas de atuação</div>
 
                 <div class="tags">
-                    <span class="tag">Front-end</span>
-                    <span class="tag">Back-end</span>
-                    <span class="tag">Dados</span>
-                    <span class="tag">Inteligência Artificial</span>
-                    <span class="tag">Mobile</span>
-                    <span class="tag">Segurança</span>
-                    <span class="tag">Pesquisa (IC)</span>
-                    <span class="tag">DevOps</span>
-                    <span class="tag">UX / Design</span>
-                </div>
-
-                <div class="titulo-secao">Exatas</div>
-
-                <div class="tags">
-                    <span class="tag">Cálculo</span>
-                    <span class="tag">Modelagem</span>
-                    <span class="tag">Simulação</span>
-                    <span class="tag">Álgebra Linear</span>
-                    <span class="tag">Otimização</span>
-                    <span class="tag">Matemática Aplicada</span>
-                    <span class="tag">Pesquisa Operacional</span>
-                    <span class="tag">Física</span>
-                </div>
-
-                <div class="titulo-secao">Engenharia</div>
-
-                <div class="tags">
-                    <span class="tag">CAD</span>
-                    <span class="tag">Energia</span>
-                    <span class="tag">Telecom</span>
-                    <span class="tag">Robótica</span>
-                    <span class="tag">Eletrônica</span>
-                    <span class="tag">Sistemas Embarcados</span>
-                    <span class="tag">Automação</span>
-                    <span class="tag">Desenho</span>
+                    <label class="tag"><input type="checkbox" name="areas" value="Front-end">Front-end</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Back-end">Back-end</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Dados">Dados</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Inteligência Artificial">Inteligência Artificial</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Mobile">Mobile</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Segurança">Segurança</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Pesquisa (IC)">Pesquisa (IC)</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="DevOps">DevOps</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="UX / Design">UX / Design</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Cálculo">Cálculo</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Modelagem">Modelagem</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Simulação">Simulação</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Álgebra Linear">Álgebra Linear</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Otimização">Otimização</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Matemática Aplicada">Matemática Aplicada</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Pesquisa Operacional">Pesquisa Operacional</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Física">Física</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="CAD">CAD</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Energia">Energia</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Telecom">Telecom</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Robótica">Robótica</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Eletrônica">Eletrônica</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Sistemas Embarcados">Sistemas Embarcados</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Automação">Automação</label>
+                    <label class="tag"><input type="checkbox" name="areas" value="Desenho">Desenho</label>
                 </div>
 
                 <div class="titulo-secao">Soft Skills</div>
 
                 <div class="tags">
-                    <span class="tag">Comunicação</span>
-                    <span class="tag">Trabalho em equipe</span>
-                    <span class="tag">Proatividade</span>
-                    <span class="tag">Criatividade</span>
-                    <span class="tag">Gestão de tempo</span>
-                    <span class="tag">Liderança</span>
-                    <span class="tag">Adaptabilidade</span>
-                    <span class="tag">Pensamento crítico</span>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Comunicação">Comunicação</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Trabalho em equipe">Trabalho em equipe</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Proatividade">Proatividade</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Criatividade">Criatividade</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Gestão de tempo">Gestão de tempo</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Liderança">Liderança</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Adaptabilidade">Adaptabilidade</label>
+                    <label class="tag"><input type="checkbox" name="softskills" value="Pensamento crítico">Pensamento crítico</label>
                 </div>
 
                 <div class="titulo-secao">Idiomas</div>
 
                 <div class="tags">
-                    <span class="tag">Inglês</span>
-                    <span class="tag">Espanhol</span>
-                    <span class="tag">Francês</span>
-                    <span class="tag">Alemão</span>
-                    <span class="tag">Mandarim</span>
+                    <label class="tag"><input type="checkbox" name="idiomas" value="Inglês">Inglês</label>
+                    <label class="tag"><input type="checkbox" name="idiomas" value="Espanhol">Espanhol</label>
+                    <label class="tag"><input type="checkbox" name="idiomas" value="Francês">Francês</label>
+                    <label class="tag"><input type="checkbox" name="idiomas" value="Alemão">Alemão</label>
+                    <label class="tag"><input type="checkbox" name="idiomas" value="Mandarim">Mandarim</label>
                 </div>
 
             </div>
@@ -482,24 +490,19 @@
             <hr>
 
             <div class="secao">
-
                 <div class="titulo-secao">Sobre você</div>
-
                 <textarea name="sobre" placeholder="Conte um pouco sobre seus objetivos e habilidades..."></textarea>
-
             </div>
 
             <hr>
 
             <div class="secao">
-
                 <div class="titulo-secao">Currículo</div>
 
                 <label class="upload">
                     📄 Clique para enviar ou arraste aqui · PDF
                     <input type="file" name="curriculo" accept=".pdf">
                 </label>
-
             </div>
 
             <button type="submit" class="btn-salvar">
@@ -518,21 +521,6 @@
 
 </div>
 
-<script>
-
-    const tags = document.querySelectorAll('.tag');
-
-    tags.forEach(tag => {
-
-        tag.addEventListener('click', () => {
-
-            tag.classList.toggle('ativo');
-
-        });
-
-    });
-
-</script>
-
 </body>
 </html>
+

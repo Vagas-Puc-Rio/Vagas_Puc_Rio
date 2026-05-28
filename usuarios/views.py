@@ -85,7 +85,34 @@ def primeiros_passos(request):
 
 
 def perfil_aluno(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+
+    if request.method == 'POST':
+        request.session['perfil_aluno'] = {
+            'nome': request.POST.get('nome') or request.POST.get('nome_completo'),
+            'email': usuario.email if usuario else '',
+            'telefone': request.POST.get('telefone'),
+            'matricula': request.POST.get('matricula'),
+            'periodo': request.POST.get('periodo'),
+            'curso': request.POST.get('curso'),
+            'interesse': request.POST.getlist('interesse') or request.POST.getlist('tipo_vaga'),
+            'linguagens': request.POST.getlist('linguagens'),
+            'tecnologias': request.POST.getlist('tecnologias'),
+            'areas': request.POST.getlist('areas'),
+            'softskills': request.POST.getlist('softskills'),
+            'idiomas': request.POST.getlist('idiomas'),
+            'sobre': request.POST.get('sobre'),
+        }
+
+        return redirect('perfil_alunopronta')
+
     return render(request, 'usuarios/perfil_aluno.html')
+
+
+def perfil_alunopronta(request):
+    perfil = request.session.get('perfil_aluno', {})
+    return render(request, 'usuarios/perfil_alunopronta.html', {'perfil': perfil})
 
 def lista_vagas(request):
     q = request.GET.get('q', '').strip()
