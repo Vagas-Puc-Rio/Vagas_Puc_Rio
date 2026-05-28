@@ -145,3 +145,7 @@ def primeiros_passos_professor(request):
 
 def cadastro_vaga(request):
     return render(request, 'usuarios/cadastro_vagas.html')
+
+def configuracoes(request):
+    perfil = request.session.get('perfil_aluno', {})
+    return render(request, 'usuarios/configuracoes.html', {'perfil': perfil})
