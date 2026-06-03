@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib.auth.hashers import check_password, make_password
-<<<<<<< HEAD
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
@@ -9,11 +8,9 @@ from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
 
 from usuarios.models import Usuario
-=======
 from django.db.models import Q
 
 from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
->>>>>>> reconhecimento
 from .forms import CadastroInicialForm
 
 
