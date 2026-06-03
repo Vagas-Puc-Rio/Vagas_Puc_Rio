@@ -1,526 +1,511 @@
-
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criar Perfil - Aluno</title>
-
+    <title>Completar Perfil - Vagas PUC-Rio</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        /* --- DESIGN SYSTEM OFICIAL DO SEU FIGMA --- */
+        :root {
+            --azul-puc: #0086A9;
+            --azul-ativo-menu: rgba(0, 134, 169, 0.32);
+            --cinza-fundo-tela: #f7f5f2;
+            --cinza-fundo-input: #F7F5F2;
+            --borda-cor: #D8D4CC;
+            --placeholder-cor: #B0ACA5;
+            --texto-cor: #1A1A1A;
+            --cinza-texto-suave: #888780;
+            --branco: #ffffff;
+        }
 
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', Arial, sans-serif;
         }
 
         body {
-            margin: 0;
-            background: #F7F5F2;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .pagina {
-            min-height: 100vh;
-            padding: 55px 70px;
-            position: relative;
-        }
-
-        .caixa {
-            background: white;
-            max-width: 1324px;
-            margin: 0 auto;
-            border: 1px solid #D8D4CC;
-            border-radius: 16px;
-            padding: 20px 36px 45px;
-            position: relative;
-        }
-
-        .btn-voltar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 34px;
-            color: black;
-            text-decoration: none;
-            font-weight: 400;
-        }
-
-        .logo-topo {
-            width: 50px;
-            display: block;
-            margin: 0 auto 6px;
-        }
-
-        .titulo-logo {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            margin-bottom: 14px;
-        }
-
-        .avatar {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 18px;
-            border-radius: 50%;
-            background: #EDEAE4;
-            border: 1px solid #D8D4CC;
+            background-color: var(--cinza-fundo-tela);
+            color: var(--texto-cor);
             display: flex;
             justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: 0.3s;
+            min-height: 100vh;
+            padding: 45px 24px;
         }
 
-        .avatar:hover {
-            opacity: 0.8;
+        .container {
+            width: 100%;
+            max-width: 1180px;
+            background: var(--branco);
+            border: 1px solid var(--borda-cor);
+            border-radius: 20px; /* Arredondamento do card principal do Figma */
+            display: flex;
+            overflow: hidden;
+            min-height: 85vh;
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.02);
         }
 
-        h1 {
-            text-align: center;
-            font-size: 17px;
-            margin: 0;
+        /* --- BARRA LATERAL (MENU PROGRESSO) --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--branco);
+           
+            padding: 40px 24px;
+            flex-shrink: 0;
         }
 
-        .subtitulo {
-            text-align: center;
-            font-size: 12px;
-            color: #888780;
-            margin: 16px 0 18px;
-        }
-
-        hr {
-            border: none;
-            border-top: 1px solid #E5E2DC;
-            margin: 12px 0;
-        }
-
-        .secao {
-            margin-top: 14px;
-        }
-
-        .titulo-secao {
+        .sidebar-title {
+            width: 133px;
             font-size: 12px;
             font-weight: 700;
-            color: #888780;
+            color: black;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
+            letter-spacing: 0.80px;
+            margin-bottom: 30px;
         }
 
-        label {
-            display: block;
-            font-size: 12px;
-            color: #888780;
-            margin-bottom: 5px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
+        .step-item {
+            display: flex;
+            align-items: center;
+            width: 204px; /* Dimensões exatas extraídas do Anima */
+            height: 34px;
+            padding: 0 12px;
             border-radius: 8px;
-            padding: 10px 13px;
-            font-family: 'Inter', sans-serif;
+            color: var(--cinza-texto-suave);
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.80px;
+            text-decoration: none;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Destaque ativo com o fundo azul translúcido do Figma */
+        .step-item.active {
+            background: var(--azul-ativo-menu) !important;
+            color: var(--texto-cor) !important;
+        }
+
+        .step-item.completed {
+            color: var(--azul-puc);
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            flex: 1;
+            padding: 40px 50px;
+            overflow-y: auto;
+        }
+
+        .main-header {
+            margin-bottom: 32px;
+        }
+
+        .main-header h1 {
+            font-size: 20px; /* Tamanho oficial do seu título */
+            font-weight: 700;
+            color: var(--texto-cor);
+            margin-bottom: 6px;
+        }
+
+        .main-header p {
+            font-size: 14px;
+            color: var(--cinza-texto-suave);
+        }
+
+        /* --- ACORDEÃO (GAVETAS) --- */
+        .accordion-section {
+            background: var(--branco);
+            border: 1px solid var(--borda-cor);
+            border-radius: 20px; /* 20px nas gavetas como extraído */
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .accordion-header {
+            background: #fbfbfa;
+            padding: 18px 24px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #555450;
+            cursor: pointer;
+            border-bottom: 1px solid transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.80px;
+        }
+
+        .accordion-section.active .accordion-header {
+            background: var(--branco);
+            color: var(--texto-cor);
+            border-bottom: 1px solid #e5e2dc;
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 24px;
+            background: var(--branco);
+        }
+
+        .accordion-section.active .accordion-content {
+            display: block;
+        }
+
+        /* --- LAYOUT DOS CAMPOS INTERNOS --- */
+        .form-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.no-margin {
+            margin-bottom: 0;
+        }
+
+        .form-group label {
+            display: block;
             font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--texto-cor);
+        }
+
+        /* inputs idênticos ao Figma */
+        .input-campo {
+            display: block;
+            width: 100%;
+            height: 35px; /* Altura exata do Anima */
+            padding: 0 14px;
+            background-color: var(--cinza-fundo-input) !important;
+            border: 1px solid var(--borda-cor) !important;
+            border-radius: 8px !important; /* Arredondamento de 8px */
+            font-size: 13px !important;
+            color: var(--texto-cor) !important;
             outline: none;
         }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: #888780;
+        .input-campo::placeholder {
+            color: var(--placeholder-cor);
         }
 
-        textarea {
-            height: 80px;
-            resize: none;
+        textarea.input-campo {
+            height: auto;
+            padding: 12px 14px;
         }
 
-        .linha {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
-
-        .linha-uma {
-            margin-bottom: 10px;
-        }
-
-        .opcoes-vaga {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .checkbox-box {
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .checkbox-box input {
-            width: auto;
-        }
-
-        .tags {
+        /* --- COMPONENTE DE TAGS (PILLS) --- */
+        .tags-grid {
             display: flex;
             flex-wrap: wrap;
-            gap: 7px;
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-top: 8px;
         }
 
-        .tag {
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
-            color: #555;
-            border-radius: 999px;
-            padding: 6px 13px;
-            font-size: 12px;
-            cursor: pointer;
-            user-select: none;
+        .tag-pill {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-        }
-
-        .tag input {
-            display: none;
-        }
-
-        .tag:has(input:checked) {
-            background: #0086A9;
-            color: white;
-            border-color: #0086A9;
-        }
-
-        .upload {
-            border: 1px dashed #C8C4BC;
-            background: #F7F5F2;
-            border-radius: 10px;
-            padding: 22px;
-            text-align: center;
-            color: #B0ACA5;
-            font-size: 12px;
             cursor: pointer;
         }
 
-        .upload input {
+        .tag-pill input[type="checkbox"] {
             display: none;
         }
 
-        .btn-salvar {
-            width: 100%;
-            background: #1A1A1A;
-            color: white;
-            border: none;
+        .tag-pill span {
+            display: inline-block;
+            padding: 8px 18px;
+            border: 1px solid var(--borda-cor);
+            background: var(--branco);
+            border-radius: 50px;
+            font-size: 13px;
+            color: #555;
+            transition: 0.2s;
+        }
+
+        /* Ativação azul escuro PUC ao marcar */
+        .tag-pill input[type="checkbox"]:checked + span {
+            background-color: var(--azul-puc);
+            color: var(--branco);
+            border-color: var(--azul-puc);
+        }
+
+        /* --- BOTÕES E DETALHES --- */
+        .upload-dashed {
+            border: 2px dashed var(--borda-cor);
+            padding: 30px;
+            text-align: center;
             border-radius: 8px;
-            padding: 14px;
-            margin-top: 22px;
-            font-weight: 700;
+            background: #fbfbfa;
+            cursor: pointer;
+            color: var(--placeholder-cor);
+            font-size: 13px;
+            position: relative;
+        }
+
+        .upload-dashed input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
             cursor: pointer;
         }
 
-        .btn-salvar:hover {
-            background: #333;
+        .btn-container {
+            margin-top: 16px;
+            text-align: right;
         }
 
-        .observacao {
-            text-align: center;
-            color: #B0ACA5;
-            font-size: 11px;
-            margin-top: 14px;
+        .btn-continue {
+            background: #1a1a1a;
+            color: var(--branco);
+            border: none;
+            padding: 10px 24px;
+            font-size: 13.90px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .logo-puc {
-            position: fixed;
-            right: 45px;
-            bottom: 25px;
-            width: 95px;
-        }
-
-        @media (max-width: 800px) {
-            .pagina {
-                padding: 25px;
-            }
-
-            .linha {
-                grid-template-columns: 1fr;
-            }
-
-            .logo-puc {
-                width: 70px;
-                right: 20px;
-            }
+        .btn-submit {
+            background: var(--azul-puc);
+            color: var(--branco);
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
         }
     </style>
 </head>
-
 <body>
 
-<div class="pagina">
-
-    <div class="caixa">
-
-        <a href="{% url 'primeiros_passos' %}" class="btn-voltar">←</a>
-
-        <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo-topo">
-        <div class="titulo-logo">VAGAS PUC-RIO</div>
-
-        <label for="foto-perfil" class="avatar">
-            <svg 
-                xmlns="http://www.w3.org/2000/svg"
-                width="38"
-                height="38"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#888780"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            >
-                <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
-                <circle cx="12" cy="13" r="4"/>
-            </svg>
-        </label>
-
-        <input type="file" id="foto-perfil" name="foto_perfil" accept="image/*" hidden>
-
-        <h1>Criar perfil — aluno</h1>
-        <p class="subtitulo">Preencha suas informações para encontrar vagas de IC / Estágio</p>
-
-        <hr>
-
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <div class="secao">
-                <div class="titulo-secao">Dados pessoais</div>
-
-                <div class="linha-uma">
-                    <label>Nome completo</label>
-                    <input type="text" name="nome" placeholder="Ex: João da Silva" required>
-                </div>
-
-                <div class="linha">
-                    <div>
-                        <label>CPF</label>
-                        <input type="text" name="cpf" placeholder="000.000.000-00" required>
-                    </div>
-
-                    <div>
-                        <label>Telefone</label>
-                        <input type="text" name="telefone" placeholder="(21) 99999-0000">
-                    </div>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="secao">
-                <div class="titulo-secao">Dados acadêmicos</div>
-
-                <div class="linha">
-                    <div>
-                        <label>Matrícula</label>
-                        <input type="text" name="matricula" placeholder="Ex: 2210123" required>
-                    </div>
-
-                    <div>
-                        <label>Período atual</label>
-                        <select name="periodo" required>
-                            <option value="">Selecione</option>
-                            <option>1º Período</option>
-                            <option>2º Período</option>
-                            <option>3º Período</option>
-                            <option>4º Período</option>
-                            <option>5º Período</option>
-                            <option>6º Período</option>
-                            <option>7º Período</option>
-                            <option>8º Período</option>
-                            <option>9º Período</option>
-                            <option>10º Período</option>
-                            <option>11º Período</option>
-                            <option>12º Período</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="linha-uma">
-                    <label>Curso</label>
-                    <select name="curso" required>
-                        <option value="">Selecione seu curso</option>
-                        <option>Física</option>
-                        <option>Química</option>
-                        <option>Estatística</option>
-                        <option>Ciência da Computação</option>
-                        <option>Engenharia da Computação</option>
-                        <option>Engenharia Elétrica</option>
-                        <option>Engenharia Mecânica</option>
-                        <option>Engenharia Civil</option>
-                        <option>Engenharia de Produção</option>
-                        <option>Engenharia Química</option>
-                        <option>Engenharia de Controle e Automação</option>
-                        <option>Engenharia de Materiais</option>
-                        <option>Engenharia Ambiental</option>
-                        <option>Engenharia de Petróleo</option>
-                        <option>Engenharia de Telecomunicações</option>
-                        <option>Matemática</option>
-                        <option>Economia</option>
-                        <option>Matemática Aplicada</option>
-                        <option>Inteligência Artificial</option>
-                    </select>
-                </div>
-
-                <label>Tipo de vaga de interesse</label>
-
-                <div class="opcoes-vaga">
-                    <label class="checkbox-box">
-                        <input type="checkbox" name="interesse" value="Estágio">
-                        Estágio
-                    </label>
-
-                    <label class="checkbox-box">
-                        <input type="checkbox" name="interesse" value="Iniciação Científica">
-                        Iniciação Científica
-                    </label>
-
-                    <label class="checkbox-box">
-                        <input type="checkbox" name="interesse" value="Ambos">
-                        Ambos
-                    </label>
-                </div>
-            </div>
-
-            <hr>
-
-            <div class="secao">
-
-                <div class="titulo-secao">Linguagens de programação</div>
-
-                <div class="tags">
-                    <label class="tag"><input type="checkbox" name="linguagens" value="Python">Python</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="Java">Java</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="JavaScript">JavaScript</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="TypeScript">TypeScript</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="Kotlin">Kotlin</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="Go">Go</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="Ruby">Ruby</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="C">C</label>
-                    <label class="tag"><input type="checkbox" name="linguagens" value="C++">C++</label>
-                </div>
-
-                <div class="titulo-secao">Tecnologias & Frameworks</div>
-
-                <div class="tags">
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="React">React</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Node.js">Node.js</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Spring Boot">Spring Boot</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Django">Django</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Flutter">Flutter</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Docker">Docker</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="Git">Git</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="SQL">SQL</label>
-                    <label class="tag"><input type="checkbox" name="tecnologias" value="AWS">AWS</label>
-                </div>
-
-                <div class="titulo-secao">Áreas de atuação</div>
-
-                <div class="tags">
-                    <label class="tag"><input type="checkbox" name="areas" value="Front-end">Front-end</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Back-end">Back-end</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Dados">Dados</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Inteligência Artificial">Inteligência Artificial</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Mobile">Mobile</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Segurança">Segurança</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Pesquisa (IC)">Pesquisa (IC)</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="DevOps">DevOps</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="UX / Design">UX / Design</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Cálculo">Cálculo</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Modelagem">Modelagem</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Simulação">Simulação</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Álgebra Linear">Álgebra Linear</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Otimização">Otimização</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Matemática Aplicada">Matemática Aplicada</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Pesquisa Operacional">Pesquisa Operacional</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Física">Física</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="CAD">CAD</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Energia">Energia</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Telecom">Telecom</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Robótica">Robótica</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Eletrônica">Eletrônica</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Sistemas Embarcados">Sistemas Embarcados</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Automação">Automação</label>
-                    <label class="tag"><input type="checkbox" name="areas" value="Desenho">Desenho</label>
-                </div>
-
-                <div class="titulo-secao">Soft Skills</div>
-
-                <div class="tags">
-                    <label class="tag"><input type="checkbox" name="softskills" value="Comunicação">Comunicação</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Trabalho em equipe">Trabalho em equipe</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Proatividade">Proatividade</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Criatividade">Criatividade</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Gestão de tempo">Gestão de tempo</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Liderança">Liderança</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Adaptabilidade">Adaptabilidade</label>
-                    <label class="tag"><input type="checkbox" name="softskills" value="Pensamento crítico">Pensamento crítico</label>
-                </div>
-
-                <div class="titulo-secao">Idiomas</div>
-
-                <div class="tags">
-                    <label class="tag"><input type="checkbox" name="idiomas" value="Inglês">Inglês</label>
-                    <label class="tag"><input type="checkbox" name="idiomas" value="Espanhol">Espanhol</label>
-                    <label class="tag"><input type="checkbox" name="idiomas" value="Francês">Francês</label>
-                    <label class="tag"><input type="checkbox" name="idiomas" value="Alemão">Alemão</label>
-                    <label class="tag"><input type="checkbox" name="idiomas" value="Mandarim">Mandarim</label>
-                </div>
-
-            </div>
-
-            <hr>
-
-            <div class="secao">
-                <div class="titulo-secao">Sobre você</div>
-                <textarea name="sobre" placeholder="Conte um pouco sobre seus objetivos e habilidades..."></textarea>
-            </div>
-
-            <hr>
-
-            <div class="secao">
-                <div class="titulo-secao">Currículo</div>
-
-                <label class="upload">
-                    📄 Clique para enviar ou arraste aqui · PDF
-                    <input type="file" name="curriculo" accept=".pdf">
-                </label>
-            </div>
-
-            <button type="submit" class="btn-salvar">
-                Salvar perfil
-            </button>
-
-            <p class="observacao">
-                Você pode editar essas informações depois
-            </p>
-
-        </form>
-
+<div class="container">
+    <div class="sidebar">
+        <div class="sidebar-title">Vagas PUC-Rio</div>
+        <div class="step-item active" id="step-1">1. Dados Pessoais</div>
+        <div class="step-item" id="step-2">2. Dados Acadêmicos</div>
+        <div class="step-item" id="step-3">3. Linguagens</div>
+        <div class="step-item" id="step-4">4. Tecnologias</div>
+        <div class="step-item" id="step-5">5. Áreas de Atuação</div>
+        <div class="step-item" id="step-6">6. Sobre Você</div>
+        <div class="step-item" id="step-7">7. Currículo</div>
     </div>
 
-    <img src="{% static 'img/image4.png' %}" class="logo-puc">
+    <div class="main-content">
+        <div class="main-header">
+            <h1>Criar perfil — aluno</h1>
+            <p>Preencha suas informações para encontrar vagas de IC / Estágio</p>
+        </div>
 
+        <form method="POST" enctype="multipart/form-data" id="perfilForm">
+            {% csrf_token %}
+
+            <div class="accordion-section active" id="section-1">
+                <div class="accordion-header" onclick="toggleSection(1)">1. DADOS PESSOAIS</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" name="nome_completo" class="input-campo" placeholder="Ex: João da Silva">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group no-margin">
+                                <label>CPF</label>
+                                <input type="text" name="cpf" class="input-campo" placeholder="000.000.000-00">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group no-margin">
+                                <label>Telefone</label>
+                                <input type="text" name="telefone" class="input-campo" placeholder="(21) 99999-0000">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(1)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-2">
+                <div class="accordion-header" onclick="toggleSection(2)">2. DADOS ACADÊMICOS</div>
+                <div class="accordion-content">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <div class="form-group no-margin">
+                                <label>Matrícula</label>
+                                <input type="text" name="matricula" class="input-campo" placeholder="Ex: 2210123">
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <div class="form-group no-margin">
+                                <label>Período atual</label>
+                                <select name="periodo" class="input-campo">
+                                    <option value="">Selecione</option>
+                                    <option value="1">1º Período</option>
+                                    <option value="2">2º Período</option>
+                                    <option value="3">3º Período</option>
+                                    <option value="4">4º Período</option>
+                                    <option value="5">5º Período</option>
+                                    <option value="6">6º Período</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label>Curso</label>
+                        <select name="curso" class="input-campo">
+                            <option value="">Selecione seu curso</option>
+                            <option value="Engenharia de Computação">Engenharia de Computação</option>
+                            <option value="Inteligência Artificial">Inteligência Artificial</option>
+                            <option value="Ciência da Computação">Ciência da Computação</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tipo de vaga de interesse</label>
+                        <div class="tags-grid">
+                            <label class="tag-pill"><input type="checkbox" name="interesse" value="Estágio"><span>Estágio</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="interesse" value="Iniciação Científica"><span>Iniciação Científica</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="interesse" value="Ambos"><span>Ambos</span></label>
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(2)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-3">
+                <div class="accordion-header" onclick="toggleSection(3)">3. LINGUAGENS DE PROGRAMAÇÃO</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Quais linguagens você domina?</label>
+                        <div class="tags-grid">
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="Python"><span>Python</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="Java"><span>Java</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="JavaScript"><span>JavaScript</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="TypeScript"><span>TypeScript</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="Kotlin"><span>Kotlin</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="Go"><span>Go</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="Ruby"><span>Ruby</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="C"><span>C</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="linguagens" value="C++"><span>C++</span></label>
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(3)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-4">
+                <div class="accordion-header" onclick="toggleSection(4)">4. TECNOLOGIAS & FRAMEWORKS</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Ferramentas e frameworks que você utiliza:</label>
+                        <div class="tags-grid">
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="React"><span>React</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Node.js"><span>Node.js</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Spring Boot"><span>Spring Boot</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Django"><span>Django</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Flutter"><span>Flutter</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Docker"><span>Docker</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="Git"><span>Git</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="SQL"><span>SQL</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="tecnologias" value="AWS"><span>AWS</span></label>
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(4)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-5">
+                <div class="accordion-header" onclick="toggleSection(5)">5. ÁREAS DE ATUAÇÃO</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Em quais áreas você tem interesse ou experiência?</label>
+                        <div class="tags-grid">
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Front-end"><span>Front-end</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Back-end"><span>Back-end</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Dados"><span>Dados</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Inteligência Artificial"><span>Inteligência Artificial</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Mobile"><span>Mobile</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Segurança"><span>Segurança</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="Pesquisa (IC)"><span>Pesquisa (IC)</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="DevOps"><span>DevOps</span></label>
+                            <label class="tag-pill"><input type="checkbox" name="areas" value="UX / Design"><span>UX / Design</span></label>
+                        </div>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(5)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-6">
+                <div class="accordion-header" onclick="toggleSection(6)">6. SOBRE VOCÊ</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Conte um pouco sobre seus objetivos e Habilidades</label>
+                        <textarea name="sobre" class="input-campo" rows="5" placeholder="Conte um pouco sobre seus objetivos e habilidades..."></textarea>
+                    </div>
+                    <div class="btn-container">
+                        <button type="button" class="btn-continue" onclick="nextSection(6)">Continuar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-section" id="section-7">
+                <div class="accordion-header" onclick="toggleSection(7)">7. CURRÍCULO</div>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Anexe seu currículo</label>
+                        <div class="upload-dashed">
+                            Clique para enviar ou arraste aqui · PDF
+                            <input type="file" name="curriculo">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Salvar perfil</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
 </div>
+
+<script>
+    function toggleSection(num) {
+        document.querySelectorAll('.accordion-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('section-' + num).classList.add('active');
+        
+        document.querySelectorAll('.step-item').forEach(st => st.classList.remove('active'));
+        document.getElementById('step-' + num).classList.add('active');
+    }
+
+    function nextSection(current) {
+        document.getElementById('step-' + current).classList.add('completed');
+        let next = current + 1;
+        if (document.getElementById('section-' + next)) {
+            toggleSection(next);
+        }
+    }
+</script>
 
 </body>
 </html>
-

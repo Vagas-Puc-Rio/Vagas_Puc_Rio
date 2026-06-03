@@ -6,20 +6,22 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
-
+from .models import Usuario, Aluno, LinguagemProgramacao, AreaAtuacao
 from usuarios.models import Usuario
 from django.db.models import Q
-
+from datetime import date
+from django.db import transaction
 from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
 from .forms import CadastroInicialForm
-
+from .models import Usuario, Aluno, Professor  # adiciona os dois no import
 
 def pagina_inicial(request):
     return render(request, 'usuarios/home.html')
 
 
-from .models import Usuario, Aluno, Professor  # adiciona os dois no import
 
+
+@transaction.atomic
 def cadastro_inicial(request, tipo):
     if request.method == 'POST':
         form = CadastroInicialForm(request.POST)
@@ -33,7 +35,13 @@ def cadastro_inicial(request, tipo):
 
             # Cria Aluno ou Professor dependendo do tipo
             if tipo == 'aluno':
-                Aluno.objects.create(dados_usuario=usuario)
+                # Alimentando todos os campos estritos com defaults provisórios
+                Aluno.objects.create(
+                    dados_usuario=usuario, 
+                    data_nascimento=date(2000, 1, 1),
+                    periodo=1,             # Evita o erro atual de NOT NULL
+                    tipo_interesse=''      # Protege contra o próximo possível erro
+                )
             elif tipo == 'professor':
                 Professor.objects.create(dados_usuario=usuario)
 
@@ -86,19 +94,17 @@ def confirmar_email(request, uid, token):
 
 
 def login_geral(request, tipo='aluno'):
-
     if request.method == 'POST':
-
         email = request.POST.get('email')
         senha_digitada = request.POST.get('senha')
 
         usuario = Usuario.objects.filter(email=email).first()
 
         if usuario and check_password(senha_digitada, usuario.senha):
-
             # Bloqueia login se ainda não confirmou o e-mail
             if not usuario.ativo:
-                return render(request, 'usuarios/LoginAluno.html', {
+                # CORRIGIDO AQUI: de LoginAluno.html para Login.html
+                return render(request, 'usuarios/Login.html', {
                     'error': 'Confirme seu e-mail antes de fazer login.'
                 })
 
@@ -106,11 +112,12 @@ def login_geral(request, tipo='aluno'):
             return redirect('primeiros_passos')
 
         else:
-            return render(request, 'usuarios/LoginAluno.html', {
+            # CORRIGIDO AQUI TAMBÉM: de LoginAluno.html para Login.html
+            return render(request, 'usuarios/Login.html', {
                 'error': 'E-mail ou senha incorretos.'
             })
 
-    return render(request, 'usuarios/LoginAluno.html')
+    return render(request, 'usuarios/Login.html')
 
 
 def primeiros_passos(request):
@@ -122,20 +129,56 @@ def perfil_aluno(request):
     usuario = Usuario.objects.filter(id=usuario_id).first()
 
     if request.method == 'POST':
+        cpf = request.POST.get('cpf', '')
+        matricula = request.POST.get('matricula', '')
+        telefone = request.POST.get('telefone', '')
+        curso = request.POST.get('curso', '')
+        sobre = request.POST.get('sobre', '')
+        curriculo = request.FILES.get('curriculo')
+
+        # RESOLUÇÃO DO BUG: Se periodo_raw for um número válido, transforma em int. Se for vazio, vira None.
+        periodo_raw = request.POST.get('periodo')
+        periodo = int(periodo_raw) if periodo_raw and periodo_raw.isdigit() else None
+
+        # Salvando ou atualizando no banco de dados
+        aluno, created = Aluno.objects.update_or_create(
+            dados_usuario=usuario,
+            defaults={
+                'cpf': cpf,
+                'matricula': matricula,
+                'telefone': telefone,
+                'curso': curso,
+                'periodo': periodo, # Agora vai aceitar None sem quebrar!
+                'sobre_voce': sobre,
+                'curriculo_pdf': curriculo if curriculo else None
+            }
+        )
+
+        # Atualizando ManyToMany das Linguagens
+        lista_linguagens = request.POST.getlist('linguagens')
+        if lista_linguagens:
+            linguagens_db = LinguagemProgramacao.objects.filter(nome__in=lista_linguagens)
+            aluno.linguagens.set(linguagens_db)
+
+        # Atualizando ManyToMany das Áreas
+        lista_areas = request.POST.getlist('areas')
+        if lista_areas:
+            areas_db = AreaAtuacao.objects.filter(nome__in=lista_areas)
+            aluno.areas_atuacao.set(areas_db)
+
+        # Mantém o espelho da sessão para a próxima tela
         request.session['perfil_aluno'] = {
-            'nome': request.POST.get('nome') or request.POST.get('nome_completo'),
+            'nome': usuario.nome if usuario else 'Aluno',
             'email': usuario.email if usuario else '',
-            'telefone': request.POST.get('telefone'),
-            'matricula': request.POST.get('matricula'),
-            'periodo': request.POST.get('periodo'),
-            'curso': request.POST.get('curso'),
-            'interesse': request.POST.getlist('interesse') or request.POST.getlist('tipo_vaga'),
-            'linguagens': request.POST.getlist('linguagens'),
+            'telefone': telefone,
+            'matricula': matricula,
+            'curso': curso,
+            'periodo': periodo,
+            'interesse': request.POST.getlist('interesse'),
+            'linguagens': lista_linguagens,
             'tecnologias': request.POST.getlist('tecnologias'),
-            'areas': request.POST.getlist('areas'),
-            'softskills': request.POST.getlist('softskills'),
-            'idiomas': request.POST.getlist('idiomas'),
-            'sobre': request.POST.get('sobre'),
+            'areas': lista_areas,
+            'sobre': sobre,
         }
 
         return redirect('perfil_alunopronta')

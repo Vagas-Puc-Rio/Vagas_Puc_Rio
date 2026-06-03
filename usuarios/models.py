@@ -8,18 +8,50 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.nome
+class LinguagemProgramacao(models.Model):
+    nome = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.nome
+
+class AreaAtuacao(models.Model):
+    # Essa lista categoriza as tags igualzinho à sua imagem do Figma!
+    CATEGORIAS = [
+        ('informatica', 'Informática'),
+        ('exatas', 'Exatas'),
+        ('engenharia', 'Engenharia'),
+    ]
+    nome = models.CharField(max_length=100)
+    categoria = models.CharField(max_length=50, choices=CATEGORIAS)
+
+    def __str__(self):
+        return f"{self.nome} ({self.get_categoria_display()})"
+    
 class Aluno(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    curso = models.CharField(max_length=100, null=True, blank=True)
-    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
+    matricula = models.CharField(max_length=20, unique=True)
+    curso = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=14, unique=True)
     data_nascimento = models.DateField(null=True, blank=True)
-    genero = models.CharField(max_length=30, null=True, blank=True)
-    periodo = models.IntegerField(null=True, blank=True)
+    genero = models.CharField(max_length=30)
+    periodo = models.IntegerField()
+    
+    TIPOS_INTERESSE = [
+        ('estagio', 'Estágio'),
+        ('ic', 'Iniciação Científica (IC)'),
+        ('ambos', 'Ambos'),
+    ]
+    tipo_interesse = models.CharField(max_length=20, choices=TIPOS_INTERESSE, null=True)
+
+    # 2. MÚLTIPLA ESCOLHA: As Tags (ManyToManyField)
+    # O blank=True permite que o aluno deixe vazio caso não saiba nenhuma ainda
+    linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
+    areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
 
     def __str__(self):
         return self.dados_usuario.nome
+    
+
     
 class Professor(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
