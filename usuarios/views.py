@@ -6,7 +6,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
-from .models import Usuario, Aluno, LinguagemProgramacao, AreaAtuacao
+from .models import LinguagemProgramacao, TecnologiaFramework, AreaAtuacao
 from usuarios.models import Usuario
 from django.db.models import Q
 from datetime import date
@@ -140,23 +140,32 @@ def perfil_aluno(request):
         periodo_raw = request.POST.get('periodo')
         periodo = int(periodo_raw) if periodo_raw and periodo_raw.isdigit() else None
 
+        # 🛠️ CORREÇÃO: Criamos os dados padrão que SEMPRE serão atualizados
+        defaults_dados = {
+            'cpf': cpf,
+            'matricula': matricula,
+            'telefone': telefone,
+            'curso': curso,
+            'periodo': periodo,
+            'sobre_voce': sobre,
+        }
+
+        # Só incluímos o currículo se um novo arquivo foi enviado.
+        # Se veio vazio (None), o Django mantém o PDF antigo intacto no banco!
+        if curriculo:
+            defaults_dados['curriculo_pdf'] = curriculo 
+            # 💡 Nota: Certifique-se de que o nome 'curriculo_pdf' está igualzinho no seu models.py!
+
         # Salvando ou atualizando no banco de dados
         aluno, created = Aluno.objects.update_or_create(
             dados_usuario=usuario,
-            defaults={
-                'cpf': cpf,
-                'matricula': matricula,
-                'telefone': telefone,
-                'curso': curso,
-                'periodo': periodo, # Agora vai aceitar None sem quebrar!
-                'sobre_voce': sobre,
-                'curriculo_pdf': curriculo if curriculo else None
-            }
+            defaults=defaults_dados
         )
 
         # Atualizando ManyToMany das Linguagens
         lista_linguagens = request.POST.getlist('linguagens')
         if lista_linguagens:
+            # 💡 Nota: Se o seu HTML enviar os IDs nos checkboxes, mude 'nome__in' para 'id__in'
             linguagens_db = LinguagemProgramacao.objects.filter(nome__in=lista_linguagens)
             aluno.linguagens.set(linguagens_db)
 
@@ -194,16 +203,19 @@ def lista_vagas(request):
     q = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
 
-    vagas = Vaga.objects.select_related(
-        'instituicao', 'professor', 'professor__dados_usuario'
-    ).all()
+    # 1. REMOVIDO o select_related que quebrava o sistema.
+    # Adicionado order_by('-id') para as vagas mais novas aparecerem primeiro.
+    vagas = Vaga.objects.all().order_by('-id')
 
+    # 2. SISTEMA DE BUSCA REESTRUTURADO
     if q:
+        # Trocado o campo antigo da instituição por buscas em campos reais da Vaga
         vagas = vagas.filter(
+            Q(titulo__icontains=q) |
             Q(descricao__icontains=q) |
-            Q(instituicao__nome_instituicao__icontains=q) |
-            Q(tipo_vaga__icontains=q)
+            Q(curso__icontains=q)
         )
+        
     if tipo:
         vagas = vagas.filter(tipo_vaga=tipo)
 
@@ -215,12 +227,72 @@ def lista_vagas(request):
     }
     return render(request, 'usuarios/lista_vagas.html', contexto)
 
-
 def primeiros_passos_professor(request):
     return render(request, 'usuarios/Pagina_PrincipalProf.html')
 
 def cadastro_vaga(request):
-    return render(request, 'usuarios/cadastro_vagas.html')
+    if request.method == 'POST':
+        # 1. Captura os dados textuais simples do formulário
+        titulo = request.POST.get('titulo')
+        local = request.POST.get('local', '')
+        carga_horaria = request.POST.get('carga_horaria', '')
+        tipo_vaga = request.POST.get('tipo_vaga')
+        descricao = request.POST.get('descricao', '')
+        curso = request.POST.get('curso', '')
+        periodo_minimo = request.POST.get('periodo_minimo', '')
+        
+        # 2. Captura o arquivo PDF anexado no dropzone do HTML
+        anexo = request.FILES.get('anexo')
+
+        # 3. Cria o registro da vaga no banco de dados (dados simples)
+        vaga = Vaga.objects.create(
+            titulo=titulo,
+            local=local,
+            carga_horaria=carga_horaria,
+            tipo_vaga=tipo_vaga,
+            descricao=descricao,
+            curso=curso,
+            periodo_minimo=periodo_minimo,
+            anexo=anexo if anexo else None 
+        )
+
+        # 4. Captura as listas de IDs (o getlist junta todas as categorias automaticamente)
+        ids_linguagens = request.POST.getlist('linguagens')
+        ids_tecnologias = request.POST.getlist('tecnologias')
+        ids_areas = request.POST.getlist('areas_atuacao')
+
+        # 5. Vincula os IDs marcados às relações Muitos-para-Muitos
+        if ids_linguagens:
+            vaga.linguagens.set(ids_linguagens)
+        if ids_tecnologias:
+            vaga.tecnologias.set(ids_tecnologias)
+        if ids_areas:
+            vaga.areas_atuacao.set(ids_areas)
+
+        # 6. Redireciona para a página de listagem de vagas geral do sistema
+        return redirect('vagas')
+
+    # ─────────────────────────────────────────────────────────────────
+    # SE FOR ACESSO "GET" (Carregando a página pela primeira vez):
+    # ─────────────────────────────────────────────────────────────────
+    # Busca as opções padrão de linguagens e tecnologias
+    linguagens = LinguagemProgramacao.objects.all().order_by('nome')
+    tecnologias = TecnologiaFramework.objects.all().order_by('nome')
+
+    # SEPARAÇÃO POR CATEGORIAS: Filtra as áreas de acordo com as etiquetas do model
+    areas_informatica = AreaAtuacao.objects.filter(categoria='Informatica').order_by('nome')
+    areas_exatas = AreaAtuacao.objects.filter(categoria='Exatas').order_by('nome')
+    areas_engenharia = AreaAtuacao.objects.filter(categoria='Engenharia').order_by('nome')
+
+    # Envia os grupos separados para o HTML renderizar cada um no seu devido bloco
+    return render(request, 'usuarios/cadastro_vaga.html', {
+        'linguagens': linguagens,
+        'tecnologias': tecnologias,
+        'areas_informatica': areas_informatica,
+        'areas_exatas': areas_exatas,
+        'areas_engenharia': areas_engenharia,
+    })
+
 
 def configuracoes(request):
     perfil = request.session.get('perfil_aluno', {})

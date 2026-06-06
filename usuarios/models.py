@@ -8,6 +8,7 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.nome
+    
 class LinguagemProgramacao(models.Model):
     nome = models.CharField(max_length=50, unique=True)
 
@@ -15,18 +16,24 @@ class LinguagemProgramacao(models.Model):
         return self.nome
 
 class AreaAtuacao(models.Model):
-    # Essa lista categoriza as tags igualzinho à sua imagem do Figma!
-    CATEGORIAS = [
-        ('informatica', 'Informática'),
-        ('exatas', 'Exatas'),
-        ('engenharia', 'Engenharia'),
+    # Definimos as grandes categorias que aparecem no Figma
+    CATEGORIAS_CHOICES = [
+        ('Informatica', 'Informática'),
+        ('Exatas', 'Exatas'),
+        ('Engenharia', 'Engenharia'),
     ]
-    nome = models.CharField(max_length=100)
-    categoria = models.CharField(max_length=50, choices=CATEGORIAS)
+    
+    nome = models.CharField(max_length=100, unique=True)
+    # Adiciona a etiqueta da categoria com um valor padrão para não quebrar dados antigos
+    categoria = models.CharField(max_length=50, choices=CATEGORIAS_CHOICES, default='Informatica')
 
     def __str__(self):
-        return f"{self.nome} ({self.get_categoria_display()})"
+        return f"[{self.categoria}] {self.nome}"
     
+class TecnologiaFramework(models.Model):
+    nome = models.CharField(max_length=50, unique=True)
+    def __str__(self): return self.nome
+
 class Aluno(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     matricula = models.CharField(max_length=20, unique=True)
@@ -35,6 +42,7 @@ class Aluno(models.Model):
     data_nascimento = models.DateField(null=True, blank=True)
     genero = models.CharField(max_length=30)
     periodo = models.IntegerField()
+    curriculo = models.FileField(upload_to='alunos/curriculos/', blank=True, null=True)
     
     TIPOS_INTERESSE = [
         ('estagio', 'Estágio'),
@@ -47,6 +55,7 @@ class Aluno(models.Model):
     # O blank=True permite que o aluno deixe vazio caso não saiba nenhuma ainda
     linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
     areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
+    tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
 
     def __str__(self):
         return self.dados_usuario.nome
@@ -77,18 +86,23 @@ class Instituicao(models.Model):
 
 
 class Vaga(models.Model):
-    instituicao = models.ForeignKey(Instituicao, on_delete=models.CASCADE)
-    professor = models.ForeignKey(Professor, on_delete=models.CASCADE)
+    # Campos simples de texto e arquivo que a View está tentando salvar
+    titulo = models.CharField(max_length=255)
+    local = models.CharField(max_length=255, blank=True, null=True)
+    carga_horaria = models.CharField(max_length=100, blank=True, null=True)
+    tipo_vaga = models.CharField(max_length=50) # Estágio ou Iniciação Científica
+    descricao = models.TextField(blank=True, null=True)
+    curso = models.CharField(max_length=255, blank=True, null=True)
+    periodo_minimo = models.CharField(max_length=50, blank=True, null=True)
+    anexo = models.FileField(upload_to='vagas/anexos/', blank=True, null=True)
 
-    descricao = models.TextField()
-    valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    beneficios = models.TextField(blank=True, null=True)
-    carga_horaria = models.IntegerField(null=True, blank=True)
-    periodo_min = models.IntegerField(null=True, blank=True)
-    tipo_vaga = models.CharField(max_length=50, null=True, blank=True)
+    # Relacionamentos Muitos-para-Muitos das etapas 4, 5 e 6
+    linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
+    tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
+    areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
 
     def __str__(self):
-        return self.descricao[:50]  # Retorna os primeiros 50 caracteres da descrição para facilitar a visualização
+        return self.titulo # Retorna os primeiros 50 caracteres da descrição para facilitar a visualização
     
     def match_de_vagas(self,aluno):
         #Ai aqui verifica o perido da vaga e o periodo do aluno, mais pra frente teremos q implementar os outros requisitos

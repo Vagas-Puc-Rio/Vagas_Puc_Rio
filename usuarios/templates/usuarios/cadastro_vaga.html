@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vagas PUC-Rio — Cadastro de Vaga</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #0086A9;
+    --blue-light: rgba(0,134,169,0.12);
+    --blue-mid: rgba(0,134,169,0.32);
+    --cream: #F7F5F2;
+    --border: #D8D4CC;
+    --border-light: #E5E2DC;
+    --grey-text: #888780;
+    --grey-light: #B0ACA5;
+    --dark: #1A1A1A;
+    --white: #ffffff;
+    --input-bg: #F7F5F2;
+    --radius-card: 20px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-hover: 0 4px 20px rgba(0,0,0,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px 80px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    width: 100%;
+    max-width: 1100px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+
+  /* ── HEADER ── */
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border-light);
+    position: relative;
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .back-btn:hover { background: var(--cream); }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .logo-icon svg { width: 22px; height: 22px; }
+
+  .logo-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--dark);
+  }
+
+  /* ── BODY LAYOUT ── */
+  .card-body {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: 680px;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    padding: 32px 24px;
+    border-right: 1px solid var(--border-light);
+  }
+
+  .sidebar-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 6px;
+  }
+  .sidebar-sub {
+    font-size: 13px;
+    color: var(--grey-text);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .step:hover { background: var(--cream); }
+  .step.active {
+    background: var(--blue-mid);
+  }
+
+  .step-icon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--grey-text);
+  }
+  .step.active .step-icon { color: var(--blue); }
+
+  .step-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+    color: var(--grey-text);
+  }
+  .step.active .step-label { color: var(--blue); }
+
+  /* ── MAIN CONTENT ── */
+  .main {
+    padding: 28px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* progress */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--blue);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 5px;
+  }
+  .dot {
+    width: 40px;
+    height: 5px;
+    border-radius: 10px;
+    background: var(--border-light);
+    transition: background 0.3s;
+  }
+  .dot.active { background: var(--blue); }
+
+  /* ── ACCORDION CARDS ── */
+  .accordion {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .accordion:hover { box-shadow: var(--shadow-hover); }
+
+  .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .accordion-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .acc-icon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    color: var(--grey-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .accordion.open .acc-icon { color: var(--blue); }
+
+  .acc-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--grey-text);
+  }
+  .accordion.open .acc-title { color: var(--blue); }
+
+  .acc-sub {
+    font-size: 11.5px;
+    color: var(--grey-light);
+    margin-top: 1px;
+  }
+
+  .chevron {
+    color: var(--grey-light);
+    transition: transform 0.25s;
+  }
+  .accordion.open .chevron { transform: rotate(180deg); }
+
+  /* ── ACCORDION BODY ── */
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+  }
+  .accordion.open .accordion-body {
+    max-height: 1000px; /* Expandido para suportar múltiplos blocos de áreas */
+  }
+
+  .accordion-content {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  /* ── FORM FIELDS ── */
+  .form-grid {
+    display: grid;
+    gap: 16px;
+    padding-top: 20px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--grey-text);
+    margin-bottom: 6px;
+  }
+
+  .field input, .field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--dark);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input::placeholder, .field textarea::placeholder {
+    color: var(--grey-light);
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--blue);
+    background: #fff;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* checkboxes/radios as labels */
+  .checkbox-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+  }
+
+  .check-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px 8px 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    color: var(--dark);
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+  }
+  .check-label:hover { border-color: var(--blue); }
+  .check-label input { display: none; }
+  .check-box {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid #767676;
+    border-radius: 3px;
+    background: var(--white);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .check-label input:checked ~ .check-box {
+    background: var(--blue);
+    border-color: var(--blue);
+  }
+  .check-label input:checked ~ .check-box::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: url("data:image/svg+xml=%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.5 5L4 7.5L8.5 2.5' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  /* Continue button */
+  .btn-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 11px 28px;
+    font-size: 13.5px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .btn-primary:hover { background: #006f8c; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  /* ── FOOTER GRID-ALIGNED ── */
+  .card-footer {
+    border-top: 1px solid var(--border-light);
+    padding: 24px 32px;
+    background: var(--white);
+    display: grid;
+    grid-template-columns: 260px 1fr; /* Sincroniza 100% com as colunas do card-body */
+    align-items: center;
+  }
+  
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-left: 32px; /* Alinhamento milimétrico com o recuo dos acordeons */
+  }
+
+  .btn-save {
+    flex: 1;
+    /* Aumentamos o limite para ele ocupar um espaço muito mais imponente */
+    max-width: 500px; 
+    
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    
+    /* Deixamos o botão um pouco mais alto e imponente (estilo premium) */
+    padding: 14px 120px; 
+    
+    font-size: 15px; /* Fonte ligeiramente maior para acompanhar o tamanho */
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.3px;
+    text-align: center;
+  }
+  
+  /* Um microefeito de clique para o usuário sentir o feedback do botão */
+  .btn-save:hover { background: #006f8c; }
+  .btn-save:active { transform: scale(0.99); }
+  .btn-save:hover { background: #006f8c; }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--grey-light);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* file upload */
+  .file-drop {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius-sm);
+    padding: 28px 16px;
+    text-align: center;
+    color: var(--grey-light);
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    margin-top: 20px;
+  }
+  .file-drop:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+  .file-drop svg { display: block; margin: 0 auto 8px; }
+</style>
+</head>
+<body>
+
+<form action="{% url 'cadastro_vaga' %}" method="POST" enctype="multipart/form-data" style="width:100%; max-width:1100px;">
+  {% csrf_token %}
+
+  <div class="card">
+
+    <div class="card-header">
+      <button type="button" class="back-btn" aria-label="Voltar" onclick="window.history.back()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M5 12l7-7M5 12l7 7"/></svg>
+      </button>
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+        </svg>
+      </div>
+      <span class="logo-label">Vagas PUC-Rio</span>
+    </div>
+
+    <div class="card-body">
+
+      <aside class="sidebar">
+        <h1 class="sidebar-title">Cadastro de vaga</h1>
+        <p class="sidebar-sub">Preencha as informações da oportunidade de IC / Estágio</p>
+
+        <nav class="steps">
+          <div class="step active" id="step1" onclick="mudarParaEtapa(1)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+            </span>
+            <span class="step-label">1. Dados da vaga</span>
+          </div>
+          <div class="step" id="step2" onclick="mudarParaEtapa(2)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </span>
+            <span class="step-label">2. Descrição</span>
+          </div>
+          <div class="step" id="step3" onclick="mudarParaEtapa(3)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <span class="step-label">3. Dados Acadêmicos e Pessoais</span>
+          </div>
+          <div class="step" id="step4" onclick="mudarParaEtapa(4)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </span>
+            <span class="step-label">4. Linguagens de Programação</span>
+          </div>
+          <div class="step" id="step5" onclick="mudarParaEtapa(5)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8"/></svg>
+            </span>
+            <span class="step-label">5. Tecnologias &amp; Frameworks</span>
+          </div>
+          <div class="step" id="step6" onclick="mudarParaEtapa(6)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </span>
+            <span class="step-label">6. Áreas de Atuação</span>
+          </div>
+          <div class="step" id="step7" onclick="mudarParaEtapa(7)">
+            <span class="step-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </span>
+            <span class="step-label">7. Anexo de Vaga</span>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="main">
+
+        <div class="progress-row">
+          <span class="progress-label" id="lbl-progresso">1 de 7</span>
+          <div class="progress-dots">
+            <div class="dot active" id="dot1"></div>
+            <div class="dot" id="dot2"></div>
+            <div class="dot" id="dot3"></div>
+            <div class="dot" id="dot4"></div>
+            <div class="dot" id="dot5"></div>
+            <div class="dot" id="dot6"></div>
+            <div class="dot" id="dot7"></div>
+          </div>
+        </div>
+
+        <div class="accordion open" id="acc1">
+          <div class="accordion-header" onclick="toggle('acc1', 1)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 12h6M12 9v6"/></svg>
+              </span>
+              <div class="acc-title">1. Dados da Vaga</div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="form-grid">
+                <div class="field">
+                  <label>Título</label>
+                  <input type="text" name="titulo" placeholder="Ex: Iniciação científica de microcontroladores" required />
+                </div>
+                <div class="two-col">
+                  <div class="field">
+                    <label>Local</label>
+                    <input type="text" name="local" placeholder="Ex: Campus Gávea" />
+                  </div>
+                  <div class="field">
+                    <label>Carga Horária</label>
+                    <input type="text" name="carga_horaria" placeholder="Ex: 20h/semana" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Tipo de vaga</label>
+                  <div class="checkbox-group">
+                    <label class="check-label">
+                      <input type="radio" name="tipo_vaga" value="Estágio" checked />
+                      <span class="check-box"></span>Estágio
+                    </label>
+                    <label class="check-label">
+                      <input type="radio" name="tipo_vaga" value="Iniciação Científica" />
+                      <span class="check-box"></span>Iniciação Científica
+                    </label>
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button type="button" class="btn-primary" onclick="mudarParaEtapa(2)">Continuar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc2">
+          <div class="accordion-header" onclick="toggle('acc2', 2)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">2. Descrição</div>
+                <div class="acc-sub">Conte um pouco mais sobre as características da vaga</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="form-grid">
+                <div class="field">
+                  <label>Descrição da vaga</label>
+                  <textarea name="descricao" placeholder="Descreva os requisitos, responsabilidades e diferenciais..."></textarea>
+                </div>
+                <div class="btn-row">
+                  <button type="button" class="btn-primary" onclick="mudarParaEtapa(3)">Continuar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc3">
+          <div class="accordion-header" onclick="toggle('acc3', 3)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">3. Dados Acadêmicos e Pessoais</div>
+                <div class="acc-sub">Informações sobre curso e período do candidato</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="form-grid">
+                <div class="two-col">
+                  <div class="field">
+                    <label>Curso alvo</label>
+                    <input type="text" name="curso" placeholder="Ex: Ciência da Computação" />
+                  </div>
+                  <div class="field">
+                    <label>Período mínimo</label>
+                    <input type="text" name="periodo_minimo" placeholder="Ex: 4º período" />
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button type="button" class="btn-primary" onclick="mudarParaEtapa(4)">Continuar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc4">
+          <div class="accordion-header" onclick="toggle('acc4', 4)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">4. Linguagens de Programação</div>
+                <div class="acc-sub">Quais linguagens de programação são necessárias para esta vaga?</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="checkbox-group" style="padding-top:20px">
+                {% for lang in linguagens %}
+                  <label class="check-label">
+                    <input type="checkbox" name="linguagens" value="{{ lang.id }}">
+                    <span class="check-box"></span>{{ lang.nome }}
+                  </label>
+                {% empty %}
+                  <p style="color: var(--grey-light); font-size: 13px;">Nenhuma linguagem cadastrada no Admin ainda.</p>
+                {% endfor %}
+              </div>
+              <div class="btn-row">
+                <button type="button" class="btn-primary" onclick="mudarParaEtapa(5)">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc5">
+          <div class="accordion-header" onclick="toggle('acc5', 5)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">5. Tecnologias &amp; Frameworks</div>
+                <div class="acc-sub">Ferramentas e frameworks para esta vaga</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="checkbox-group" style="padding-top:20px">
+                {% for tech in tecnologias %}
+                  <label class="check-label">
+                    <input type="checkbox" name="tecnologias" value="{{ tech.id }}">
+                    <span class="check-box"></span>{{ tech.nome }}
+                  </label>
+                {% empty %}
+                  <p style="color: var(--grey-light); font-size: 13px;">Nenhuma tecnologia cadastrada no Admin ainda.</p>
+                {% endfor %}
+              </div>
+              <div class="btn-row">
+                <button type="button" class="btn-primary" onclick="mudarParaEtapa(6)">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc6">
+          <div class="accordion-header" onclick="toggle('acc6', 6)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">6. Áreas de Atuação</div>
+                <div class="acc-sub">Quais áreas têm relação com essa vaga?</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content" style="padding-top: 20px; display: flex; flex-direction: column; gap: 20px;">
+              
+              <div>
+                <p style="font-size: 13px; font-weight: 700; color: var(--grey-text); margin-bottom: 8px;">Informática:</p>
+                <div class="checkbox-group">
+                  {% for area in areas_informatica %}
+                    <label class="check-label">
+                      <input type="checkbox" name="areas_atuacao" value="{{ area.id }}">
+                      <span class="check-box"></span>{{ area.nome }}
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div>
+                <p style="font-size: 13px; font-weight: 700; color: var(--grey-text); margin-bottom: 8px;">Exatas:</p>
+                <div class="checkbox-group">
+                  {% for area in areas_exatas %}
+                    <label class="check-label">
+                      <input type="checkbox" name="areas_atuacao" value="{{ area.id }}">
+                      <span class="check-box"></span>{{ area.nome }}
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div>
+                <p style="font-size: 13px; font-weight: 700; color: var(--grey-text); margin-bottom: 8px;">Engenharia:</p>
+                <div class="checkbox-group">
+                  {% for area in areas_engenharia %}
+                    <label class="check-label">
+                      <input type="checkbox" name="areas_atuacao" value="{{ area.id }}">
+                      <span class="check-box"></span>{{ area.nome }}
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button type="button" class="btn-primary" onclick="mudarParaEtapa(7)">Continuar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion" id="acc7">
+          <div class="accordion-header" onclick="toggle('acc7', 7)">
+            <div class="accordion-left">
+              <span class="acc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              </span>
+              <div>
+                <div class="acc-title">7. Anexo de Vaga</div>
+                <div class="acc-sub">Anexe um documento com detalhes da vaga</div>
+              </div>
+            </div>
+            <svg class="chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+          </div>
+          <div class="accordion-body">
+            <div class="accordion-content">
+              <div class="file-drop" onclick="document.getElementById('id_anexo').click()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <input type="file" id="id_anexo" name="anexo" accept="application/pdf" style="display:none;" onchange="atualizarNomeArquivo(this)" />
+                <span id="txt-arquivo">Arraste um arquivo ou <strong>clique para selecionar</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main> </div> <div class="card-footer">
+      <div class="footer-sidebar-space"></div> <div class="footer-content">
+        <button type="submit" class="btn-save">Salvar vaga</button>
+        <span class="footer-note">Você pode editar essas informações depois</span>
+      </div>
+    </div>
+
+  </div> </form>
+
+<script>
+  function toggle(id, etapa) {
+    const el = document.getElementById(id);
+    const abrindo = !el.classList.contains('open');
+    
+    document.querySelectorAll('.accordion').forEach(acc => acc.classList.remove('open'));
+    
+    if (abrindo) {
+      el.classList.add('open');
+      atualizarProgressoVisual(etapa);
+    }
+  }
+
+  function mudarParaEtapa(etapa) {
+    document.querySelectorAll('.accordion').forEach((acc, index) => {
+      if (index === (etapa - 1)) {
+        acc.classList.add('open');
+      } else {
+        acc.classList.remove('open');
+      }
+    });
+    atualizarProgressoVisual(etapa);
+  }
+
+  function atualizarProgressoVisual(etapa) {
+    document.getElementById('lbl-progresso').innerText = etapa + " de 7";
+
+    for(let i = 1; i <= 7; i++) {
+      const dot = document.getElementById('dot' + i);
+      if(i <= etapa) dot.classList.add('active');
+      else dot.classList.remove('active');
+    }
+
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    const passoAtual = document.getElementById('step' + etapa);
+    if(passoAtual) passoAtual.classList.add('active');
+  }
+
+  function atualizarNomeArquivo(input) {
+    const txt = document.getElementById('txt-arquivo');
+    if (input.files && input.files[0]) {
+      txt.innerHTML = "Arquivo carregado: <strong>" + input.files[0].name + "</strong>";
+    }
+  }
+</script>
+</body>
+</html>
