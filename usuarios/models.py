@@ -43,6 +43,7 @@ class Aluno(models.Model):
     genero = models.CharField(max_length=30)
     periodo = models.IntegerField()
     curriculo = models.FileField(upload_to='alunos/curriculos/', blank=True, null=True)
+    vagas_salvas = models.ManyToManyField("Vaga", blank=True, related_name='alunos_favoritaram')
     
     TIPOS_INTERESSE = [
         ('estagio', 'Estágio'),

@@ -55,7 +55,9 @@ urlpatterns = [
          name='cadastro_vaga'),
 
     path('vagas/', views.lista_vagas, name='vagas'),
+    path('vagas/salvar/<int:vaga_id>/', views.salvar_vaga, name='salvar_vaga'),
 
+    path('vagas_salvas/', views.vagas_salvas, name='vagas_salvas'), 
     path('perfil/aluno/pronto/', views.perfil_alunopronta, name='perfil_alunopronta'),
 
     path('configuracoes/', views.configuracoes, name='configuracoes'),

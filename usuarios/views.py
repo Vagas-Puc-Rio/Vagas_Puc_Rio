@@ -14,6 +14,8 @@ from django.db import transaction
 from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
 from .forms import CadastroInicialForm
 from .models import Usuario, Aluno, Professor  # adiciona os dois no import
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def pagina_inicial(request):
     return render(request, 'usuarios/home.html')
@@ -199,33 +201,80 @@ def perfil_alunopronta(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/perfil_alunopronta.html', {'perfil': perfil})
 
+
 def lista_vagas(request):
     q = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
-
-    # 1. REMOVIDO o select_related que quebrava o sistema.
-    # Adicionado order_by('-id') para as vagas mais novas aparecerem primeiro.
+ 
     vagas = Vaga.objects.all().order_by('-id')
-
-    # 2. SISTEMA DE BUSCA REESTRUTURADO
+ 
     if q:
-        # Trocado o campo antigo da instituição por buscas em campos reais da Vaga
         vagas = vagas.filter(
             Q(titulo__icontains=q) |
             Q(descricao__icontains=q) |
             Q(curso__icontains=q)
         )
-        
+ 
     if tipo:
         vagas = vagas.filter(tipo_vaga=tipo)
-
+ 
+    # IDs das vagas já salvas pelo aluno logado (para pintar a bandeirinha)
+    usuario_id = request.session.get('usuario_id')
+    vagas_salvas_ids = []
+    if usuario_id:
+        usuario = Usuario.objects.filter(id=usuario_id).first()
+        aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+        if aluno:
+            vagas_salvas_ids = list(aluno.vagas_salvas.values_list('id', flat=True))
+ 
     contexto = {
         'vagas': vagas,
         'total': vagas.count(),
         'q': q,
         'tipo_atual': tipo,
+        'vagas_salvas_ids': vagas_salvas_ids,
     }
     return render(request, 'usuarios/lista_vagas.html', contexto)
+ 
+ 
+# ─────────────────────────────────────────────────────────────────────
+# 3. Nova view salvar_vaga — adicione logo abaixo de lista_vagas:
+# ─────────────────────────────────────────────────────────────────────
+ 
+@require_POST
+def salvar_vaga(request, vaga_id):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return JsonResponse({'error': 'Não autenticado'}, status=401)
+ 
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+    if not aluno:
+        return JsonResponse({'error': 'Aluno não encontrado'}, status=404)
+ 
+    vaga = Vaga.objects.filter(id=vaga_id).first()
+    if not vaga:
+        return JsonResponse({'error': 'Vaga não encontrada'}, status=404)
+ 
+    # Toggle: se já salvou remove, se não salvou adiciona
+    if aluno.vagas_salvas.filter(id=vaga_id).exists():
+        aluno.vagas_salvas.remove(vaga)
+        salvo = False
+    else:
+        aluno.vagas_salvas.add(vaga)
+        salvo = True
+ 
+    return JsonResponse({'salvo': salvo})
+
+def vagas_salvas(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+    vagas = aluno.vagas_salvas.all().order_by('-id') if aluno else []
+ 
+    return render(request, 'usuarios/vagas_salvas.html', {
+        'vagas': vagas
+    })
 
 def primeiros_passos_professor(request):
     return render(request, 'usuarios/Pagina_PrincipalProf.html')
