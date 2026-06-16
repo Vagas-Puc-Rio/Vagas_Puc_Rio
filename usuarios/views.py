@@ -6,6 +6,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
+from .models import Vaga
 
 from usuarios.models import Usuario
 from django.db.models import Q
@@ -98,7 +99,7 @@ def login_geral(request, tipo='aluno'):
 
             # Bloqueia login se ainda não confirmou o e-mail
             if not usuario.ativo:
-                return render(request, 'usuarios/LoginAluno.html', {
+                return render(request, 'usuarios/Login.html', {
                     'error': 'Confirme seu e-mail antes de fazer login.'
                 })
 
@@ -106,11 +107,11 @@ def login_geral(request, tipo='aluno'):
             return redirect('primeiros_passos')
 
         else:
-            return render(request, 'usuarios/LoginAluno.html', {
+            return render(request, 'usuarios/Login.html', {
                 'error': 'E-mail ou senha incorretos.'
             })
 
-    return render(request, 'usuarios/LoginAluno.html')
+    return render(request, 'usuarios/Login.html')
 
 
 def primeiros_passos(request):
@@ -176,9 +177,33 @@ def lista_vagas(request):
 def primeiros_passos_professor(request):
     return render(request, 'usuarios/Pagina_PrincipalProf.html')
 
-def cadastro_vaga(request):
+def cadastro_vagas(request):
+    if request.method == 'POST':
+        vaga = Vaga(
+            titulo=request.POST.get('titulo'),
+            local=request.POST.get('local'),
+            carga_horaria=request.POST.get('carga_horaria'),
+            tipo_vaga=', '.join(request.POST.getlist('tipo_vaga')),
+            modalidade=request.POST.get('modalidade'),
+            salario=request.POST.get('salario'),
+            data_publicacao=request.POST.get('data_publicacao') or None,
+            prazo_candidatura=request.POST.get('prazo_candidatura') or None,
+            descricao=request.POST.get('descricao'),
+            cursos=request.POST.get('cursos'),
+            cr=request.POST.get('cr'),
+            periodo_minimo=request.POST.get('periodo_minimo'),
+            periodo_maximo=request.POST.get('periodo_maximo'),
+            arquivo_vaga=request.FILES.get('arquivo_vaga')
+        )
+        vaga.save()
+        return redirect('vagas_cadastradas')
+
     return render(request, 'usuarios/cadastro_vagas.html')
 
 def configuracoes(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/configuracoes.html', {'perfil': perfil})
+
+def vagas_cadastradas(request):
+    vagas = Vaga.objects.all().order_by('-criado_em')
+    return render(request, 'usuarios/vagas_cadastradas.html', {'vagas': vagas})

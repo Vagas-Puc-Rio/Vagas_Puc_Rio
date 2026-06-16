@@ -1,662 +1,814 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Vaga</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de vaga</title>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-        * {
-            box-sizing: border-box;
-        }
+    * { box-sizing: border-box; }
 
-        body {
-            margin: 0;
-            background: #F7F5F2;
-            font-family: 'Inter', sans-serif;
-        }
+    body {
+      margin: 0;
+      background: #F7F5F2;
+      font-family: 'Inter', sans-serif;
+      color: #1A1A1A;
+    }
 
-        .pagina {
-            min-height: 100vh;
-            padding: 55px 70px;
-            position: relative;
-        }
+    .pagina {
+      min-height: 100vh;
+      padding: 65px 90px;
+      position: relative;
+    }
 
-        .caixa {
-            background: white;
-            max-width: 1324px;
-            margin: 0 auto;
-            border: 1px solid #D8D4CC;
-            border-radius: 16px;
-            padding: 20px 36px 45px;
-            position: relative;
-        }
+    .caixa {
+      background: #fff;
+      max-width: 1110px;
+      min-height: 880px;
+      margin: 0 auto;
+      border: 1px solid #D8D4CC;
+      border-radius: 10px;
+      padding: 22px 26px 38px;
+      position: relative;
+    }
 
-        .btn-voltar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            font-size: 34px;
-            color: black;
-            text-decoration: none;
-            font-weight: 400;
-        }
+    .btn-voltar {
+      position: absolute;
+      top: 22px;
+      left: 18px;
+      font-size: 34px;
+      color: #000;
+      text-decoration: none;
+      line-height: 1;
+    }
 
-        .logo-topo {
-            width: 50px;
-            display: block;
-            margin: 0 auto 6px;
-        }
+    .logo-topo {
+      width: 42px;
+      display: block;
+      margin: 0 auto 4px;
+    }
 
-        .titulo-logo {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-        }
+    .titulo-logo {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 42px;
+    }
 
-        h1 {
-            text-align: center;
-            font-size: 17px;
-            margin: 0;
-        }
+    .conteudo {
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      gap: 80px;
+      align-items: flex-start;
+    }
 
-        .subtitulo {
-            text-align: center;
-            font-size: 12px;
-            color: #888780;
-            margin: 10px 0 18px;
-        }
+    .lateral {
+      padding-left: 14px;
+      border-left: 1px solid #E8E4DE;
+      min-height: 520px;
+    }
 
-        hr {
-            border: none;
-            border-top: 1px solid #E5E2DC;
-            margin: 12px 0;
-        }
+    .lateral h1 {
+      font-size: 17px;
+      margin: 0 0 8px;
+      font-weight: 700;
+    }
 
-        .secao {
-            margin-top: 14px;
-        }
+    .lateral p {
+      font-size: 11px;
+      color: #8A867F;
+      margin: 0 0 34px;
+      line-height: 1.3;
+      max-width: 190px;
+    }
 
-        .titulo-secao {
-            font-size: 12px;
-            font-weight: 700;
-            color: #888780;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
-        }
+    .menu-etapas {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
 
-        label {
-            display: block;
-            font-size: 12px;
-            color: #888780;
-            margin-bottom: 5px;
-        }
+    .menu-item {
+      border: none;
+      background: transparent;
+      color: #888780;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: left;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: fit-content;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
 
-        input, select, textarea {
-            width: 100%;
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
-            border-radius: 8px;
-            padding: 10px 13px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            outline: none;
-        }
+    .menu-item.ativo {
+      background: #BFE8EF;
+      color: #0086A9;
+    }
 
-        textarea {
-            height: 80px;
-            resize: none;
-        }
+    .icone {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      fill: none;
+      flex-shrink: 0;
+    }
 
-        input:focus, select:focus, textarea:focus {
-            border-color: #888780;
-        }
+    .area-form {
+      width: 100%;
+      max-width: 720px;
+    }
 
-        .linha {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
+    .progresso {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-right: 12px;
+    }
 
-        .linha-tres {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 10px;
-        }
+    .contador {
+      font-size: 10px;
+      color: #0086A9;
+      margin-right: 5px;
+    }
 
-        .linha-uma {
-            margin-bottom: 10px;
-        }
+    .barra {
+      width: 36px;
+      height: 4px;
+      border-radius: 10px;
+      background: #E5E2DC;
+    }
 
-        .opcoes-vaga {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
+    .barra.ativa {
+      background: #0086A9;
+    }
 
-        .checkbox-box {
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
-            border-radius: 8px;
-            padding: 8px 14px;
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #1A1A1A;
-        }
+    .accordion {
+      border: 1px solid #D8D4CC;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      background: #fff;
+      overflow: hidden;
+    }
 
-        .checkbox-box input {
-            width: auto;
-        }
+    .accordion-header {
+      width: 100%;
+      background: #fff;
+      border: none;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      color: #8A867F;
+    }
 
-        .dropdown-cursos {
-            position: relative;
-        }
+    .accordion-header-left {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
 
-        .btn-dropdown {
-            width: 100%;
-            background: #F7F5F2;
-            border: 1px solid #D8D4CC;
-            border-radius: 8px;
-            padding: 10px 13px;
-            text-align: left;
-            cursor: pointer;
-            font-size: 13px;
-            font-family: 'Inter', sans-serif;
-        }
+    .accordion-title {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .menu-cursos {
-            display: none;
-            position: absolute;
-            width: 100%;
-            background: white;
-            border: 1px solid #D8D4CC;
-            border-radius: 8px;
-            margin-top: 4px;
-            max-height: 230px;
-            overflow-y: auto;
-            z-index: 100;
-            padding: 10px;
-        }
+    .accordion-sub {
+      font-size: 10px;
+      color: #B0ACA5;
+    }
 
-        .menu-cursos label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            font-size: 13px;
-            color: #555;
-            cursor: pointer;
-        }
+    .accordion.ativo .accordion-title {
+      color: #0086A9;
+    }
 
-        .menu-cursos input {
-            width: auto;
-        }
+    .seta {
+      font-size: 13px;
+      color: #8A867F;
+    }
 
-        .cursos-selecionados {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-            margin-top: 12px;
-        }
+    .accordion-body {
+      display: none;
+      padding: 0 24px 22px;
+    }
 
-        .curso-tag {
-            background: #0086A9;
-            color: white;
-            border-radius: 999px;
-            padding: 6px 12px;
-            font-size: 12px;
-        }
+    .accordion.ativo .accordion-body {
+      display: block;
+    }
 
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-            margin-bottom: 12px;
-        }
+    label {
+      display: block;
+      font-size: 10px;
+      color: #77736B;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
 
-        .tag {
-            border: 1px solid #D8D4CC;
-            background: #F7F5F2;
-            color: #555;
-            border-radius: 999px;
-            padding: 6px 13px;
-            font-size: 12px;
-            cursor: pointer;
-            user-select: none;
-            transition: 0.2s;
-        }
+    .obrigatorio { color: red; }
 
-        .tag:hover {
-            background: #ece8e1;
-        }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #D8D4CC;
+      background: #F7F5F2;
+      border-radius: 7px;
+      padding: 9px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      outline: none;
+    }
 
-        .tag.ativo {
-            background: #0086A9;
-            color: white;
-            border-color: #0086A9;
-        }
+    textarea {
+      height: 82px;
+      resize: none;
+    }
 
-        .upload {
-            border: 1px dashed #C8C4BC;
-            background: #F7F5F2;
-            border-radius: 10px;
-            padding: 22px;
-            text-align: center;
-            color: #B0ACA5;
-            font-size: 12px;
-            cursor: pointer;
-        }
+    .linha {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
 
-        .upload input {
-            display: none;
-        }
+    .linha-uma { margin-bottom: 10px; }
 
-        .btn-salvar {
-            width: 100%;
-            background: #1A1A1A;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 14px;
-            margin-top: 22px;
-            font-weight: 700;
-            cursor: pointer;
-        }
+    .opcoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
 
-        .btn-salvar:hover {
-            background: #333;
-        }
+    .check-opcao {
+      border: 1px solid #D8D4CC;
+      background: #F7F5F2;
+      border-radius: 7px;
+      padding: 6px 10px;
+      font-size: 10px;
+      color: #555;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
 
-        .logo-puc {
-            position: fixed;
-            right: 45px;
-            bottom: 25px;
-            width: 95px;
-        }
+    .check-opcao input { width: auto; }
 
-        @media (max-width: 800px) {
-            .pagina {
-                padding: 25px;
-            }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 7px 0 12px;
+    }
 
-            .linha,
-            .linha-tres {
-                grid-template-columns: 1fr;
-            }
+    .tag {
+      border: 1px solid #D8D4CC;
+      background: #F7F5F2;
+      color: #555;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 10px;
+      cursor: pointer;
+      user-select: none;
+    }
 
-            .logo-puc {
-                width: 70px;
-                right: 20px;
-            }
-        }
-    </style>
+    .tag.ativo {
+      background: #0086A9;
+      color: white;
+      border-color: #0086A9;
+    }
+
+    .subgrupo {
+      font-size: 11px;
+      color: #77736B;
+      font-weight: 700;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .btn-continuar {
+      background: #0086A9;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 35px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      float: right;
+      margin-top: 10px;
+    }
+
+    .btn-salvar {
+      width: 100%;
+      background: #0086A9;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 0;
+    }
+
+    .aviso-final {
+      text-align: center;
+      color: #B0ACA5;
+      font-size: 10px;
+      margin-top: 12px;
+    }
+
+    .upload {
+      display: block;
+      border: 1px dashed #C8C4BC;
+      background: #F7F5F2;
+      border-radius: 8px;
+      padding: 26px;
+      text-align: center;
+      color: #B0ACA5;
+      font-size: 11px;
+      cursor: pointer;
+      margin: 10px auto 20px;
+      max-width: 360px;
+    }
+
+    .upload input { display: none; }
+
+    .logo-puc {
+      position: fixed;
+      right: 45px;
+      bottom: 25px;
+      width: 95px;
+    }
+  </style>
 </head>
 
 <body>
-
 <div class="pagina">
+  <div class="caixa">
 
-    <div class="caixa">
+    <a href="{% url 'primeiros_passos_professor' %}" class="btn-voltar">←</a>
 
-        <a href="{% url 'primeiros_passos_professor' %}" class="btn-voltar">←</a>
+    <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo-topo" alt="Logo Vagas PUC-Rio">
+    <div class="titulo-logo">VAGAS PUC-RIO</div>
 
-        <img src="{% static 'img/image4.png' %}" class="logo-topo">
+    <div class="conteudo">
+      <aside class="lateral">
+        <h1>Cadastro de vaga</h1>
+        <p>Preencha as informações para cadastro de vaga de IC / Estágio</p>
 
-        <div class="titulo-logo">VAGAS PUC-RIO</div>
+        <div class="menu-etapas">
+          <button type="button" class="menu-item ativo" data-step="1">
+            <svg class="icone" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"></circle><path d="M6 21v-2a6 6 0 0 1 12 0v2"></path></svg>
+            1. DADOS DA VAGA
+          </button>
 
-        <h1>CADASTRO VAGAS</h1>
+          <button type="button" class="menu-item" data-step="2">
+            <svg class="icone" viewBox="0 0 24 24"><path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z"></path></svg>
+            2. DESCRIÇÃO
+          </button>
 
-        <p class="subtitulo">Preencha as informações da sua vaga</p>
+          <button type="button" class="menu-item" data-step="3">
+            <svg class="icone" viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4-9-4z"></path><path d="M7 10v5c3 2 7 2 10 0v-5"></path></svg>
+            3. DADOS ACADÊMICOS E PESSOAIS
+          </button>
 
-        <hr>
+          <button type="button" class="menu-item" data-step="4">
+            <svg class="icone" viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path></svg>
+            4. LINGUAGENS DE PROGRAMAÇÃO
+          </button>
+
+          <button type="button" class="menu-item" data-step="5">
+            <svg class="icone" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1"></rect><path d="M9 20h6"></path><path d="M12 16v4"></path></svg>
+            5. TECNOLOGIAS & FRAMEWORKS
+          </button>
+
+          <button type="button" class="menu-item" data-step="6">
+            <svg class="icone" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01"></path><path d="M11 12h1v5h1"></path></svg>
+            6. ÁREAS DE ATUAÇÃO
+          </button>
+
+          <button type="button" class="menu-item" data-step="7">
+            <svg class="icone" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg>
+            7. ANEXO DE VAGA
+          </button>
+        </div>
+      </aside>
+
+      <main class="area-form">
+        <div class="progresso">
+          <span class="contador" id="contador">1 de 7</span>
+          <span class="barra ativa"></span>
+          <span class="barra"></span>
+          <span class="barra"></span>
+          <span class="barra"></span>
+          <span class="barra"></span>
+          <span class="barra"></span>
+          <span class="barra"></span>
+        </div>
 
         <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-
-            <div class="secao">
-
-                <div class="titulo-secao">Dados da vaga</div>
-
-                <div class="linha-uma">
-                    <label>Título</label>
-                    <input type="text" name="titulo" placeholder="Ex: Iniciação científica de microcontroladores" required>
-                </div>
-
-                <div class="linha">
-
-                    <div>
-                        <label>Local</label>
-                        <input type="text" name="local" placeholder="Ex: Laboratório, remoto, empresa..." required>
-                    </div>
-
-                    <div>
-                        <label>Carga horária</label>
-                        <input type="text" name="carga_horaria" placeholder="Ex: 20h semanais">
-                    </div>
-
-                </div>
-
-                <div class="linha-tres">
-
-                    <div>
-                        <label>Tipo de vaga</label>
-
-                        <div class="opcoes-vaga">
-                            <label class="checkbox-box">
-                                <input type="checkbox" name="tipo_vaga" value="Estágio">
-                                Estágio
-                            </label>
-
-                            <label class="checkbox-box">
-                                <input type="checkbox" name="tipo_vaga" value="Iniciação Científica">
-                                Iniciação Científica
-                            </label>
-
-                            <label class="checkbox-box">
-                                <input type="checkbox" name="tipo_vaga" value="Ambos">
-                                Ambos
-                            </label>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label>Modalidade</label>
-
-                        <select name="modalidade">
-                            <option value="">Selecione</option>
-                            <option>Presencial</option>
-                            <option>Híbrido</option>
-                            <option>Remoto</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label>Salário</label>
-                        <input type="text" name="salario" placeholder="Ex: R$ 1200,00">
-                    </div>
-
-                </div>
-
-                <div class="linha">
-
-                    <div>
-                        <label>Data de publicação</label>
-                        <input type="date" name="data_publicacao">
-                    </div>
-
-                    <div>
-                        <label>Prazo para candidatura</label>
-                        <input type="date" name="prazo_candidatura">
-                    </div>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-            <div class="secao">
-
-                <div class="titulo-secao">Dados acadêmicos</div>
-
-                <div class="linha-tres">
-
-                    <div>
-                        <label>Cursos</label>
-
-                        <div class="dropdown-cursos">
-
-                            <button type="button" class="btn-dropdown" onclick="toggleCursos()">
-                                Selecionar cursos
-                            </button>
-
-                            <div class="menu-cursos" id="menuCursos">
-
-                                <label><input type="checkbox" name="cursos" value="Ciência da Computação"> Ciência da Computação</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia da Computação"> Engenharia da Computação</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia Elétrica"> Engenharia Elétrica</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia Mecânica"> Engenharia Mecânica</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia Civil"> Engenharia Civil</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia de Produção"> Engenharia de Produção</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia Química"> Engenharia Química</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia de Controle e Automação"> Engenharia de Controle e Automação</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia de Materiais"> Engenharia de Materiais</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia Ambiental"> Engenharia Ambiental</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia de Petróleo"> Engenharia de Petróleo</label>
-                                <label><input type="checkbox" name="cursos" value="Engenharia de Telecomunicações"> Engenharia de Telecomunicações</label>
-                                <label><input type="checkbox" name="cursos" value="Matemática"> Matemática</label>
-                                <label><input type="checkbox" name="cursos" value="Matemática Aplicada"> Matemática Aplicada</label>
-                                <label><input type="checkbox" name="cursos" value="Física"> Física</label>
-                                <label><input type="checkbox" name="cursos" value="Química"> Química</label>
-                                <label><input type="checkbox" name="cursos" value="Estatística"> Estatística</label>
-                                <label><input type="checkbox" name="cursos" value="Inteligência Artificial"> Inteligência Artificial</label>
-
-                            </div>
-
-                        </div>
-
-                        <div class="cursos-selecionados" id="cursosSelecionados"></div>
-                    </div>
-
-                    <div>
-                        <label>CR</label>
-                        <input type="text" name="cr" placeholder="Ex: 7.0">
-                    </div>
-
-                    <div>
-                        <label>Período mínimo</label>
-
-                        <select name="periodo_minimo">
-                            <option value="">Selecione</option>
-                            <option>1º Período</option>
-                            <option>2º Período</option>
-                            <option>3º Período</option>
-                            <option>4º Período</option>
-                            <option>5º Período</option>
-                            <option>6º Período</option>
-                            <option>7º Período</option>
-                            <option>8º Período</option>
-                            <option>9º Período</option>
-                            <option>10º Período</option>
-                        </select>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-            <div class="secao">
-
-                <div class="titulo-secao">Tags de vagas</div>
-
-                <div class="titulo-secao">Linguagens de programação</div>
-
-                <div class="tags">
-                    <span class="tag">Python</span>
-                    <span class="tag">Java</span>
-                    <span class="tag">JavaScript</span>
-                    <span class="tag">TypeScript</span>
-                    <span class="tag">Kotlin</span>
-                    <span class="tag">Go</span>
-                    <span class="tag">Ruby</span>
-                    <span class="tag">C</span>
-                    <span class="tag">C++</span>
-                </div>
-
-                <div class="titulo-secao">Tecnologias & Frameworks</div>
-
-                <div class="tags">
-                    <span class="tag">React</span>
-                    <span class="tag">Node.js</span>
-                    <span class="tag">Spring Boot</span>
-                    <span class="tag">Django</span>
-                    <span class="tag">Flutter</span>
-                    <span class="tag">Docker</span>
-                    <span class="tag">Git</span>
-                    <span class="tag">SQL</span>
-                    <span class="tag">AWS</span>
-                </div>
-
-                <div class="titulo-secao">Áreas de atuação</div>
-
-                <div class="tags">
-                    <span class="tag">Front-end</span>
-                    <span class="tag">Back-end</span>
-                    <span class="tag">Dados</span>
-                    <span class="tag">Inteligência Artificial</span>
-                    <span class="tag">Mobile</span>
-                    <span class="tag">Segurança</span>
-                    <span class="tag">Pesquisa (IC)</span>
-                    <span class="tag">DevOps</span>
-                    <span class="tag">UX / Design</span>
-                </div>
-
-                <div class="titulo-secao">Exatas</div>
-
-                <div class="tags">
-                    <span class="tag">Cálculo</span>
-                    <span class="tag">Modelagem</span>
-                    <span class="tag">Simulação</span>
-                    <span class="tag">Álgebra Linear</span>
-                    <span class="tag">Otimização</span>
-                    <span class="tag">Matemática Aplicada</span>
-                    <span class="tag">Pesquisa Operacional</span>
-                    <span class="tag">Física</span>
-                </div>
-
-                <div class="titulo-secao">Engenharia</div>
-
-                <div class="tags">
-                    <span class="tag">CAD</span>
-                    <span class="tag">Energia</span>
-                    <span class="tag">Telecom</span>
-                    <span class="tag">Robótica</span>
-                    <span class="tag">Eletrônica</span>
-                    <span class="tag">Sistemas Embarcados</span>
-                    <span class="tag">Automação</span>
-                    <span class="tag">Desenho</span>
-                </div>
-
-                <div class="titulo-secao">Soft Skills</div>
-
-                <div class="tags">
-                    <span class="tag">Comunicação</span>
-                    <span class="tag">Trabalho em equipe</span>
-                    <span class="tag">Proatividade</span>
-                    <span class="tag">Criatividade</span>
-                    <span class="tag">Gestão de tempo</span>
-                    <span class="tag">Liderança</span>
-                    <span class="tag">Adaptabilidade</span>
-                    <span class="tag">Pensamento crítico</span>
-                </div>
-
-                <div class="titulo-secao">Idiomas</div>
-
-                <div class="tags">
-                    <span class="tag">Inglês</span>
-                    <span class="tag">Espanhol</span>
-                    <span class="tag">Francês</span>
-                    <span class="tag">Alemão</span>
-                    <span class="tag">Mandarim</span>
-                </div>
-
-            </div>
-
-            <hr>
-
-            <div class="secao">
-
-                <div class="titulo-secao">Descrição</div>
-
-                <textarea name="descricao" placeholder="Conte um pouco sobre a vaga..."></textarea>
-
-            </div>
-
-            <hr>
-
-            <div class="secao">
-
-                <div class="titulo-secao">Vaga</div>
-
-                <label class="upload">
-                    📄 Clique para enviar ou arraste aqui · PDF
-                    <input type="file" name="arquivo_vaga" accept=".pdf">
-                </label>
-
-            </div>
-
-            <button type="submit" class="btn-salvar">
-                Cadastrar Vaga
+          {% csrf_token %}
+
+          <section class="accordion ativo" data-step="1">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"></circle><path d="M6 21v-2a6 6 0 0 1 12 0v2"></path></svg>
+                  1. Dados da vaga
+                </span>
+                <span class="accordion-sub">Vamos começar com informações básicas</span>
+              </span>
+              <span class="seta">⌃</span>
             </button>
 
+            <div class="accordion-body">
+              <div class="linha-uma">
+                <label>Título<span class="obrigatorio">*</span></label>
+                <input type="text" name="titulo" placeholder="Ex: Iniciação científica de microcontroladores" required>
+              </div>
+
+              <div class="linha">
+                <div>
+                  <label>Local<span class="obrigatorio">*</span></label>
+                  <input type="text" name="local" required>
+                </div>
+
+                <div>
+                  <label>Carga Horária<span class="obrigatorio">*</span></label>
+                  <input type="text" name="carga_horaria">
+                </div>
+              </div>
+
+              <label>Tipo de vaga<span class="obrigatorio">*</span></label>
+              <div class="opcoes">
+                <label class="check-opcao"><input type="checkbox" name="tipo_vaga" value="Estágio"> Estágio</label>
+                <label class="check-opcao"><input type="checkbox" name="tipo_vaga" value="Iniciação Científica"> Iniciação Científica</label>
+              </div>
+
+              <button type="button" class="btn-continuar" data-next="2">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="2">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><path d="M4 20h4l10-10a2.8 2.8 0 0 0-4-4L4 16v4z"></path></svg>
+                  2. Descrição
+                </span>
+                <span class="accordion-sub">Conte um pouco mais sobre as características da vaga</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <div class="linha">
+                <div>
+                  <label>Modalidade<span class="obrigatorio">*</span></label>
+                  <select name="modalidade">
+                    <option value="">Selecione</option>
+                    <option>Presencial</option>
+                    <option>Híbrido</option>
+                    <option>Remoto</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label>Salário<span class="obrigatorio">*</span></label>
+                  <input type="text" name="salario">
+                </div>
+              </div>
+
+              <div class="linha">
+                <div>
+                  <label>Data de publicação<span class="obrigatorio">*</span></label>
+                  <input type="date" name="data_publicacao">
+                </div>
+
+                <div>
+                  <label>Prazo para candidatura<span class="obrigatorio">*</span></label>
+                  <input type="date" name="prazo_candidatura">
+                </div>
+              </div>
+
+              <div class="linha-uma">
+                <label>Fale mais detalhadamente sobre esta vaga (opcional)</label>
+                <textarea name="descricao" placeholder="Conte aqui"></textarea>
+              </div>
+
+              <button type="button" class="btn-continuar" data-next="3">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="3">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><path d="M3 8l9-4 9 4-9 4-9-4z"></path><path d="M7 10v5c3 2 7 2 10 0v-5"></path></svg>
+                  3. Dados acadêmicos e pessoais
+                </span>
+                <span class="accordion-sub">Informações sobre matrícula, curso, período e características do candidato</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <div class="linha">
+                <div>
+                  <label>Cursos desejados<span class="obrigatorio">*</span></label>
+                  <select name="cursos">
+                    <option value="">Selecione</option>
+                    <option>Ciência da Computação</option>
+                    <option>Engenharia da Computação</option>
+                    <option>Engenharia Elétrica</option>
+                    <option>Engenharia Mecânica</option>
+                    <option>Matemática</option>
+                    <option>Física</option>
+                    <option>Inteligência Artificial</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label>Coeficiente de rendimento (CR) desejado<span class="obrigatorio">*</span></label>
+                  <input type="text" name="cr">
+                </div>
+              </div>
+
+              <div class="linha">
+                <div>
+                  <label>Período mínimo<span class="obrigatorio">*</span></label>
+                  <select name="periodo_minimo">
+                    <option value="">Selecione</option>
+                    <option>1º Período</option>
+                    <option>2º Período</option>
+                    <option>3º Período</option>
+                    <option>4º Período</option>
+                    <option>5º Período</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label>Período máximo<span class="obrigatorio">*</span></label>
+                  <select name="periodo_maximo">
+                    <option value="">Selecione</option>
+                    <option>6º Período</option>
+                    <option>7º Período</option>
+                    <option>8º Período</option>
+                    <option>9º Período</option>
+                    <option>10º Período</option>
+                  </select>
+                </div>
+              </div>
+
+              <label>Características desejadas do candidato<span class="obrigatorio">*</span></label>
+              <div class="tags">
+                <span class="tag">Comunicação</span>
+                <span class="tag">Trabalho em equipe</span>
+                <span class="tag">Proatividade</span>
+                <span class="tag">Criatividade</span>
+                <span class="tag">Gestão de tempo</span>
+                <span class="tag">Liderança</span>
+                <span class="tag">Adaptabilidade</span>
+                <span class="tag">Pensamento crítico</span>
+              </div>
+
+              <label>Idiomas desejados do candidato<span class="obrigatorio">*</span></label>
+              <div class="tags">
+                <span class="tag">Inglês</span>
+                <span class="tag">Espanhol</span>
+                <span class="tag">Francês</span>
+                <span class="tag">Alemão</span>
+                <span class="tag">Mandarim</span>
+              </div>
+
+              <button type="button" class="btn-continuar" data-next="4">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="4">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><path d="M8 8l-4 4 4 4"></path><path d="M16 8l4 4-4 4"></path></svg>
+                  4. Linguagens de programação
+                </span>
+                <span class="accordion-sub">Quais linguagens de programação são necessárias para esta vaga?</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <div class="tags">
+                <span class="tag">Python</span>
+                <span class="tag">Java</span>
+                <span class="tag">JavaScript</span>
+                <span class="tag">TypeScript</span>
+                <span class="tag">Kotlin</span>
+                <span class="tag">Go</span>
+                <span class="tag">Ruby</span>
+                <span class="tag">C</span>
+                <span class="tag">C++</span>
+              </div>
+
+              <label>Gostaria de adicionar mais alguma informação sobre as linguagens necessárias para esta vaga? (Opcional)</label>
+              <textarea name="obs_linguagens" placeholder="Conte aqui"></textarea>
+
+              <button type="button" class="btn-continuar" data-next="5">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="5">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1"></rect><path d="M9 20h6"></path><path d="M12 16v4"></path></svg>
+                  5. Tecnologias & Frameworks
+                </span>
+                <span class="accordion-sub">Ferramentas e frameworks para esta vaga</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <div class="tags">
+                <span class="tag">React</span>
+                <span class="tag">Node.js</span>
+                <span class="tag">Spring Boot</span>
+                <span class="tag">Django</span>
+                <span class="tag">Flutter</span>
+                <span class="tag">Docker</span>
+                <span class="tag">Git</span>
+                <span class="tag">SQL</span>
+                <span class="tag">AWS</span>
+              </div>
+
+              <label>Fale mais sobre outras tecnologias que seriam de interesse para esta vaga (opcional)</label>
+              <textarea name="obs_tecnologias" placeholder="Conte aqui"></textarea>
+
+              <button type="button" class="btn-continuar" data-next="6">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="6">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01"></path><path d="M11 12h1v5h1"></path></svg>
+                  6. Áreas de atuação
+                </span>
+                <span class="accordion-sub">Quais áreas têm relação com essa vaga?</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <div class="subgrupo">Informática:</div>
+              <div class="tags">
+                <span class="tag">Front-end</span>
+                <span class="tag">Back-end</span>
+                <span class="tag">Dados</span>
+                <span class="tag">Inteligência Artificial</span>
+                <span class="tag">Mobile</span>
+                <span class="tag">Segurança</span>
+                <span class="tag">Pesquisa (IC)</span>
+                <span class="tag">DevOps</span>
+                <span class="tag">UX / Design</span>
+              </div>
+
+              <div class="subgrupo">Exatas:</div>
+              <div class="tags">
+                <span class="tag">Cálculo</span>
+                <span class="tag">Modelagem</span>
+                <span class="tag">Simulação</span>
+                <span class="tag">Álgebra Linear</span>
+                <span class="tag">Otimização</span>
+                <span class="tag">Matemática Aplicada</span>
+                <span class="tag">Pesquisa Operacional</span>
+                <span class="tag">Física</span>
+              </div>
+
+              <div class="subgrupo">Engenharia:</div>
+              <div class="tags">
+                <span class="tag">CAD</span>
+                <span class="tag">Energia</span>
+                <span class="tag">Telecom</span>
+                <span class="tag">Robótica</span>
+                <span class="tag">Eletrônica</span>
+                <span class="tag">Desenho</span>
+                <span class="tag">Sistemas Embarcados</span>
+                <span class="tag">Automação</span>
+              </div>
+
+              <button type="button" class="btn-continuar" data-next="7">Continuar</button>
+            </div>
+          </section>
+
+          <section class="accordion" data-step="7">
+            <button type="button" class="accordion-header">
+              <span class="accordion-header-left">
+                <span class="accordion-title">
+                  <svg class="icone" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"></path><path d="M14 3v5h5"></path></svg>
+                  7. Anexo de vaga
+                </span>
+                <span class="accordion-sub">Anexe um documento com detalhes da vaga</span>
+              </span>
+              <span class="seta">⌄</span>
+            </button>
+
+            <div class="accordion-body">
+              <label class="upload">
+                ☁<br>
+                Clique para enviar ou arraste aqui · PDF
+                <input type="file" name="arquivo_vaga" accept=".pdf">
+              </label>
+
+              <p style="font-size: 11px; color: #77736B;">
+                Sinta-se livre para anexar um documento com os detalhes da vaga, se quiser
+              </p>
+
+              <button type="button" class="btn-continuar" data-next="1">Continuar</button>
+            </div>
+          </section>
+
+          <button type="submit" class="btn-salvar">Salvar vaga</button>
+          <div class="aviso-final">Você pode editar essas informações depois</div>
         </form>
-
+      </main>
     </div>
+  </div>
 
-    <img src="{% static 'img/image4.png' %}" class="logo-puc">
-
+  <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Brasão PUC-Rio">
 </div>
 
 <script>
-    const tags = document.querySelectorAll('.tag');
+  let etapaAtual = 1;
 
-    tags.forEach(tag => {
-        tag.addEventListener('click', () => {
-            tag.classList.toggle('ativo');
-        });
+  const accordions = document.querySelectorAll('.accordion');
+  const menuItems = document.querySelectorAll('.menu-item');
+  const barras = document.querySelectorAll('.barra');
+  const contador = document.getElementById('contador');
+
+  function abrirEtapa(step) {
+    etapaAtual = Number(step);
+
+    accordions.forEach(acc => {
+      const ativo = Number(acc.dataset.step) === etapaAtual;
+      acc.classList.toggle('ativo', ativo);
+      acc.querySelector('.seta').textContent = ativo ? '⌃' : '⌄';
     });
 
-    function toggleCursos() {
-        const menu = document.getElementById("menuCursos");
-
-        if (menu.style.display === "block") {
-            menu.style.display = "none";
-        } else {
-            menu.style.display = "block";
-        }
-    }
-
-    const checkboxesCursos = document.querySelectorAll('#menuCursos input');
-    const cursosSelecionados = document.getElementById('cursosSelecionados');
-
-    checkboxesCursos.forEach(checkbox => {
-        checkbox.addEventListener('change', atualizarCursos);
+    menuItems.forEach(item => {
+      item.classList.toggle('ativo', Number(item.dataset.step) === etapaAtual);
     });
 
-    function atualizarCursos() {
-        cursosSelecionados.innerHTML = '';
-
-        checkboxesCursos.forEach(checkbox => {
-            if (checkbox.checked) {
-                const tag = document.createElement('div');
-                tag.classList.add('curso-tag');
-                tag.textContent = checkbox.value;
-                cursosSelecionados.appendChild(tag);
-            }
-        });
-    }
-
-    document.addEventListener('click', function(event) {
-        const dropdown = document.querySelector('.dropdown-cursos');
-        const menu = document.getElementById('menuCursos');
-
-        if (!dropdown.contains(event.target)) {
-            menu.style.display = 'none';
-        }
+    barras.forEach((barra, index) => {
+      barra.classList.toggle('ativa', index === etapaAtual - 1);
     });
+
+    contador.textContent = etapaAtual + ' de 7';
+  }
+
+  document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+      abrirEtapa(header.closest('.accordion').dataset.step);
+    });
+  });
+
+  menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      abrirEtapa(item.dataset.step);
+    });
+  });
+
+  document.querySelectorAll('.btn-continuar').forEach(btn => {
+    btn.addEventListener('click', () => {
+      abrirEtapa(btn.dataset.next);
+    });
+  });
+
+  document.querySelectorAll('.tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      tag.classList.toggle('ativo');
+    });
+  });
 </script>
 
 </body>

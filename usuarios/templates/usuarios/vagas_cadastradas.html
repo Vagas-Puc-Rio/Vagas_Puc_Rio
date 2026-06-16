@@ -1,0 +1,345 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Vagas cadastradas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jaldi:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Jaldi', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #edeae4;
+      min-height: 100vh;
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 50px 80px;
+      position: relative;
+    }
+
+    .card-principal {
+      width: 100%;
+      max-width: 1250px;
+      min-height: 720px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 0 75px 75px 75px;
+      padding: 30px 70px;
+      position: relative;
+    }
+
+    .voltar {
+      position: absolute;
+      top: 35px;
+      left: 38px;
+      text-decoration: none;
+      color: #000;
+      font-size: 38px;
+      line-height: 1;
+    }
+
+    .top-icons {
+      position: absolute;
+      top: 52px;
+      right: 60px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      color: #8a867f;
+    }
+
+    .engrenagem {
+      font-size: 35px;
+      color: #8a867f;
+      line-height: 1;
+    }
+
+    .perfil-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .perfil-svg {
+      width: 42px;
+      height: 42px;
+      display: block;
+    }
+
+    .setinha {
+      font-size: 20px;
+      color: #8a867f;
+      margin-top: -8px;
+    }
+
+    .header {
+      text-align: center;
+    }
+
+    .header h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .logo {
+      width: 55px;
+      height: 55px;
+      object-fit: contain;
+      margin-top: 5px;
+    }
+
+    h1 {
+      margin: 8px 0 0;
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+    .subtitulo {
+      margin-top: 5px;
+      color: #8a867f;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .legenda {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 24px;
+      max-width: 1050px;
+      margin: 22px auto 22px;
+      padding-right: 20px;
+      font-size: 14px;
+      color: #777;
+    }
+
+    .item-legenda {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .bolinha {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+
+    .verde {
+      background: green;
+    }
+
+    .vermelha {
+      background: red;
+    }
+
+    .editar-legenda {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 15px;
+    }
+
+    .vagas-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 38px 28px;
+      max-width: 1050px;
+      margin: 0 auto;
+    }
+
+    .vaga-card {
+      background: #f0f0f0;
+      border-radius: 10px;
+      height: 84px;
+      padding: 11px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vaga-card h4 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .status {
+      margin: 4px 0 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .status .disponivel {
+      color: green;
+    }
+
+    .status .finalizada {
+      color: red;
+    }
+
+    .data {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #777;
+    }
+
+    .editar {
+      color: #007bff;
+      text-decoration: none;
+      font-size: 17px;
+      white-space: nowrap;
+    }
+
+    .sem-vagas {
+      text-align: center;
+      margin-top: 115px;
+      color: #777;
+    }
+
+    .sem-vagas h2 {
+      margin: 0;
+      color: #120e0e;
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .sem-vagas p {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .botao-area {
+      display: flex;
+      justify-content: center;
+      margin-top: 120px;
+    }
+
+    .botao-area.vazio {
+      margin-top: 145px;
+    }
+
+    .botao {
+      background: #0086a9;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 10px 35px;
+      min-width: 300px;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .botao:hover {
+      background: #006f8d;
+    }
+
+    .brasao {
+      position: fixed;
+      right: 20px;
+      bottom: 10px;
+      width: 95px;
+      height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <div class="card-principal">
+
+      <a href="javascript:history.back()" class="voltar">←</a>
+
+      <div class="top-icons">
+        <span class="engrenagem">⚙</span>
+
+        <div class="perfil-menu">
+          <svg class="perfil-svg" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="4" stroke="#8A867F" stroke-width="1.8"/>
+            <path d="M4.5 19C5.5 15.8 8.2 14 12 14C15.8 14 18.5 15.8 19.5 19"
+                  stroke="#8A867F"
+                  stroke-width="1.8"
+                  stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="10" stroke="#8A867F" stroke-width="1.5"/>
+          </svg>
+
+          <span class="setinha">⌄</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <h3>VAGAS PUC-RIO</h3>
+        <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo" alt="Logo Vagas PUC-Rio">
+        <h1>Vagas cadastradas</h1>
+        <div class="subtitulo">Gerencie as oportunidades abertas pela sua unidade</div>
+      </div>
+
+      {% if vagas %}
+        <div class="legenda">
+          <div class="item-legenda">
+            <span class="bolinha verde"></span>
+            <span>Disponível</span>
+          </div>
+
+          <div class="item-legenda">
+            <span class="bolinha vermelha"></span>
+            <span>Finalizada</span>
+          </div>
+
+          <a href="#" class="editar-legenda">✎ Editar</a>
+        </div>
+
+        <div class="vagas-grid">
+          {% for vaga in vagas %}
+            <div class="vaga-card">
+              <div>
+                <h4>{{ vaga.titulo }}</h4>
+
+                <p class="status">
+                  Status:
+                  {% if vaga.status == 'Disponível' %}
+                    <span class="disponivel">Disponível</span>
+                  {% else %}
+                    <span class="finalizada">Finalizada</span>
+                  {% endif %}
+                </p>
+
+                <p class="data">Atualizado em {{ vaga.atualizado_em }}</p>
+              </div>
+
+              <a href="#" class="editar">✎ Editar</a>
+            </div>
+          {% endfor %}
+        </div>
+
+        <div class="botao-area">
+          <a href="{% url 'cadastro_vagas' %}" class="botao">＋ Cadastrar nova oportunidade</a>
+        </div>
+
+      {% else %}
+        <div class="sem-vagas">
+          <h2>Nenhuma vaga cadastrada ainda</h2>
+          <p>Clique em “Cadastrar nova oportunidade” para adicionar a primeira vaga.</p>
+        </div>
+
+        <div class="botao-area vazio">
+          <a href="{% url 'cadastro_vagas' %}" class="botao">＋ Cadastrar nova oportunidade</a>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <img src="{% static 'img/image4.png' %}" class="brasao" alt="Brasão PUC-Rio">
+  </div>
+</body>
+</html>
