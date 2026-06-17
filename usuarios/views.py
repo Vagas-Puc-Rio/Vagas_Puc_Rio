@@ -6,7 +6,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User  # necessário para o token
 from django.conf import settings
-from .models import Usuario, Aluno, LinguagemProgramacao, AreaAtuacao
+from .models import LinguagemProgramacao, TecnologiaFramework, AreaAtuacao
 from usuarios.models import Usuario
 from django.db.models import Q
 from datetime import date
@@ -14,6 +14,8 @@ from django.db import transaction
 from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
 from .forms import CadastroInicialForm
 from .models import Usuario, Aluno, Professor  # adiciona os dois no import
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def pagina_inicial(request):
     return render(request, 'usuarios/home.html')
@@ -137,43 +139,36 @@ def perfil_aluno(request):
         interesse = request.POST.get('interesse', '') # Captura o tipo de vaga (Estágio/IC)
         curriculo = request.FILES.get('curriculo')
 
-        # 1. Recupera o período bruto enviado pelo formulário
-        periodo_raw = request.POST.get('periodo', '')
+        # RESOLUÇÃO DO BUG: Se periodo_raw for um número válido, transforma em int. Se for vazio, vira None.
+        periodo_raw = request.POST.get('periodo')
+        periodo = int(periodo_raw) if periodo_raw and periodo_raw.isdigit() else None
 
-        # 2. Busca se o aluno já tem um registro salvo no banco
-        aluno_existente = Aluno.objects.filter(dados_usuario=usuario).first()
-
-        # 3. BLINDAGEM CONTRA NULL: Decide o período sem deixar brecha para None
-        if periodo_raw and str(periodo_raw).isdigit():
-            periodo_final = int(periodo_raw)
-        else:
-            # Se veio vazio, tenta manter o que já estava no banco. Se não tiver nada, assume 1.
-            periodo_final = aluno_existente.periodo if aluno_existente else 1
-
-        # 4. Monta o dicionário de atualização garantindo que o período é um número válido
-        model_defaults = {
+        # 🛠️ CORREÇÃO: Criamos os dados padrão que SEMPRE serão atualizados
+        defaults_dados = {
             'cpf': cpf,
             'matricula': matricula,
             'telefone': telefone,
             'curso': curso,
+            'periodo': periodo,
             'sobre_voce': sobre,
-            'periodo': periodo_final, # Proteção total aplicada aqui
-            'tipo_interesse': interesse,
         }
 
-        # Atualiza o arquivo de currículo apenas se um novo foi enviado
+        # Só incluímos o currículo se um novo arquivo foi enviado.
+        # Se veio vazio (None), o Django mantém o PDF antigo intacto no banco!
         if curriculo:
-            model_defaults['curriculo_pdf'] = curriculo
+            defaults_dados['curriculo_pdf'] = curriculo 
+            # 💡 Nota: Certifique-se de que o nome 'curriculo_pdf' está igualzinho no seu models.py!
 
-        # Salva com segurança no SQLite
+        # Salvando ou atualizando no banco de dados
         aluno, created = Aluno.objects.update_or_create(
             dados_usuario=usuario,
-            defaults=model_defaults
+            defaults=defaults_dados
         )
 
         # Atualizando ManyToMany das Linguagens
         lista_linguagens = request.POST.getlist('linguagens')
         if lista_linguagens:
+            # 💡 Nota: Se o seu HTML enviar os IDs nos checkboxes, mude 'nome__in' para 'id__in'
             linguagens_db = LinguagemProgramacao.objects.filter(nome__in=lista_linguagens)
             aluno.linguagens.set(linguagens_db)
 
@@ -206,37 +201,147 @@ def perfil_alunopronta(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/perfil_alunopronta.html', {'perfil': perfil})
 
+
 def lista_vagas(request):
     q = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
-
-    vagas = Vaga.objects.select_related(
-        'instituicao', 'professor', 'professor__dados_usuario'
-    ).all()
-
+ 
+    vagas = Vaga.objects.all().order_by('-id')
+ 
     if q:
         vagas = vagas.filter(
+            Q(titulo__icontains=q) |
             Q(descricao__icontains=q) |
-            Q(instituicao__nome_instituicao__icontains=q) |
-            Q(tipo_vaga__icontains=q)
+            Q(curso__icontains=q)
         )
+ 
     if tipo:
         vagas = vagas.filter(tipo_vaga=tipo)
-
+ 
+    # IDs das vagas já salvas pelo aluno logado (para pintar a bandeirinha)
+    usuario_id = request.session.get('usuario_id')
+    vagas_salvas_ids = []
+    if usuario_id:
+        usuario = Usuario.objects.filter(id=usuario_id).first()
+        aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+        if aluno:
+            vagas_salvas_ids = list(aluno.vagas_salvas.values_list('id', flat=True))
+ 
     contexto = {
         'vagas': vagas,
         'total': vagas.count(),
         'q': q,
         'tipo_atual': tipo,
+        'vagas_salvas_ids': vagas_salvas_ids,
     }
     return render(request, 'usuarios/lista_vagas.html', contexto)
+ 
+ 
+# ─────────────────────────────────────────────────────────────────────
+# 3. Nova view salvar_vaga — adicione logo abaixo de lista_vagas:
+# ─────────────────────────────────────────────────────────────────────
+ 
+@require_POST
+def salvar_vaga(request, vaga_id):
+    usuario_id = request.session.get('usuario_id')
+    if not usuario_id:
+        return JsonResponse({'error': 'Não autenticado'}, status=401)
+ 
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+    if not aluno:
+        return JsonResponse({'error': 'Aluno não encontrado'}, status=404)
+ 
+    vaga = Vaga.objects.filter(id=vaga_id).first()
+    if not vaga:
+        return JsonResponse({'error': 'Vaga não encontrada'}, status=404)
+ 
+    # Toggle: se já salvou remove, se não salvou adiciona
+    if aluno.vagas_salvas.filter(id=vaga_id).exists():
+        aluno.vagas_salvas.remove(vaga)
+        salvo = False
+    else:
+        aluno.vagas_salvas.add(vaga)
+        salvo = True
+ 
+    return JsonResponse({'salvo': salvo})
 
+def vagas_salvas(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+    vagas = aluno.vagas_salvas.all().order_by('-id') if aluno else []
+ 
+    return render(request, 'usuarios/vagas_salvas.html', {
+        'vagas': vagas
+    })
 
 def primeiros_passos_professor(request):
     return render(request, 'usuarios/Pagina_PrincipalProf.html')
 
 def cadastro_vaga(request):
-    return render(request, 'usuarios/cadastro_vagas.html')
+    if request.method == 'POST':
+        # 1. Captura os dados textuais simples do formulário
+        titulo = request.POST.get('titulo')
+        local = request.POST.get('local', '')
+        carga_horaria = request.POST.get('carga_horaria', '')
+        tipo_vaga = request.POST.get('tipo_vaga')
+        descricao = request.POST.get('descricao', '')
+        curso = request.POST.get('curso', '')
+        periodo_minimo = request.POST.get('periodo_minimo', '')
+        
+        # 2. Captura o arquivo PDF anexado no dropzone do HTML
+        anexo = request.FILES.get('anexo')
+
+        # 3. Cria o registro da vaga no banco de dados (dados simples)
+        vaga = Vaga.objects.create(
+            titulo=titulo,
+            local=local,
+            carga_horaria=carga_horaria,
+            tipo_vaga=tipo_vaga,
+            descricao=descricao,
+            curso=curso,
+            periodo_minimo=periodo_minimo,
+            anexo=anexo if anexo else None 
+        )
+
+        # 4. Captura as listas de IDs (o getlist junta todas as categorias automaticamente)
+        ids_linguagens = request.POST.getlist('linguagens')
+        ids_tecnologias = request.POST.getlist('tecnologias')
+        ids_areas = request.POST.getlist('areas_atuacao')
+
+        # 5. Vincula os IDs marcados às relações Muitos-para-Muitos
+        if ids_linguagens:
+            vaga.linguagens.set(ids_linguagens)
+        if ids_tecnologias:
+            vaga.tecnologias.set(ids_tecnologias)
+        if ids_areas:
+            vaga.areas_atuacao.set(ids_areas)
+
+        # 6. Redireciona para a página de listagem de vagas geral do sistema
+        return redirect('vagas')
+
+    # ─────────────────────────────────────────────────────────────────
+    # SE FOR ACESSO "GET" (Carregando a página pela primeira vez):
+    # ─────────────────────────────────────────────────────────────────
+    # Busca as opções padrão de linguagens e tecnologias
+    linguagens = LinguagemProgramacao.objects.all().order_by('nome')
+    tecnologias = TecnologiaFramework.objects.all().order_by('nome')
+
+    # SEPARAÇÃO POR CATEGORIAS: Filtra as áreas de acordo com as etiquetas do model
+    areas_informatica = AreaAtuacao.objects.filter(categoria='Informatica').order_by('nome')
+    areas_exatas = AreaAtuacao.objects.filter(categoria='Exatas').order_by('nome')
+    areas_engenharia = AreaAtuacao.objects.filter(categoria='Engenharia').order_by('nome')
+
+    # Envia os grupos separados para o HTML renderizar cada um no seu devido bloco
+    return render(request, 'usuarios/cadastro_vaga.html', {
+        'linguagens': linguagens,
+        'tecnologias': tecnologias,
+        'areas_informatica': areas_informatica,
+        'areas_exatas': areas_exatas,
+        'areas_engenharia': areas_engenharia,
+    })
+
 
 def configuracoes(request):
     perfil = request.session.get('perfil_aluno', {})

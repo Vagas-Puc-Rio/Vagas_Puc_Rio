@@ -18,8 +18,10 @@ from django.contrib import admin
 from django.urls import path
 from usuarios import views
 
-urlpatterns = [
+from django.conf import settings
+from django.conf.urls.static import static
 
+urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', views.pagina_inicial, name='home'),
@@ -40,20 +42,27 @@ urlpatterns = [
 
     path('primeiros-passos/', views.primeiros_passos,
          name='primeiros_passos'),
+         
     path('confirmar-email/<str:uid>/<str:token>/', views.confirmar_email, name='confirmar_email'),
 
     path('perfil-aluno/', views.perfil_aluno,
          name='perfil_aluno'),
 
-    path('primeiros-passos-professor/',views.primeiros_passos_professor,
+    path('primeiros-passos-professor/', views.primeiros_passos_professor,
          name='primeiros_passos_professor'),
 
     path('cadastro-vaga/', views.cadastro_vaga,
          name='cadastro_vaga'),
 
     path('vagas/', views.lista_vagas, name='vagas'),
+    path('vagas/salvar/<int:vaga_id>/', views.salvar_vaga, name='salvar_vaga'),
 
+    path('vagas_salvas/', views.vagas_salvas, name='vagas_salvas'), 
     path('perfil/aluno/pronto/', views.perfil_alunopronta, name='perfil_alunopronta'),
 
     path('configuracoes/', views.configuracoes, name='configuracoes'),
 ]
+
+# 2. O BLOCO DE MÍDIA ENTRA AQUI (FORA E DEPOIS DA LISTA URLPATTERNS)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

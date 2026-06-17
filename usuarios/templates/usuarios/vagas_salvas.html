@@ -1,0 +1,337 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vagas PUC-Rio — Vagas Salvas</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #0086A9;
+    --cream: #F7F5F2;
+    --border: #D8D4CC;
+    --grey-text: #888780;
+    --dark: #1A1A1A;
+    --white: #ffffff;
+    --green: #2E7D32;
+    --red: #C62828;
+    --card-bg: #F0EDE8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .container {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    width: 100%;
+    max-width: 900px;
+    padding: 40px 48px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .back-btn {
+    position: absolute;
+    left: 40px;
+    top: 44px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark);
+  }
+
+  .header-block {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .logo-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--dark);
+    margin-top: 4px;
+    display: block;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-top: 12px;
+  }
+
+  .vagas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .vaga-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    transition: opacity 0.3s;
+  }
+
+  .vaga-card.removendo {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .vaga-titulo {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    padding-right: 28px; /* espaço para o botão de remover */
+  }
+
+  .vaga-tipo {
+    display: inline-block;
+    background: #DCC8FF;
+    color: #6E39B5;
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 10px;
+    font-weight: 700;
+    width: fit-content;
+  }
+
+  .vaga-meta-linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .status { font-weight: 700; }
+  .status.disponivel { color: var(--green); }
+
+  .btn-visualizar {
+    color: var(--blue);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    transition: opacity 0.2s;
+  }
+  .btn-visualizar:hover { opacity: 0.75; }
+
+  /* Botão remover (X) no canto do card */
+  .btn-remover {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--grey-text);
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .btn-remover:hover {
+    background: rgba(198, 40, 40, 0.08);
+    color: var(--red);
+  }
+
+  .btn-explore {
+    background: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 12px 40px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    text-decoration: none;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .btn-explore:hover { background: #006f8c; }
+
+  .empty-text {
+    grid-column: span 2;
+    text-align: center;
+    color: var(--grey-text);
+    font-size: 14px;
+    padding: 40px 0;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1A1A1A;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+
+  .toast.visivel {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 32px 20px; }
+    .vagas-grid { grid-template-columns: 1fr; }
+    .back-btn { left: 20px; top: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+  <button type="button" class="back-btn" aria-label="Voltar" onclick="window.history.back()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"/>
+      <polyline points="12 19 5 12 12 5"/>
+    </svg>
+  </button>
+
+  <div class="header-block">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+    </svg>
+    <span class="logo-label">Vagas PUC-Rio</span>
+    <h1 class="title">Vagas Salvas</h1>
+  </div>
+
+  <div class="vagas-grid" id="vagasGrid">
+    {% for vaga in vagas %}
+      <div class="vaga-card" id="card-{{ vaga.id }}">
+
+        <!-- Botão remover -->
+        <button
+          type="button"
+          class="btn-remover"
+          data-vaga-id="{{ vaga.id }}"
+          aria-label="Remover vaga salva"
+          title="Remover dos salvos"
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+
+        <span class="vaga-tipo">{{ vaga.tipo_vaga }}</span>
+        <div class="vaga-titulo">{{ vaga.titulo }}</div>
+
+        <div class="vaga-meta-linha">
+          <span>Status: <span class="status disponivel">Disponível</span></span>
+          <a href="{% url 'vagas' %}?q={{ vaga.titulo }}" class="btn-visualizar">Visualizar →</a>
+        </div>
+
+      </div>
+    {% empty %}
+      <p class="empty-text" id="emptyMsg">Você ainda não salvou nenhuma vaga. Que tal explorar algumas?</p>
+    {% endfor %}
+  </div>
+
+  <a href="{% url 'vagas' %}" class="btn-explore">Ir para Vagas</a>
+
+</div>
+
+<script>
+  const toast = document.getElementById('toast');
+  let toastTimer;
+
+  function mostrarToast(msg) {
+    clearTimeout(toastTimer);
+    toast.textContent = msg;
+    toast.classList.add('visivel');
+    toastTimer = setTimeout(() => toast.classList.remove('visivel'), 2200);
+  }
+
+  function getCookie(name) {
+    let val = null;
+    document.cookie.split(';').forEach(c => {
+      c = c.trim();
+      if (c.startsWith(name + '=')) val = decodeURIComponent(c.substring(name.length + 1));
+    });
+    return val;
+  }
+
+  function verificarVazio() {
+    const cards = document.querySelectorAll('.vaga-card');
+    const grid = document.getElementById('vagasGrid');
+    if (cards.length === 0) {
+      const p = document.createElement('p');
+      p.className = 'empty-text';
+      p.id = 'emptyMsg';
+      p.textContent = 'Você ainda não salvou nenhuma vaga. Que tal explorar algumas?';
+      grid.appendChild(p);
+    }
+  }
+
+  document.querySelectorAll('.btn-remover').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const vagaId = btn.dataset.vagaId;
+      const card = document.getElementById('card-' + vagaId);
+
+      fetch(`/vagas/salvar/${vagaId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': getCookie('csrftoken'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => res.json())
+      .then(data => {
+        // O toggle já vai remover (ela estava salva)
+        card.classList.add('removendo');
+        setTimeout(() => {
+          card.remove();
+          verificarVazio();
+        }, 300);
+        mostrarToast('Vaga removida das salvas');
+      })
+      .catch(() => mostrarToast('Erro ao remover. Tente novamente.'));
+    });
+  });
+</script>
+
+</body>
+</html>

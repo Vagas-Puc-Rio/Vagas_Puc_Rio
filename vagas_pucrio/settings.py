@@ -136,3 +136,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "usuarios/static",
 ]
+# URL base para acessar os arquivos de mídia pelo navegador
+MEDIA_URL = '/media/'
+
+# Caminho físico no seu computador onde o Django vai criar a pasta e salvar os arquivos
+MEDIA_ROOT = BASE_DIR / 'media'
