@@ -134,24 +134,41 @@ def perfil_aluno(request):
         telefone = request.POST.get('telefone', '')
         curso = request.POST.get('curso', '')
         sobre = request.POST.get('sobre', '')
+        interesse = request.POST.get('interesse', '') # Captura o tipo de vaga (Estágio/IC)
         curriculo = request.FILES.get('curriculo')
 
-        # RESOLUÇÃO DO BUG: Se periodo_raw for um número válido, transforma em int. Se for vazio, vira None.
-        periodo_raw = request.POST.get('periodo')
-        periodo = int(periodo_raw) if periodo_raw and periodo_raw.isdigit() else None
+        # 1. Recupera o período bruto enviado pelo formulário
+        periodo_raw = request.POST.get('periodo', '')
 
-        # Salvando ou atualizando no banco de dados
+        # 2. Busca se o aluno já tem um registro salvo no banco
+        aluno_existente = Aluno.objects.filter(dados_usuario=usuario).first()
+
+        # 3. BLINDAGEM CONTRA NULL: Decide o período sem deixar brecha para None
+        if periodo_raw and str(periodo_raw).isdigit():
+            periodo_final = int(periodo_raw)
+        else:
+            # Se veio vazio, tenta manter o que já estava no banco. Se não tiver nada, assume 1.
+            periodo_final = aluno_existente.periodo if aluno_existente else 1
+
+        # 4. Monta o dicionário de atualização garantindo que o período é um número válido
+        model_defaults = {
+            'cpf': cpf,
+            'matricula': matricula,
+            'telefone': telefone,
+            'curso': curso,
+            'sobre_voce': sobre,
+            'periodo': periodo_final, # Proteção total aplicada aqui
+            'tipo_interesse': interesse,
+        }
+
+        # Atualiza o arquivo de currículo apenas se um novo foi enviado
+        if curriculo:
+            model_defaults['curriculo_pdf'] = curriculo
+
+        # Salva com segurança no SQLite
         aluno, created = Aluno.objects.update_or_create(
             dados_usuario=usuario,
-            defaults={
-                'cpf': cpf,
-                'matricula': matricula,
-                'telefone': telefone,
-                'curso': curso,
-                'periodo': periodo, # Agora vai aceitar None sem quebrar!
-                'sobre_voce': sobre,
-                'curriculo_pdf': curriculo if curriculo else None
-            }
+            defaults=model_defaults
         )
 
         # Atualizando ManyToMany das Linguagens
@@ -166,17 +183,16 @@ def perfil_aluno(request):
             areas_db = AreaAtuacao.objects.filter(nome__in=lista_areas)
             aluno.areas_atuacao.set(areas_db)
 
-        # Mantém o espelho da sessão para a próxima tela
+        # Atualiza os dados da sessão para a tela de sucesso
         request.session['perfil_aluno'] = {
             'nome': usuario.nome if usuario else 'Aluno',
             'email': usuario.email if usuario else '',
             'telefone': telefone,
             'matricula': matricula,
             'curso': curso,
-            'periodo': periodo,
-            'interesse': request.POST.getlist('interesse'),
+            'periodo': periodo_final,
+            'interesse': interesse,
             'linguagens': lista_linguagens,
-            'tecnologias': request.POST.getlist('tecnologias'),
             'areas': lista_areas,
             'sobre': sobre,
         }
