@@ -88,48 +88,33 @@ class Instituicao(models.Model):
 
 class Vaga(models.Model):
     titulo = models.CharField(max_length=200)
-    local = models.CharField(max_length=200)
-    carga_horaria = models.CharField(max_length=100, blank=True)
+    local = models.CharField(max_length=200, blank=True, null=True)
+    carga_horaria = models.CharField(max_length=100, blank=True, null=True)
     tipo_vaga = models.CharField(max_length=100)
     modalidade = models.CharField(max_length=100, blank=True)
     salario = models.CharField(max_length=100, blank=True)
     data_publicacao = models.DateField(null=True, blank=True)
     prazo_candidatura = models.DateField(null=True, blank=True)
-    descricao = models.TextField(blank=True)
-    cursos = models.CharField(max_length=200, blank=True)
+    descricao = models.TextField(blank=True, null=True)
+    cursos = models.CharField(max_length=200, blank=True, null=True)
     cr = models.CharField(max_length=20, blank=True)
-    periodo_minimo = models.CharField(max_length=50, blank=True)
-    periodo_maximo = models.CharField(max_length=50, blank=True)
-    arquivo_vaga = models.FileField(upload_to='vagas/', null=True, blank=True)
+    periodo_minimo = models.IntegerField(blank=True, null=True)
+    periodo_maximo = models.IntegerField(blank=True, null=True)
+    arquivo_vaga = models.FileField(upload_to='vagas/', blank=True, null=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.titulo
-    # Campos simples de texto e arquivo que a View está tentando salvar
-    titulo = models.CharField(max_length=255)
-    local = models.CharField(max_length=255, blank=True, null=True)
-    carga_horaria = models.CharField(max_length=100, blank=True, null=True)
-    tipo_vaga = models.CharField(max_length=50) # Estágio ou Iniciação Científica
-    descricao = models.TextField(blank=True, null=True)
-    curso = models.CharField(max_length=255, blank=True, null=True)
-    periodo_minimo = models.CharField(max_length=50, blank=True, null=True)
-    anexo = models.FileField(upload_to='vagas/anexos/', blank=True, null=True)
-
-    # Relacionamentos Muitos-para-Muitos das etapas 4, 5 e 6
     linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
     tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
     areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
 
     def __str__(self):
-        return self.titulo # Retorna os primeiros 50 caracteres da descrição para facilitar a visualização
-    
-    def match_de_vagas(self,aluno):
-        #Ai aqui verifica o perido da vaga e o periodo do aluno, mais pra frente teremos q implementar os outros requisitos
-        if aluno.periodo >= self.periodo_min:
-            return True
-        else:
-            return False
+        return self.titulo
 
+    def match_de_vagas(self, aluno):
+        if self.periodo_minimo is None:
+            return True
+        return aluno.periodo >= self.periodo_minimo
+    
 ##class Bolsa(models.Model):
     ##vagas = models.OneToOneField(Vaga, on_delete = models.CASCADE)
 
