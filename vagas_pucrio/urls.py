@@ -47,7 +47,7 @@ urlpatterns = [
 
     path('primeiros-passos-professor/',views.primeiros_passos_professor, name='primeiros_passos_professor'),
 
-    path('cadastro-vaga/', views.cadastro_vagas, name='cadastro_vagas'),
+    path('cadastro-vagas/', views.cadastro_vagas, name='cadastro_vagas'),
 
     path('vagas/', views.lista_vagas, name='vagas'),
 
