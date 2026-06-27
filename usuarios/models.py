@@ -36,12 +36,14 @@ class TecnologiaFramework(models.Model):
 
 class Aluno(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    matricula = models.CharField(max_length=20, unique=True)
-    curso = models.CharField(max_length=100)
-    cpf = models.CharField(max_length=14, unique=True)
+    matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    curso = models.CharField(max_length=100, blank=True)
+    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
     data_nascimento = models.DateField(null=True, blank=True)
-    genero = models.CharField(max_length=30)
-    periodo = models.IntegerField()
+    genero = models.CharField(max_length=30, blank=True)
+    periodo = models.IntegerField(null=True, blank=True)
+    telefone = models.CharField(max_length=20, blank=True, null=True)
+    sobre = models.TextField(blank=True, null=True)
     curriculo = models.FileField(upload_to='alunos/curriculos/', blank=True, null=True)
     vagas_salvas = models.ManyToManyField("Vaga", blank=True, related_name='alunos_favoritaram')
     
@@ -156,4 +158,3 @@ class Caracteristicas(models.Model):
 
     def __str__(self):
         return self.titulo
-
