@@ -10,6 +10,9 @@ admin.site.register(Instituicao)
 admin.site.register(Vaga)
 
 admin.site.register(Caracteristicas)
+admin.site.register(LinguagemProgramacao)
+admin.site.register(AreaAtuacao)
+admin.site.register(TecnologiaFramework)
 ##admin.site.register(Bolsa)
 ##admin.site.register(Estagio)
 

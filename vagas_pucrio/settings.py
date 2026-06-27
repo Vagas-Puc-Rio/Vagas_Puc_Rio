@@ -81,9 +81,11 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        'OPTIONS': {
+            'timeout': 30,  # Diz ao Django para esperar até 30 segundos pelo IO da rede antes de dar "locked"
+        },
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -134,3 +136,8 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "usuarios/static",
 ]
+# URL base para acessar os arquivos de mídia pelo navegador
+MEDIA_URL = '/media/'
+
+# Caminho físico no seu computador onde o Django vai criar a pasta e salvar os arquivos
+MEDIA_ROOT = BASE_DIR / 'media'

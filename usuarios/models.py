@@ -8,18 +8,60 @@ class Usuario(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class LinguagemProgramacao(models.Model):
+    nome = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.nome
+
+class AreaAtuacao(models.Model):
+    # Definimos as grandes categorias que aparecem no Figma
+    CATEGORIAS_CHOICES = [
+        ('Informatica', 'Informática'),
+        ('Exatas', 'Exatas'),
+        ('Engenharia', 'Engenharia'),
+    ]
+    
+    nome = models.CharField(max_length=100, unique=True)
+    # Adiciona a etiqueta da categoria com um valor padrão para não quebrar dados antigos
+    categoria = models.CharField(max_length=50, choices=CATEGORIAS_CHOICES, default='Informatica')
+
+    def __str__(self):
+        return f"[{self.categoria}] {self.nome}"
+    
+class TecnologiaFramework(models.Model):
+    nome = models.CharField(max_length=50, unique=True)
+    def __str__(self): return self.nome
 
 class Aluno(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
-    matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    curso = models.CharField(max_length=100, null=True, blank=True)
-    cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
+    matricula = models.CharField(max_length=20, unique=True)
+    curso = models.CharField(max_length=100)
+    cpf = models.CharField(max_length=14, unique=True)
     data_nascimento = models.DateField(null=True, blank=True)
-    genero = models.CharField(max_length=30, null=True, blank=True)
-    periodo = models.IntegerField(null=True, blank=True)
+    genero = models.CharField(max_length=30)
+    periodo = models.IntegerField()
+    curriculo = models.FileField(upload_to='alunos/curriculos/', blank=True, null=True)
+    vagas_salvas = models.ManyToManyField("Vaga", blank=True, related_name='alunos_favoritaram')
+    
+    TIPOS_INTERESSE = [
+        ('estagio', 'Estágio'),
+        ('ic', 'Iniciação Científica (IC)'),
+        ('ambos', 'Ambos'),
+    ]
+    tipo_interesse = models.CharField(max_length=20, choices=TIPOS_INTERESSE, null=True)
+
+    # 2. MÚLTIPLA ESCOLHA: As Tags (ManyToManyField)
+    # O blank=True permite que o aluno deixe vazio caso não saiba nenhuma ainda
+    linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
+    areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
+    tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
 
     def __str__(self):
         return self.dados_usuario.nome
+    
+
     
 class Professor(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
@@ -63,6 +105,23 @@ class Vaga(models.Model):
 
     def __str__(self):
         return self.titulo
+    # Campos simples de texto e arquivo que a View está tentando salvar
+    titulo = models.CharField(max_length=255)
+    local = models.CharField(max_length=255, blank=True, null=True)
+    carga_horaria = models.CharField(max_length=100, blank=True, null=True)
+    tipo_vaga = models.CharField(max_length=50) # Estágio ou Iniciação Científica
+    descricao = models.TextField(blank=True, null=True)
+    curso = models.CharField(max_length=255, blank=True, null=True)
+    periodo_minimo = models.CharField(max_length=50, blank=True, null=True)
+    anexo = models.FileField(upload_to='vagas/anexos/', blank=True, null=True)
+
+    # Relacionamentos Muitos-para-Muitos das etapas 4, 5 e 6
+    linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
+    tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
+    areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
+
+    def __str__(self):
+        return self.titulo # Retorna os primeiros 50 caracteres da descrição para facilitar a visualização
     
     def match_de_vagas(self,aluno):
         #Ai aqui verifica o perido da vaga e o periodo do aluno, mais pra frente teremos q implementar os outros requisitos

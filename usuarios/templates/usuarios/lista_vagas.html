@@ -10,9 +10,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -70,14 +68,21 @@
             border: 1px solid #D8D4CC;
             border-radius: 28px;
             min-height: 680px;
-            padding: 26px 36px 110px;
+            padding: 0 0 110px;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* FAIXA DE TOPO */
+        .topo-conteudo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 22px 16px 14px;
             position: relative;
         }
 
         .hamburguer {
-            position: absolute;
-            top: 47px;
-            left: 26px;
             width: 34px;
             height: 34px;
             cursor: pointer;
@@ -91,11 +96,10 @@
             padding: 7px;
             transition: .2s;
             z-index: 30;
+            flex-shrink: 0;
         }
 
-        .hamburguer:hover {
-            background: #F0F0F0;
-        }
+        .hamburguer:hover { background: #F0F0F0; }
 
         .hamburguer span {
             display: block;
@@ -107,8 +111,8 @@
 
         .menu-lateral {
             position: absolute;
-            left: 25px;
-            top: 88px;
+            left: 0;
+            top: 42px;
             background: white;
             border: 1px solid #C8C4BC;
             border-radius: 8px;
@@ -120,9 +124,7 @@
             box-shadow: 0 8px 18px rgba(0,0,0,.08);
         }
 
-        .menu-lateral.aberto {
-            display: block;
-        }
+        .menu-lateral.aberto { display: block; }
 
         .menu-lateral a {
             display: block;
@@ -131,18 +133,14 @@
             color: #1A1A1A;
         }
 
-        .menu-lateral a:hover {
-            background: #F7F5F2;
-        }
+        .menu-lateral a:hover { background: #F7F5F2; }
 
         .acoes-direita {
-            position: absolute;
-            top: 25px;
-            right: 38px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 18px;
+            gap: 14px;
+            position: relative;
         }
 
         .botao-icone {
@@ -159,13 +157,11 @@
             transition: .2s;
         }
 
-        .botao-icone:hover .sino {
-            color: #1A1A1A;
-        }
+        .botao-icone:hover .sino { color: #1A1A1A; }
 
         .notificacao-box {
             position: absolute;
-            top: 52px;
+            top: 34px;
             right: 0;
             width: 235px;
             background: white;
@@ -180,13 +176,11 @@
             text-align: center;
         }
 
-        .notificacao-box.aberto {
-            display: block;
-        }
+        .notificacao-box.aberto { display: block; }
 
         .foto {
-            width: 68px;
-            height: 68px;
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             background: #EDEAE4;
             border: 1px solid #D8D4CC;
@@ -203,9 +197,11 @@
             background: #E5E2DC;
         }
 
+        /* CONTEÚDO INTERNO */
+        .conteudo-interno { padding: 0 26px; }
+
         .banner-busca {
-            width: 76%;
-            margin: 0 auto 22px;
+            margin: 0 0 22px;
             background: #008BA8;
             border-radius: 13px;
             padding: 22px 22px 15px;
@@ -260,9 +256,7 @@
             gap: 28px;
         }
 
-        .filtros {
-            padding-top: 8px;
-        }
+        .filtros { padding-top: 8px; }
 
         .titulo-filtro {
             display: flex;
@@ -273,9 +267,7 @@
             margin-bottom: 18px;
         }
 
-        .grupo-filtro {
-            margin-bottom: 16px;
-        }
+        .grupo-filtro { margin-bottom: 16px; }
 
         .grupo-filtro h3 {
             font-size: 10px;
@@ -325,14 +317,9 @@
             position: relative;
         }
 
-        .total-vagas {
-            font-size: 16px;
-            font-weight: 800;
-        }
+        .total-vagas { font-size: 16px; font-weight: 800; }
 
-        .ordenar {
-            position: relative;
-        }
+        .ordenar { position: relative; }
 
         .ordenar-botao {
             border: none;
@@ -344,9 +331,7 @@
             font-family: Inter, sans-serif;
         }
 
-        .ordenar-botao strong {
-            color: #1A1A1A;
-        }
+        .ordenar-botao strong { color: #1A1A1A; }
 
         .ordenar-menu {
             position: absolute;
@@ -362,9 +347,7 @@
             overflow: hidden;
         }
 
-        .ordenar-menu.aberto {
-            display: block;
-        }
+        .ordenar-menu.aberto { display: block; }
 
         .ordenar-menu button {
             width: 100%;
@@ -377,10 +360,9 @@
             font-family: Inter, sans-serif;
         }
 
-        .ordenar-menu button:hover {
-            background: #F7F5F2;
-        }
+        .ordenar-menu button:hover { background: #F7F5F2; }
 
+        /* CARDS */
         .lista-vagas {
             display: flex;
             flex-direction: column;
@@ -469,14 +451,75 @@
             white-space: nowrap;
         }
 
-        .salvar-icon {
+        /* BOTÃO FAVORITAR */
+        .btn-favoritar {
             position: absolute;
             right: 28px;
             top: 18px;
-            width: 14px;
-            color: #888780;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.1s;
         }
 
+        .btn-favoritar:hover { background: rgba(0,0,0,0.05); }
+        .btn-favoritar:active { transform: scale(0.92); }
+
+        .salvar-icon {
+            width: 16px;
+            height: 16px;
+            transition: color 0.2s, fill 0.2s;
+        }
+
+        /* Estado padrão: não salvo */
+        .btn-favoritar .salvar-icon {
+            color: #888780;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+        /* Hover quando não salvo */
+        .btn-favoritar:hover .salvar-icon {
+            color: #008BA8;
+        }
+
+        /* Estado salvo: preenchida em azul */
+        .btn-favoritar.salvo .salvar-icon {
+            fill: #008BA8;
+            color: #008BA8;
+        }
+
+        /* Toast de feedback */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1A1A1A;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s, transform 0.25s;
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        .toast.visivel {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ESTADO VAZIO */
         .estado-vazio {
             background: #F0F0F0;
             border-radius: 36px;
@@ -509,46 +552,25 @@
             width: 88px;
         }
 
-        svg {
-            flex-shrink: 0;
-        }
+        svg { flex-shrink: 0; }
 
         @media(max-width: 900px) {
-            .pagina {
-                padding: 25px;
-            }
-
-            .conteudo {
-                padding: 24px 18px 100px;
-            }
-
-            .banner-busca {
-                width: 100%;
-            }
-
-            .area-principal {
-                grid-template-columns: 1fr;
-            }
-
-            .filtros {
-                display: none;
-            }
-
-            .acoes-direita {
-                display: none;
-            }
-
-            .vaga-card {
-                grid-template-columns: 1fr;
-            }
+            .pagina { padding: 25px; }
+            .conteudo-interno { padding: 0 18px; }
+            .area-principal { grid-template-columns: 1fr; }
+            .filtros { display: none; }
+            .acoes-direita { display: none; }
+            .vaga-card { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 
 <body>
 
-<div class="pagina">
+<!-- Toast global -->
+<div class="toast" id="toast"></div>
 
+<div class="pagina">
     <main class="caixa">
 
         <a href="javascript:history.back()" class="btn-voltar">←</a>
@@ -560,187 +582,160 @@
 
         <section class="conteudo">
 
-            <button class="hamburguer" id="hamburguer" type="button" aria-label="Abrir menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-
-            <nav class="menu-lateral" id="menuLateral">
-                <a href="{% url 'perfil_alunopronta' %}">Perfil</a>
-                <a href="#">Vagas Salvas</a>
-                <a href="#">Publicar Vaga</a>
-                <a href="#">Candidaturas</a>
-                <a href="#">Ajuda/FAQ</a>
-                <a href="{% url 'configuracoes' %}">Configurações</a>
-                <a href="{% url 'home' %}">Sair</a>
-            </nav>
-
-            <div class="acoes-direita">
-                <button class="botao-icone" type="button" id="botaoNotificacao" aria-label="Notificações">
-                    <svg class="sino" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/>
-                    </svg>
-                </button>
-
-                <div class="notificacao-box" id="notificacaoBox">
-                    Você não possui notificações no momento.
+            <!-- FAIXA DE TOPO -->
+            <div class="topo-conteudo">
+                <div style="position: relative;">
+                    <button class="hamburguer" id="hamburguer" type="button" aria-label="Abrir menu">
+                        <span></span><span></span><span></span>
+                    </button>
+                    <nav class="menu-lateral" id="menuLateral">
+                        <a href="{% url 'perfil_alunopronta' %}">Perfil</a>
+                        <a href="{% url 'vagas_salvas' %}">Vagas Salvas</a>
+                        <a href="#">Publicar Vaga</a>
+                        <a href="#">Candidaturas</a>
+                        <a href="#">Ajuda/FAQ</a>
+                        <a href="{% url 'configuracoes' %}">Configurações</a>
+                        <a href="{% url 'home' %}">Sair</a>
+                    </nav>
                 </div>
 
-                <a class="foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
-                        <circle cx="12" cy="13" r="4"/>
-                    </svg>
-                </a>
+                <div class="acoes-direita">
+                    <button class="botao-icone" type="button" id="botaoNotificacao" aria-label="Notificações">
+                        <svg class="sino" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/>
+                        </svg>
+                    </button>
+                    <div class="notificacao-box" id="notificacaoBox">
+                        Você não possui notificações no momento.
+                    </div>
+                    <a class="foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+                            <circle cx="12" cy="13" r="4"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
 
-            <section class="banner-busca">
-                <h1>Encontre a sua próxima oportunidade</h1>
-                <p>Explore vagas de estágio, trainee e projetos de pesquisa</p>
+            <!-- BANNER + GRID -->
+            <div class="conteudo-interno">
 
-                <form class="barra-busca" method="GET">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="11" cy="11" r="8"/>
-                        <path d="m21 21-4.3-4.3"/>
-                    </svg>
-
-                    <input type="text" name="q" placeholder="Cargo, empresa ou palavra-chave...">
-                    <button type="submit">Buscar</button>
-                </form>
-            </section>
-
-            <section class="area-principal">
-
-                <aside class="filtros">
-
-                    <div class="titulo-filtro">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 5h18l-7 8v5l-4 2v-7z"/>
+                <section class="banner-busca">
+                    <h1>Encontre a sua próxima oportunidade</h1>
+                    <p>Explore vagas de estágio, trainee e projetos de pesquisa</p>
+                    <form class="barra-busca" method="GET">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
                         </svg>
-                        Filtros
-                    </div>
-
-                    <div class="grupo-filtro">
-                        <h3>Tipo de vaga</h3>
-                        <button class="opcao-filtro" type="button">Estágio</button>
-                        <button class="opcao-filtro" type="button">Trainee</button>
-                        <button class="opcao-filtro" type="button">Inic. Cient.</button>
-                    </div>
-
-                    <div class="grupo-filtro">
-                        <h3>Modalidade</h3>
-                        <button class="opcao-filtro" type="button">Remoto</button>
-                        <button class="opcao-filtro" type="button">Híbrido</button>
-                        <button class="opcao-filtro" type="button">Presencial</button>
-                    </div>
-
-                    <button class="limpar" id="limparFiltros" type="button">Limpar filtros</button>
-
-                </aside>
-
-                <section>
-
-                    <div class="topo-lista">
-                        <div class="total-vagas">
-                            {% if vagas %}
-                                {{ vagas|length }} vagas encontradas
-                            {% else %}
-                                0 vagas encontradas
-                            {% endif %}
-                        </div>
-
-                        <div class="ordenar">
-                            <button class="ordenar-botao" id="botaoOrdenar" type="button">
-                                Ordenar por: <strong id="textoOrdenacao">Mais recentes ↓</strong>
-                            </button>
-
-                            <div class="ordenar-menu" id="ordenarMenu">
-                                <button type="button" data-ordem="Mais recentes ↓">Mais recentes</button>
-                                <button type="button" data-ordem="Mais antigas ↑">Mais antigas</button>
-                                <button type="button" data-ordem="A-Z">A-Z</button>
-                                <button type="button" data-ordem="Z-A">Z-A</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="lista-vagas">
-
-                        {% if vagas %}
-
-                            {% for vaga in vagas %}
-                                <article class="vaga-card">
-
-                                    <svg class="salvar-icon" xmlns="http://www.w3.org/2000/svg" fill="#888780" viewBox="0 0 24 24">
-                                        <path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/>
-                                    </svg>
-
-                                    <div>
-                                        <span class="vaga-tag">{{ vaga.tipo }}</span>
-                                        <span class="vaga-tempo">Há pouco tempo</span>
-
-                                        <h2>{{ vaga.titulo }}</h2>
-
-                                        <div class="empresa">{{ vaga.empresa }}</div>
-
-                                        <div class="meta">
-                                            <span>{{ vaga.area }}</span>
-                                            <span>{{ vaga.local }}</span>
-                                            <span>{{ vaga.bolsa }}</span>
-                                        </div>
-
-                                        <p class="descricao">
-                                            {{ vaga.descricao }}
-                                        </p>
-
-                                        <div class="mini-tags">
-                                            {% for tag in vaga.tags.all %}
-                                                <span>{{ tag.nome }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-
-                                    <button class="ver-detalhes">
-                                        Ver detalhes ›
-                                    </button>
-
-                                </article>
-                            {% endfor %}
-
-                        {% else %}
-
-                            <div class="estado-vazio">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 7h16"/>
-                                    <path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>
-                                    <rect x="3" y="7" width="18" height="13" rx="2"/>
-                                    <path d="M9 13h6"/>
-                                </svg>
-
-                                <h2>Nenhuma vaga cadastrada ainda</h2>
-
-                                <p>
-                                    Assim que novas vagas forem publicadas, elas aparecerão aqui no formato de cards.
-                                </p>
-                            </div>
-
-                        {% endif %}
-
-                    </div>
-
+                        <input type="text" name="q" placeholder="Cargo, empresa ou palavra-chave...">
+                        <button type="submit">Buscar</button>
+                    </form>
                 </section>
 
-            </section>
+                <section class="area-principal">
+
+                    <aside class="filtros">
+                        <div class="titulo-filtro">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 5h18l-7 8v5l-4 2v-7z"/>
+                            </svg>
+                            Filtros
+                        </div>
+                        <div class="grupo-filtro">
+                            <h3>Tipo de vaga</h3>
+                            <button class="opcao-filtro" type="button">Estágio</button>
+                            <button class="opcao-filtro" type="button">Trainee</button>
+                            <button class="opcao-filtro" type="button">Inic. Cient.</button>
+                        </div>
+                        <div class="grupo-filtro">
+                            <h3>Modalidade</h3>
+                            <button class="opcao-filtro" type="button">Remoto</button>
+                            <button class="opcao-filtro" type="button">Híbrido</button>
+                            <button class="opcao-filtro" type="button">Presencial</button>
+                        </div>
+                        <button class="limpar" id="limparFiltros" type="button">Limpar filtros</button>
+                    </aside>
+
+                    <section>
+                        <div class="topo-lista">
+                            <div class="total-vagas">
+                                {% if vagas %}{{ vagas|length }} vagas encontradas{% else %}0 vagas encontradas{% endif %}
+                            </div>
+                            <div class="ordenar">
+                                <button class="ordenar-botao" id="botaoOrdenar" type="button">
+                                    Ordenar por: <strong id="textoOrdenacao">Mais recentes ↓</strong>
+                                </button>
+                                <div class="ordenar-menu" id="ordenarMenu">
+                                    <button type="button" data-ordem="Mais recentes ↓">Mais recentes</button>
+                                    <button type="button" data-ordem="Mais antigas ↑">Mais antigas</button>
+                                    <button type="button" data-ordem="A-Z">A-Z</button>
+                                    <button type="button" data-ordem="Z-A">Z-A</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lista-vagas">
+                            {% if vagas %}
+                                {% for vaga in vagas %}
+                                    <article class="vaga-card">
+
+                                        <button
+                                            type="button"
+                                            class="btn-favoritar {% if vaga in vagas_salvas_ids %}salvo{% endif %}"
+                                            data-vaga-id="{{ vaga.id }}"
+                                            aria-label="Salvar vaga"
+                                        >
+                                            <svg class="salvar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                                            </svg>
+                                        </button>
+
+                                        <div>
+                                            <span class="vaga-tag">{{ vaga.tipo_vaga }}</span>
+                                            <span class="vaga-tempo">Há pouco tempo</span>
+                                            <h2>{{ vaga.titulo }}</h2>
+                                            <div class="empresa">PUC-Rio</div>
+                                            <div class="meta">
+                                                <span>{{ vaga.local }}</span>
+                                                <span>{{ vaga.carga_horaria }}</span>
+                                            </div>
+                                            <p class="descricao">{{ vaga.descricao }}</p>
+                                            <div class="mini-tags">
+                                                {% for lang in vaga.linguagens.all %}<span>{{ lang.nome }}</span>{% endfor %}
+                                                {% for tech in vaga.tecnologias.all %}<span>{{ tech.nome }}</span>{% endfor %}
+                                            </div>
+                                        </div>
+
+                                        <button class="ver-detalhes">Ver detalhes ›</button>
+
+                                    </article>
+                                {% endfor %}
+                            {% else %}
+                                <div class="estado-vazio">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 7h16"/>
+                                        <path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/>
+                                        <rect x="3" y="7" width="18" height="13" rx="2"/>
+                                        <path d="M9 13h6"/>
+                                    </svg>
+                                    <h2>Nenhuma vaga cadastrada ainda</h2>
+                                    <p>Assim que novas vagas forem publicadas, elas aparecerão aqui no formato de cards.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                </section>
+            </div>
 
             <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
 
         </section>
-
     </main>
-
 </div>
 
 <script>
+    // ── Menus ──────────────────────────────────────────────
     const hamburguer = document.getElementById('hamburguer');
     const menuLateral = document.getElementById('menuLateral');
     const botaoNotificacao = document.getElementById('botaoNotificacao');
@@ -751,51 +746,64 @@
     const limparFiltros = document.getElementById('limparFiltros');
     const filtros = document.querySelectorAll('.opcao-filtro');
 
-    hamburguer.addEventListener('click', function(event) {
-        event.stopPropagation();
-        menuLateral.classList.toggle('aberto');
-        notificacaoBox.classList.remove('aberto');
-        ordenarMenu.classList.remove('aberto');
-    });
+    hamburguer.addEventListener('click', e => { e.stopPropagation(); menuLateral.classList.toggle('aberto'); notificacaoBox.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
+    botaoNotificacao.addEventListener('click', e => { e.stopPropagation(); notificacaoBox.classList.toggle('aberto'); menuLateral.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
+    botaoOrdenar.addEventListener('click', e => { e.stopPropagation(); ordenarMenu.classList.toggle('aberto'); menuLateral.classList.remove('aberto'); notificacaoBox.classList.remove('aberto'); });
+    ordenarMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { textoOrdenacao.textContent = b.dataset.ordem; ordenarMenu.classList.remove('aberto'); }));
+    filtros.forEach(f => f.addEventListener('click', () => f.classList.toggle('ativo')));
+    limparFiltros.addEventListener('click', () => filtros.forEach(f => f.classList.remove('ativo')));
+    document.addEventListener('click', () => { menuLateral.classList.remove('aberto'); notificacaoBox.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
 
-    botaoNotificacao.addEventListener('click', function(event) {
-        event.stopPropagation();
-        notificacaoBox.classList.toggle('aberto');
-        menuLateral.classList.remove('aberto');
-        ordenarMenu.classList.remove('aberto');
-    });
+    // ── Toast ──────────────────────────────────────────────
+    const toast = document.getElementById('toast');
+    let toastTimer;
 
-    botaoOrdenar.addEventListener('click', function(event) {
-        event.stopPropagation();
-        ordenarMenu.classList.toggle('aberto');
-        menuLateral.classList.remove('aberto');
-        notificacaoBox.classList.remove('aberto');
-    });
+    function mostrarToast(msg) {
+        clearTimeout(toastTimer);
+        toast.textContent = msg;
+        toast.classList.add('visivel');
+        toastTimer = setTimeout(() => toast.classList.remove('visivel'), 2200);
+    }
 
-    ordenarMenu.querySelectorAll('button').forEach(function(botao) {
-        botao.addEventListener('click', function() {
-            textoOrdenacao.textContent = botao.dataset.ordem;
-            ordenarMenu.classList.remove('aberto');
+    // ── Favoritar ──────────────────────────────────────────
+    document.querySelectorAll('.btn-favoritar').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const vagaId = btn.dataset.vagaId;
+
+            fetch(`/vagas/salvar/${vagaId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.salvo) {
+                    btn.classList.add('salvo');
+                    mostrarToast('Vaga salva! ✓');
+                } else {
+                    btn.classList.remove('salvo');
+                    mostrarToast('Vaga removida das salvas');
+                }
+            })
+            .catch(() => mostrarToast('Erro ao salvar. Tente novamente.'));
         });
     });
 
-    filtros.forEach(function(filtro) {
-        filtro.addEventListener('click', function() {
-            filtro.classList.toggle('ativo');
-        });
-    });
-
-    limparFiltros.addEventListener('click', function() {
-        filtros.forEach(function(filtro) {
-            filtro.classList.remove('ativo');
-        });
-    });
-
-    document.addEventListener('click', function() {
-        menuLateral.classList.remove('aberto');
-        notificacaoBox.classList.remove('aberto');
-        ordenarMenu.classList.remove('aberto');
-    });
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(function(cookie) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            });
+        }
+        return cookieValue;
+    }
 </script>
 
 </body>
