@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # Faz o Django imprimir os e-mails no terminal em vez de tentar enviar de verdade
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
