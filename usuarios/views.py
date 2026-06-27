@@ -4,22 +4,17 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User  # necessário para o token
+from django.contrib.auth.models import User
 from django.conf import settings
-from .models import Vaga
-
-from usuarios.models import Usuario
 from django.db.models import Q
 
-from usuarios.models import Usuario, Vaga # Ferramenta nativa para criptografar
+from .models import Usuario, Aluno, Professor, Vaga
 from .forms import CadastroInicialForm
 
 
 def pagina_inicial(request):
     return render(request, 'usuarios/home.html')
 
-
-from .models import Usuario, Aluno, Professor  # adiciona os dois no import
 
 def cadastro_inicial(request, tipo):
     if request.method == 'POST':
@@ -50,6 +45,8 @@ def cadastro_inicial(request, tipo):
                 from_email='noreplyvagaspucrio@gmail.com',
                 recipient_list=[usuario.email],
                 fail_silently=False,
+                # Se você configurou no settings.py para printar no console, 
+                # o e-mail aparecerá direto no terminal do seu VS Code!
             )
 
             return render(request, 'usuarios/email_enviado.html', {'email': usuario.email})
@@ -58,6 +55,7 @@ def cadastro_inicial(request, tipo):
         form = CadastroInicialForm()
 
     return render(request, 'usuarios/cadastro_inicial.html', {'form': form, 'tipo': tipo})
+
 
 def confirmar_email(request, uid, token):
     try:
@@ -87,16 +85,13 @@ def confirmar_email(request, uid, token):
 
 
 def login_geral(request, tipo='aluno'):
-
     if request.method == 'POST':
-
         email = request.POST.get('email')
         senha_digitada = request.POST.get('senha')
 
         usuario = Usuario.objects.filter(email=email).first()
 
         if usuario and check_password(senha_digitada, usuario.senha):
-
             # Bloqueia login se ainda não confirmou o e-mail
             if not usuario.ativo:
                 return render(request, 'usuarios/Login.html', {
@@ -148,18 +143,19 @@ def perfil_alunopronta(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/perfil_alunopronta.html', {'perfil': perfil})
 
+
 def lista_vagas(request):
     q = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
 
-    vagas = Vaga.objects.select_related(
-        'instituicao', 'professor', 'professor__dados_usuario'
-    ).all()
+    # CORREÇÃO: Removida a otimização select_related dos campos que não existem mais
+    vagas = Vaga.objects.all()
 
     if q:
+        # CORREÇÃO: Removido o filtro por "instituicao__nome_instituicao" que também geraria erro
         vagas = vagas.filter(
             Q(descricao__icontains=q) |
-            Q(instituicao__nome_instituicao__icontains=q) |
+            Q(titulo__icontains=q) |
             Q(tipo_vaga__icontains=q)
         )
     if tipo:
@@ -176,6 +172,7 @@ def lista_vagas(request):
 
 def primeiros_passos_professor(request):
     return render(request, 'usuarios/Pagina_PrincipalProf.html')
+
 
 def cadastro_vagas(request):
     if request.method == 'POST':
@@ -200,9 +197,11 @@ def cadastro_vagas(request):
 
     return render(request, 'usuarios/cadastro_vagas.html')
 
+
 def configuracoes(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/configuracoes.html', {'perfil': perfil})
+
 
 def vagas_cadastradas(request):
     vagas = Vaga.objects.all().order_by('-criado_em')
