@@ -108,6 +108,17 @@ def login_geral(request, tipo='aluno'):
                 })
 
             request.session['usuario_id'] = usuario.id
+
+            if tipo == 'professor':
+                return redirect('primeiros_passos_professor')
+
+            # Aluno: se já tem perfil preenchido, vai direto pra vagas.
+            # Se não, vai pra primeiros-passos pra completar o cadastro.
+            aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+            perfil_completo = bool(aluno and aluno.curso and aluno.matricula)
+
+            if perfil_completo:
+                return redirect('vagas')
             return redirect('primeiros_passos')
 
         else:
@@ -227,6 +238,33 @@ def lista_vagas(request):
         'vagas_salvas_ids': vagas_salvas_ids,
     }
     return render(request, 'usuarios/lista_vagas.html', contexto)
+
+
+def vaga_detalhe(request, vaga_id):
+    vaga = Vaga.objects.filter(id=vaga_id).first()
+    if not vaga:
+        return redirect('vagas')
+
+    dias_publicada = None
+    if vaga.data_publicacao:
+        dias_publicada = (date.today() - vaga.data_publicacao).days
+
+    usuario_id = request.session.get('usuario_id')
+    ja_salva = False
+    if usuario_id:
+        usuario = Usuario.objects.filter(id=usuario_id).first()
+        aluno = Aluno.objects.filter(dados_usuario=usuario).first()
+        if aluno:
+            ja_salva = aluno.vagas_salvas.filter(id=vaga_id).exists()
+
+    contexto = {
+        'vaga': vaga,
+        'dias_publicada': dias_publicada,
+        'ja_salva': ja_salva,
+        'beneficios': vaga.caracteristicas_set.all(),
+        'tags': list(vaga.linguagens.all()) + list(vaga.tecnologias.all()) + list(vaga.areas_atuacao.all()),
+    }
+    return render(request, 'usuarios/vaga_detalhe.html', contexto)
 
 
 @require_POST

@@ -1,0 +1,616 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ vaga.titulo }} - Vagas PUC-Rio</title>
+
+  <style>
+    :root {
+      --azul-puc: #0086A9;
+      --cinza-fundo-tela: #f7f5f2;
+      --borda-cor: #D8D4CC;
+      --texto-cor: #1A1A1A;
+      --cinza-texto-suave: #888780;
+      --branco: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+
+    body {
+      background: var(--cinza-fundo-tela);
+      color: var(--texto-cor);
+      padding: 30px 24px;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      background: var(--branco);
+      border: 1px solid var(--borda-cor);
+      border-radius: 20px;
+      padding: 32px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .btn-voltar-topo {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--cinza-texto-suave);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--borda-cor);
+      background: var(--branco);
+      border-radius: 8px;
+      padding: 9px 16px;
+      transition: 0.2s;
+    }
+
+    .btn-voltar-topo:hover {
+      color: var(--texto-cor);
+      border-color: var(--placeholder-cor, #B0ACA5);
+    }
+
+    .topbar-icones {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topbar-sino {
+      width: 24px;
+      height: 24px;
+      color: var(--cinza-texto-suave);
+    }
+
+    .topbar-foto {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: 0.2s;
+    }
+
+    .topbar-foto:hover {
+      background: #E5E2DC;
+    }
+
+    .layout {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+    }
+
+    .main-col {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .side-col {
+      width: 320px;
+      flex-shrink: 0;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .badges {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .badge-tipo {
+      background: #cfe9f2;
+      color: #0086A9;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .badge-dias {
+      font-size: 12px;
+      color: var(--cinza-texto-suave);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .empresa-nome {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 10px;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--cinza-texto-suave);
+      margin-bottom: 20px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .actions-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .btn-candidatar {
+      background: var(--azul-puc);
+      color: var(--branco);
+      border: none;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      border: 1px solid var(--borda-cor);
+      background: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-btn.salva svg {
+      fill: var(--azul-puc);
+      stroke: var(--azul-puc);
+    }
+
+    .btn-compartilhar {
+      border: 1px solid var(--borda-cor);
+      background: var(--branco);
+      border-radius: 8px;
+      padding: 0 18px;
+      height: 42px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 24px;
+      border-bottom: 1px solid var(--borda-cor);
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding-bottom: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--cinza-texto-suave);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+
+    .tab.active {
+      color: var(--azul-puc);
+      border-bottom-color: var(--azul-puc);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .content-grid {
+      display: flex;
+      gap: 24px;
+    }
+
+    .content-main {
+      flex: 1;
+    }
+
+    .info-box {
+      width: 260px;
+      flex-shrink: 0;
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      border-radius: 10px;
+      padding: 16px;
+    }
+
+    .info-box-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--cinza-texto-suave);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 12px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--cinza-texto-suave);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    p.descricao {
+      font-size: 13px;
+      line-height: 1.7;
+      color: #333;
+      white-space: pre-line;
+    }
+
+    .req-list {
+      list-style: none;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .req-list li {
+      margin-bottom: 6px;
+    }
+
+    .req-list strong {
+      color: var(--cinza-texto-suave);
+      font-weight: 600;
+      margin-right: 6px;
+    }
+
+    .beneficio-item {
+      border: 1px solid var(--borda-cor);
+      border-radius: 8px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .beneficio-item .titulo {
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      background: #ececea;
+      color: #444;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+    }
+
+    .empresa-card {
+      background: var(--branco);
+      border: 1px solid var(--borda-cor);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .empresa-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      flex-shrink: 0;
+    }
+
+    .empresa-card .nome {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .empresa-card .setor {
+      font-size: 11px;
+      color: var(--cinza-texto-suave);
+    }
+
+    .localizacao-card,
+    .duvidas-card {
+      background: var(--branco);
+      border: 1px solid var(--borda-cor);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .localizacao-card .mapa {
+      height: 110px;
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    .localizacao-card .endereco {
+      font-size: 12px;
+      color: #444;
+    }
+
+    .duvidas-card a {
+      color: var(--azul-puc);
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        flex-direction: column;
+      }
+      .side-col {
+        width: 100%;
+      }
+      .content-grid {
+        flex-direction: column;
+      }
+      .info-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="topbar">
+      <a href="{% url 'vagas' %}" class="btn-voltar-topo">← Voltar para vagas</a>
+
+      <div class="topbar-icones">
+        <svg class="topbar-sino" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/>
+        </svg>
+        <a class="topbar-foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <div class="main-col">
+        <div class="badges">
+          <span class="badge-tipo">{{ vaga.tipo_vaga }}</span>
+          {% if dias_publicada is not None %}
+            <span class="badge-dias">Há {{ dias_publicada }} dia{{ dias_publicada|pluralize }}</span>
+          {% endif %}
+        </div>
+
+        <h1>{{ vaga.titulo }}</h1>
+        {% if vaga.professor_responsavel %}
+          <p class="empresa-nome">Prof. {{ vaga.professor_responsavel.dados_usuario.nome }}{% if vaga.professor_responsavel.departamento %} · {{ vaga.professor_responsavel.departamento }}{% endif %}</p>
+        {% else %}
+          <p class="empresa-nome">Empresa não cadastrada</p>
+        {% endif %}
+
+        <div class="meta-row">
+          {% if vaga.areas_atuacao.all %}
+            <span class="meta-item">{{ vaga.areas_atuacao.all|join:", " }}</span>
+          {% endif %}
+          {% if vaga.local %}<span class="meta-item">📍 {{ vaga.local }}</span>{% endif %}
+          {% if vaga.salario %}<span class="meta-item">💰 {{ vaga.salario }}</span>{% endif %}
+        </div>
+
+        <div class="actions-row">
+          <button class="btn-candidatar">Candidatar-se</button>
+
+          <button class="icon-btn {% if ja_salva %}salva{% endif %}" id="btnSalvar" data-vaga-id="{{ vaga.id }}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+          </button>
+
+          <button class="btn-compartilhar">Compartilhar vaga</button>
+        </div>
+
+        <div class="tabs">
+          <button class="tab active" onclick="trocarAba('sobre')">Sobre a vaga</button>
+          <button class="tab" onclick="trocarAba('requisitos')">Requisitos</button>
+          <button class="tab" onclick="trocarAba('beneficios')">Benefícios</button>
+        </div>
+
+        <div class="content-grid">
+          <div class="content-main">
+
+            <div class="tab-content active" id="tab-sobre">
+              <h3>Sobre a vaga</h3>
+              <p class="descricao">{{ vaga.descricao|default:"Sem descrição cadastrada." }}</p>
+
+              <h3 style="margin-top: 20px;">Tags</h3>
+              {% if tags %}
+                <div class="tags">
+                  {% for tag in tags %}
+                    <span class="tag">{{ tag }}</span>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="descricao">Nenhuma tag cadastrada para esta vaga.</p>
+              {% endif %}
+            </div>
+
+            <div class="tab-content" id="tab-requisitos">
+              <h3>Requisitos</h3>
+              <ul class="req-list">
+                {% if vaga.cursos %}<li><strong>Cursos:</strong>{{ vaga.cursos }}</li>{% endif %}
+                {% if vaga.cr %}<li><strong>CR mínimo:</strong>{{ vaga.cr }}</li>{% endif %}
+                {% if vaga.periodo_minimo %}<li><strong>Período mínimo:</strong>{{ vaga.periodo_minimo }}º</li>{% endif %}
+                {% if vaga.periodo_maximo %}<li><strong>Período máximo:</strong>{{ vaga.periodo_maximo }}º</li>{% endif %}
+              </ul>
+              {% if not vaga.cursos and not vaga.cr and not vaga.periodo_minimo and not vaga.periodo_maximo %}
+                <p class="descricao">Nenhum requisito específico cadastrado.</p>
+              {% endif %}
+            </div>
+
+            <div class="tab-content" id="tab-beneficios">
+              <h3>Benefícios</h3>
+              {% for beneficio in beneficios %}
+                <div class="beneficio-item">
+                  <div class="titulo">{{ beneficio.titulo }}</div>
+                  <div>{{ beneficio.auxilios }}</div>
+                  {% if beneficio.valor %}<div>R$ {{ beneficio.valor }}</div>{% endif %}
+                </div>
+              {% empty %}
+                <p class="descricao">Nenhum benefício cadastrado.</p>
+              {% endfor %}
+            </div>
+
+          </div>
+
+          <div class="info-box">
+            <div class="info-box-title">Informações principais</div>
+            <div class="info-grid">
+              <div>
+                <div class="info-label">Modelo</div>
+                <div class="info-value">{{ vaga.modalidade|default:"—" }}</div>
+              </div>
+              <div>
+                <div class="info-label">Carga horária</div>
+                <div class="info-value">{{ vaga.carga_horaria|default:"—" }}</div>
+              </div>
+              <div>
+                <div class="info-label">Prazo</div>
+                <div class="info-value">{{ vaga.prazo_candidatura|date:"d/m/Y"|default:"—" }}</div>
+              </div>
+              <div>
+                <div class="info-label">Bolsa</div>
+                <div class="info-value">{{ vaga.salario|default:"—" }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-col">
+        {% if vaga.professor_responsavel %}
+          <div class="empresa-card">
+            <div class="empresa-logo"></div>
+            <div>
+              <div class="nome">Prof. {{ vaga.professor_responsavel.dados_usuario.nome }}</div>
+              <div class="setor">{{ vaga.professor_responsavel.departamento|default:"Departamento não informado" }}</div>
+            </div>
+          </div>
+        {% else %}
+          <div class="empresa-card">
+            <div class="empresa-logo"></div>
+            <div>
+              <div class="nome">Empresa não cadastrada</div>
+              <div class="setor">Cadastro de empresas em breve</div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="localizacao-card">
+          <h3>Localização</h3>
+          <div class="mapa"></div>
+          <div class="endereco">{{ vaga.local|default:"Local não informado" }}</div>
+        </div>
+
+        <div class="duvidas-card">
+          <h3>Dúvidas sobre a vaga?</h3>
+          <p class="descricao" style="margin: 6px 0;">Fale com a coordenação pelo e-mail institucional.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function trocarAba(nome) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      document.querySelector(`.tab[onclick="trocarAba('${nome}')"]`).classList.add('active');
+      document.getElementById('tab-' + nome).classList.add('active');
+    }
+
+    document.getElementById('btnSalvar').addEventListener('click', function () {
+      const vagaId = this.dataset.vagaId;
+      fetch(`/vagas/salvar/${vagaId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': document.cookie.split('csrftoken=')[1]?.split(';')[0] || ''
+        }
+      })
+        .then(res => res.json())
+        .then(data => {
+          this.classList.toggle('salva', data.salvo);
+        })
+        .catch(() => alert('Faça login para salvar vagas.'));
+    });
+  </script>
+
+</body>
+</html>

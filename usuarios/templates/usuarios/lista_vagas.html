@@ -681,7 +681,7 @@
 
                                         <button
                                             type="button"
-                                            class="btn-favoritar {% if vaga in vagas_salvas_ids %}salvo{% endif %}"
+                                            class="btn-favoritar {% if vaga.id in vagas_salvas_ids %}salvo{% endif %}"
                                             data-vaga-id="{{ vaga.id }}"
                                             aria-label="Salvar vaga"
                                         >
@@ -706,7 +706,7 @@
                                             </div>
                                         </div>
 
-                                        <button class="ver-detalhes">Ver detalhes ›</button>
+                                        <a href="{% url 'vaga_detalhe' vaga.id %}" class="ver-detalhes" style="text-decoration: none; display: inline-block;">Ver detalhes ›</a>
 
                                     </article>
                                 {% endfor %}

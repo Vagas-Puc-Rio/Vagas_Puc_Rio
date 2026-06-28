@@ -9,6 +9,13 @@ class Usuario(models.Model):
     def __str__(self):
         return self.nome
     
+
+class Curso(models.Model):
+    nome = models.CharField(max_length=150, unique=True)
+
+    def __str__(self):
+        return self.nome
+    
 class LinguagemProgramacao(models.Model):
     nome = models.CharField(max_length=50, unique=True)
 
@@ -37,7 +44,10 @@ class TecnologiaFramework(models.Model):
 class Aluno(models.Model):
     dados_usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE)
     matricula = models.CharField(max_length=20, unique=True, null=True, blank=True)
-    curso = models.CharField(max_length=100, blank=True)
+    
+    # MODIFICADO: Agora aponta para o model Curso
+    curso = models.ForeignKey(Curso, on_delete=models.SET_NULL, null=True, blank=True, related_name='alunos')
+    
     cpf = models.CharField(max_length=14, unique=True, null=True, blank=True)
     data_nascimento = models.DateField(null=True, blank=True)
     genero = models.CharField(max_length=30, blank=True)
@@ -54,8 +64,6 @@ class Aluno(models.Model):
     ]
     tipo_interesse = models.CharField(max_length=20, choices=TIPOS_INTERESSE, null=True)
 
-    # 2. MÚLTIPLA ESCOLHA: As Tags (ManyToManyField)
-    # O blank=True permite que o aluno deixe vazio caso não saiba nenhuma ainda
     linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
     areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
     tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
@@ -96,18 +104,29 @@ class Vaga(models.Model):
     modalidade = models.CharField(max_length=100, blank=True)
     salario = models.CharField(max_length=100, blank=True)
     data_publicacao = models.DateField(null=True, blank=True)
-    prazo_candidatura = models.DateField(null=True, blank=True)
+    prares_candidatura = models.DateField(null=True, blank=True)
     descricao = models.TextField(blank=True, null=True)
-    cursos = models.CharField(max_length=200, blank=True, null=True)
+    
+    # MODIFICADO: Uma vaga pode aceitar múltiplos cursos (ex: Sistemas de Inf. E Ciência da Comp.)
+    cursos = models.ManyToManyField(Curso, blank=True, related_name='vagas')
+    
     cr = models.CharField(max_length=20, blank=True)
     periodo_minimo = models.IntegerField(blank=True, null=True)
     periodo_maximo = models.IntegerField(blank=True, null=True)
     arquivo_vaga = models.FileField(upload_to='vagas/', blank=True, null=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
+    professor_responsavel = models.ForeignKey(
+        Professor, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='vagas_publicadas'
+    )
+
     linguagens = models.ManyToManyField(LinguagemProgramacao, blank=True)
     tecnologias = models.ManyToManyField(TecnologiaFramework, blank=True)
     areas_atuacao = models.ManyToManyField(AreaAtuacao, blank=True)
+
+    def __str__(self):
+        return self.titulo
 
     def __str__(self):
         return self.titulo
