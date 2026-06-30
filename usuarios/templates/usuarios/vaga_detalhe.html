@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ vaga.titulo }} - Vagas PUC-Rio</title>
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
     :root {
       --azul-puc: #0086A9;
@@ -62,7 +65,7 @@
 
     .btn-voltar-topo:hover {
       color: var(--texto-cor);
-      border-color: var(--placeholder-cor, #B0ACA5);
+      border-color: #B0ACA5;
     }
 
     .topbar-icones {
@@ -108,13 +111,6 @@
     .side-col {
       width: 320px;
       flex-shrink: 0;
-    }
-
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
     }
 
     .badges {
@@ -386,12 +382,14 @@
       margin-bottom: 20px;
     }
 
+    /* CORRIGIDO: Adicionado id="mapa" e z-index para garantir a exibição fluida do mapa Leaflet */
     .localizacao-card .mapa {
-      height: 110px;
+      height: 160px;
       background: var(--cinza-fundo-tela);
       border: 1px solid var(--borda-cor);
       border-radius: 8px;
       margin: 10px 0;
+      z-index: 1;
     }
 
     .localizacao-card .endereco {
@@ -406,18 +404,10 @@
     }
 
     @media (max-width: 900px) {
-      .layout {
-        flex-direction: column;
-      }
-      .side-col {
-        width: 100%;
-      }
-      .content-grid {
-        flex-direction: column;
-      }
-      .info-box {
-        width: 100%;
-      }
+      .layout { flex-direction: column; }
+      .side-col { width: 100%; }
+      .content-grid { flex-direction: column; }
+      .info-box { width: 100%; }
     }
   </style>
 </head>
@@ -575,7 +565,7 @@
 
         <div class="localizacao-card">
           <h3>Localização</h3>
-          <div class="mapa"></div>
+          <div id="mapa" class="mapa"></div>
           <div class="endereco">{{ vaga.local|default:"Local não informado" }}</div>
         </div>
 
@@ -592,7 +582,8 @@
     function trocarAba(nome) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      document.querySelector(`.tab[onclick="trocarAba('${nome}')"]`).classList.add('active');
+      // CORRIGIDO: Seleção refinada para evitar falhas de clique nas abas
+      document.querySelector(`.tab[onclick*="${nome}"]`).classList.add('active');
       document.getElementById('tab-' + nome).classList.add('active');
     }
 
@@ -610,6 +601,39 @@
         })
         .catch(() => alert('Faça login para salvar vagas.'));
     });
+
+    // ── Script de Renderização do Mapa Inteligente ──
+    var map = L.map('mapa', { zoomControl: false }).setView([-22.9068, -43.1729], 12);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    let enderecoVaga = "{{ vaga.local|escapejs }}".trim(); 
+
+    if (enderecoVaga && enderecoVaga !== "None" && enderecoVaga.toLowerCase() !== "remoto") {
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoVaga)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    let lat = data[0].lat;
+                    let lon = data[0].lon;
+                    
+                    map.setView([lat, lon], 15);
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(`<strong>${enderecoVaga}</strong><br>Local da Vaga`)
+                        .openPopup();
+                } else {
+                    map.setView([-22.9791, -43.2332], 15);
+                    L.marker([-22.9791, -43.2332]).addTo(map).bindPopup("Endereço padrão (PUC-Rio)").openPopup();
+                }
+            })
+            .catch(() => {
+                map.setView([-22.9791, -43.2332], 15);
+            });
+    } else {
+        map.setView([-22.9791, -43.2332], 15);
+    }
   </script>
 
 </body>

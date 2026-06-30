@@ -19,7 +19,6 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
@@ -109,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br' # Ajustado para português das validações nativas
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo' # Ajustado para o horário oficial do Brasil
 
 USE_I18N = True
 
@@ -122,22 +121,30 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-# Faz o Django imprimir os e-mails no terminal em vez de tentar enviar de verdade
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')        # vem do .env
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') # vem do .env
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / "usuarios/static",
 ]
+
 # URL base para acessar os arquivos de mídia pelo navegador
 MEDIA_URL = '/media/'
 
 # Caminho físico no seu computador onde o Django vai criar a pasta e salvar os arquivos
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# ── CONFIGURAÇÃO DE ENVIO DE E-MAIL REAL (GMAIL SMTP) ────────────────
+
+# CORRIGIDO: Modificado de 'console.EmailBackend' para 'smtp.EmailBackend' para disparar de verdade
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Puxa os dados em segurança direto do seu arquivo .env
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')        
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD') 
+
+# Nome que aparecerá na caixa de entrada do aluno
+DEFAULT_FROM_EMAIL = f"Vagas PUC-Rio <{EMAIL_HOST_USER}>"

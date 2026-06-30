@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar perfil — Professor</title>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Inter, Arial, sans-serif; }
+
+    body { background: #f7f5f2; color: #1a1a1a; }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 45px 24px;
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 700px;
+      background: #fff;
+      border: 1px solid #d8d4cc;
+      border-radius: 10px;
+      padding: 22px 28px 30px;
+    }
+
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .back { text-decoration: none; color: #1a1a1a; font-size: 30px; line-height: 1; }
+
+    .logo-area { text-align: center; flex: 1; margin-right: 30px; }
+
+    .logo { width: 48px; height: 48px; object-fit: contain; margin-bottom: 4px; }
+
+    .brand { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; }
+
+    .title { text-align: center; margin: 18px 0 18px; }
+
+    .title h1 { font-size: 22px; margin-bottom: 4px; }
+
+    .title p { font-size: 14px; color: #888780; }
+
+    .separator { height: 1px; background: #e5e2dc; margin: 14px 0; }
+
+    .section-card {
+      background: #f7f5f2;
+      border: 1px solid #d8d4cc;
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 16px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      color: #888780;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: 14px; }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: #888780;
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d8d4cc;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      color: #1a1a1a;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      background: #1a1a1a;
+      color: white;
+      border-radius: 8px;
+      padding: 13px;
+      font-weight: 700;
+      margin-top: 26px;
+      cursor: pointer;
+    }
+
+    .hint {
+      text-align: center;
+      color: #b0aca5;
+      font-size: 10px;
+      margin-top: 12px;
+    }
+
+    .logo-puc {
+      position: fixed;
+      right: 45px;
+      bottom: 25px;
+      width: 95px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <main class="card">
+
+      <div class="top">
+        <a href="{% url 'primeiros_passos_professor' %}" class="back">←</a>
+        <div class="logo-area">
+          <img class="logo" src="{% static 'img/logo_vagas_pucrio1.png' %}" alt="Logo Vagas PUC-Rio">
+          <div class="brand">VAGAS PUC-RIO</div>
+        </div>
+      </div>
+
+      <div class="title">
+        <h1>Criar perfil — professor</h1>
+        <p>Preencha suas informações</p>
+      </div>
+
+      <div class="separator"></div>
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <div class="section-card">
+          <div class="section-title">Dados acadêmicos</div>
+
+          <div class="field">
+            <label for="codigo_identificacao">Código de Identificação</label>
+            <input type="text" name="codigo_identificacao" id="codigo_identificacao" placeholder="Ex: 2210123">
+          </div>
+
+          <div class="field">
+            <label for="departamento">Departamento</label>
+            <input type="text" name="departamento" id="departamento" placeholder="Ex: Informática">
+          </div>
+
+          <div class="field">
+            <label for="disciplinas">Disciplinas Lecionadas</label>
+            <input type="text" name="disciplinas" id="disciplinas" placeholder="Ex: Estruturas de Dados, Algoritmos">
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">Sobre você</div>
+
+          <div class="field">
+            <label for="sobre">Conte um pouco sobre sua trajetória e objetivos (opcional)</label>
+            <textarea name="sobre" id="sobre" placeholder="Conte aqui"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn">Salvar perfil</button>
+      </form>
+
+      <p class="hint">Você pode editar essas informações depois</p>
+
+    </main>
+
+    <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
+  </div>
+</body>
+</html>

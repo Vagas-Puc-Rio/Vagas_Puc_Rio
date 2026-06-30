@@ -1,19 +1,3 @@
-"""
-URL configuration for vagas_pucrio project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
 from django.urls import path
 from usuarios import views
@@ -42,7 +26,7 @@ urlpatterns = [
 
     path('primeiros-passos/', views.primeiros_passos,
          name='primeiros_passos'),
-         
+
     path('confirmar-email/<str:uid>/<str:token>/', views.confirmar_email, name='confirmar_email'),
 
     path('perfil-aluno/', views.perfil_aluno,
@@ -54,18 +38,22 @@ urlpatterns = [
     path('cadastro-vagas/', views.cadastro_vagas, name='cadastro_vagas'),
 
     path('vagas/', views.lista_vagas, name='vagas'),
+    path('vagas/recomendadas/', views.vagas_recomendadas, name='vagas_recomendadas'),
     path('vagas/salvar/<int:vaga_id>/', views.salvar_vaga, name='salvar_vaga'),
     path('vagas/<int:vaga_id>/', views.vaga_detalhe, name='vaga_detalhe'),
 
-    path('vagas_salvas/', views.vagas_salvas, name='vagas_salvas'), 
+    path('vagas_salvas/', views.vagas_salvas, name='vagas_salvas'),
     path('perfil/aluno/pronto/', views.perfil_alunopronta, name='perfil_alunopronta'),
+
+    path('perfil-professor/', views.perfil_professor, name='perfil_professor'),
+    path('perfil-professor/pronto/', views.perfil_professorpronto, name='perfil_professorpronto'),
 
     path('configuracoes/', views.configuracoes, name='configuracoes'),
 
     path('vagas-cadastradas/', views.vagas_cadastradas, name='vagas_cadastradas'),
+    path('vagas-cadastradas/editar/<int:vaga_id>/', views.editar_vaga, name='editar_vaga'),
 
 ]
 
-# 2. O BLOCO DE MÍDIA ENTRA AQUI (FORA E DEPOIS DA LISTA URLPATTERNS)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

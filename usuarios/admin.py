@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import *
 
+# Adicione o Curso bem aqui:
+admin.site.register(Curso)
 
 admin.site.register(Usuario)
 admin.site.register(Aluno)
@@ -15,5 +17,3 @@ admin.site.register(AreaAtuacao)
 admin.site.register(TecnologiaFramework)
 ##admin.site.register(Bolsa)
 ##admin.site.register(Estagio)
-
-

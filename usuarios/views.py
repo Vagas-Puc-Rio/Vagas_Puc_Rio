@@ -13,8 +13,9 @@ from django.views.decorators.http import require_POST
 from datetime import date
 
 from .models import (
-    Usuario, Aluno, Professor,
-    Vaga, LinguagemProgramacao, TecnologiaFramework, AreaAtuacao,
+    Usuario, Aluno, Professor, Funcionario, Instituicao,
+    Vaga, LinguagemProgramacao, TecnologiaFramework, AreaAtuacao, Curso,
+
 )
 from .forms import CadastroInicialForm
 
@@ -35,9 +36,7 @@ def cadastro_inicial(request, tipo):
             usuario.ativo = False
             usuario.save()
 
-            # Cria Aluno ou Professor dependendo do tipo
             if tipo == 'aluno':
-                # Defaults provisórios para não quebrar os campos NOT NULL do model
                 Aluno.objects.create(
                     dados_usuario=usuario,
                     data_nascimento=date(2000, 1, 1),
@@ -59,7 +58,7 @@ def cadastro_inicial(request, tipo):
                 from_email='noreplyvagaspucrio@gmail.com',
                 recipient_list=[usuario.email],
                 fail_silently=False,
-            )
+                )
 
             return render(request, 'usuarios/email_enviado.html', {'email': usuario.email})
 
@@ -112,8 +111,6 @@ def login_geral(request, tipo='aluno'):
             if tipo == 'professor':
                 return redirect('primeiros_passos_professor')
 
-            # Aluno: se já tem perfil preenchido, vai direto pra vagas.
-            # Se não, vai pra primeiros-passos pra completar o cadastro.
             aluno = Aluno.objects.filter(dados_usuario=usuario).first()
             perfil_completo = bool(aluno and aluno.curso and aluno.matricula)
 
@@ -140,23 +137,34 @@ def perfil_aluno(request):
     if request.method == 'POST':
         cpf = request.POST.get('cpf', '')
         matricula = request.POST.get('matricula', '')
-        telefone = request.POST.get('telefone', '')  # ainda não existe no model, ver nota abaixo
-        curso = request.POST.get('curso', '')
-        sobre = request.POST.get('sobre', '')  # idem
+        telefone = request.POST.get('telefone', '')  
+        curso_nome = request.POST.get('curso', '')
+        sobre = request.POST.get('sobre', '')  
         interesse = request.POST.get('interesse', '') or ', '.join(request.POST.getlist('tipo_vaga'))
         curriculo = request.FILES.get('curriculo')
 
         periodo_raw = request.POST.get('periodo')
         periodo = int(periodo_raw) if periodo_raw and periodo_raw.isdigit() else None
 
+        cr_raw = request.POST.get('cr')
+        cr = None
+        if cr_raw:
+            try:
+                cr = float(cr_raw.replace(',', '.'))
+            except ValueError:
+                cr = None
+
         defaults_dados = {
             'cpf': cpf,
             'matricula': matricula,
-            'curso': curso,
             'periodo': periodo,
             'telefone': telefone,
             'sobre': sobre,
+            'cr': cr,
         }
+        if curso_nome:
+            curso_obj, _ = Curso.objects.get_or_create(nome=curso_nome)
+            defaults_dados['curso'] = curso_obj
         if curriculo:
             defaults_dados['curriculo'] = curriculo
 
@@ -180,14 +188,14 @@ def perfil_aluno(request):
             tecnologias_db = TecnologiaFramework.objects.filter(nome__in=lista_tecnologias)
             aluno.tecnologias.set(tecnologias_db)
 
-        # Guardado na sessão pra tela de sucesso (inclui telefone/sobre que ainda não persistem no banco)
         request.session['perfil_aluno'] = {
             'nome': usuario.nome if usuario else 'Aluno',
             'email': usuario.email if usuario else '',
             'telefone': telefone,
             'matricula': matricula,
-            'curso': curso,
+            'curso': curso_nome,
             'periodo': periodo,
+            'cr': cr,
             'interesse': interesse,
             'linguagens': lista_linguagens,
             'tecnologias': lista_tecnologias,
@@ -208,6 +216,7 @@ def perfil_alunopronta(request):
 def lista_vagas(request):
     q = request.GET.get('q', '').strip()
     tipo = request.GET.get('tipo', '').strip()
+    modalidade = request.GET.get('modalidade', '').strip()
 
     vagas = Vaga.objects.all().order_by('-id')
 
@@ -215,12 +224,15 @@ def lista_vagas(request):
         vagas = vagas.filter(
             Q(titulo__icontains=q) |
             Q(descricao__icontains=q) |
-            Q(cursos__icontains=q) |
+            Q(cursos__nome__icontains=q) |
             Q(tipo_vaga__icontains=q)
-        )
+        ).distinct()
 
     if tipo:
         vagas = vagas.filter(tipo_vaga=tipo)
+        
+    if modalidade:
+        vagas = vagas.filter(modalidade=modalidade)
 
     usuario_id = request.session.get('usuario_id')
     vagas_salvas_ids = []
@@ -230,14 +242,15 @@ def lista_vagas(request):
         if aluno:
             vagas_salvas_ids = list(aluno.vagas_salvas.values_list('id', flat=True))
 
-    contexto = {
+    context = {
         'vagas': vagas,
         'total': vagas.count(),
         'q': q,
         'tipo_atual': tipo,
+        'modalidade_atual': modalidade,
         'vagas_salvas_ids': vagas_salvas_ids,
     }
-    return render(request, 'usuarios/lista_vagas.html', contexto)
+    return render(request, 'usuarios/lista_vagas.html', context)
 
 
 def vaga_detalhe(request, vaga_id):
@@ -257,14 +270,14 @@ def vaga_detalhe(request, vaga_id):
         if aluno:
             ja_salva = aluno.vagas_salvas.filter(id=vaga_id).exists()
 
-    contexto = {
+    context = {
         'vaga': vaga,
         'dias_publicada': dias_publicada,
         'ja_salva': ja_salva,
         'beneficios': vaga.caracteristicas_set.all(),
         'tags': list(vaga.linguagens.all()) + list(vaga.tecnologias.all()) + list(vaga.areas_atuacao.all()),
     }
-    return render(request, 'usuarios/vaga_detalhe.html', contexto)
+    return render(request, 'usuarios/vaga_detalhe.html', context)
 
 
 @require_POST
@@ -308,23 +321,39 @@ def primeiros_passos_professor(request):
 
 
 def cadastro_vagas(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    professor = Professor.objects.filter(dados_usuario=usuario).first() if usuario else None
+
     if request.method == 'POST':
+        local_nome = request.POST.get('local', '').strip()
+
         vaga = Vaga.objects.create(
             titulo=request.POST.get('titulo'),
-            local=request.POST.get('local', ''),
+            local=local_nome,
             carga_horaria=request.POST.get('carga_horaria', ''),
-            tipo_vaga=request.POST.get('tipo_vaga') or ', '.join(request.POST.getlist('tipo_vaga')),
+            tipo_vaga=request.POST.get('tipo_vaga'),
             modalidade=request.POST.get('modalidade', ''),
             salario=request.POST.get('salario', ''),
             data_publicacao=request.POST.get('data_publicacao') or None,
             prazo_candidatura=request.POST.get('prazo_candidatura') or None,
             descricao=request.POST.get('descricao', ''),
-            cursos=request.POST.get('curso', '') or request.POST.get('cursos', ''),
             cr=request.POST.get('cr', ''),
-            periodo_minimo=request.POST.get('periodo_minimo', ''),
-            periodo_maximo=request.POST.get('periodo_maximo', ''),
+            periodo_minimo=int(request.POST.get('periodo_minimo')) if request.POST.get('periodo_minimo') else None,
+            periodo_maximo=int(request.POST.get('periodo_maximo')) if request.POST.get('periodo_maximo') else None,
             arquivo_vaga=request.FILES.get('arquivo_vaga') or request.FILES.get('anexo'),
+            professor_responsavel=professor,
         )
+
+        nomes_cursos = request.POST.getlist('cursos') or request.POST.getlist('curso')
+        if not nomes_cursos:
+            curso_unico = request.POST.get('curso') or request.POST.get('cursos')
+            if curso_unico:
+                nomes_cursos = [curso_unico]
+        for nome_curso in nomes_cursos:
+            if nome_curso:
+                curso_obj, _ = Curso.objects.get_or_create(nome=nome_curso)
+                vaga.cursos.add(curso_obj)
 
         ids_linguagens = request.POST.getlist('linguagens')
         ids_tecnologias = request.POST.getlist('tecnologias')
@@ -355,11 +384,178 @@ def cadastro_vagas(request):
     })
 
 
-def vagas_cadastradas(request):
-    vagas = Vaga.objects.all().order_by('-criado_em')
-    return render(request, 'usuarios/vagas_cadastradas.html', {'vagas': vagas})
 
+def vagas_cadastradas(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    professor = Professor.objects.filter(dados_usuario=usuario).first() if usuario else None
+
+    vagas = Vaga.objects.filter(professor_responsavel=professor).order_by('-criado_em') if professor else Vaga.objects.none()
+
+    return render(request, 'usuarios/vagas_cadastradas.html', {'vagas': vagas})
 
 def configuracoes(request):
     perfil = request.session.get('perfil_aluno', {})
     return render(request, 'usuarios/configuracoes.html', {'perfil': perfil})
+
+
+def vagas_recomendadas(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+    aluno = Aluno.objects.filter(dados_usuario=usuario).first() if usuario else None
+
+    filtro = request.GET.get('filtro', 'compativeis')
+
+    vagas_qs = Vaga.objects.all()
+    if filtro == 'estagio':
+        vagas_qs = vagas_qs.filter(tipo_vaga__icontains='Estágio')
+    elif filtro == 'ic':
+        vagas_qs = vagas_qs.filter(tipo_vaga__icontains='Iniciação')
+    elif filtro == 'recentes':
+        vagas_qs = vagas_qs.order_by('-data_publicacao', '-criado_em')
+
+    competencias_aluno = []
+    if aluno:
+        competencias_aluno = (
+            list(aluno.linguagens.all())
+            + list(aluno.tecnologias.all())
+            + list(aluno.areas_atuacao.all())
+        )
+
+    vagas_processadas = []
+    if aluno:
+        for vaga in vagas_qs:
+            resultado = vaga.calcular_detalhes_match(aluno)
+            if not resultado['valido']:
+                continue
+
+            pct = resultado['porcentagem']
+            if pct >= 80:
+                nivel, nivel_classe, cor_anel = 'Muito Alta', 'muito-alta', '#0B3D91'
+            elif pct >= 60:
+                nivel, nivel_classe, cor_anel = 'Alta', 'alta', '#4C8C3A'
+            elif pct >= 40:
+                nivel, nivel_classe, cor_anel = 'Média', 'media', '#C77B17'
+            else:
+                nivel, nivel_classe, cor_anel = 'Baixa', 'baixa', '#C0392B'
+
+            tags_vaga = (
+                list(vaga.linguagens.all())
+                + list(vaga.tecnologias.all())
+                + list(vaga.areas_atuacao.all())
+            )
+
+            vagas_processadas.append({
+                'vaga': vaga,
+                'pct': pct,
+                'nivel': nivel,
+                'nivel_classe': nivel_classe,
+                'cor_anel': cor_anel,
+                'combinam': resultado['combinam'][:4],  
+                'faltam': resultado['faltam'][:2],      
+                'tags': tags_vaga[:4],
+            })
+
+    if filtro == 'compativeis':
+        vagas_processadas.sort(key=lambda item: item['pct'], reverse=True)
+
+    contexto = {
+        'vagas_processadas': vagas_processadas,
+        'filtro_atual': filtro,
+        'competencias_aluno': competencias_aluno,
+        'aluno': aluno,
+        'sem_perfil': aluno is None,
+    }
+    return render(request, 'usuarios/vagas_recomendadas.html', contexto)
+
+def perfil_professor(request):
+    usuario_id = request.session.get('usuario_id')
+    usuario = Usuario.objects.filter(id=usuario_id).first()
+
+    if request.method == 'POST':
+        codigo_identificacao = request.POST.get('codigo_identificacao', '')
+        departamento = request.POST.get('departamento', '')
+        disciplinas = request.POST.get('disciplinas', '') or ', '.join(request.POST.getlist('disciplinas'))
+        sobre = request.POST.get('sobre', '')
+
+        Professor.objects.update_or_create(
+            dados_usuario=usuario,
+            defaults={
+                'codigo_identificacao': codigo_identificacao,
+                'departamento': departamento,
+                'disciplina': disciplinas,
+                'sobre': sobre,
+            }
+        )
+
+        request.session['perfil_professor'] = {
+            'nome': usuario.nome if usuario else 'Professor',
+            'email': usuario.email if usuario else '',
+            'codigo_identificacao': codigo_identificacao,
+            'departamento': departamento,
+            'disciplina': disciplinas,
+            'sobre': sobre,
+        }
+
+        return redirect('perfil_professorpronto')
+
+    return render(request, 'usuarios/perfil_professor.html')
+
+
+def perfil_professorpronto(request):
+    perfil = request.session.get('perfil_professor', {})
+    return render(request, 'usuarios/perfil_professorpronto.html', {'perfil': perfil})
+def editar_vaga(request, vaga_id):
+    vaga = Vaga.objects.filter(id=vaga_id).first()
+    if not vaga:
+        return redirect('vagas_cadastradas')
+
+    if request.method == 'POST':
+        vaga.titulo = request.POST.get('titulo', vaga.titulo)
+        vaga.local = request.POST.get('local', vaga.local)
+        vaga.carga_horaria = request.POST.get('carga_horaria', vaga.carga_horaria)
+        vaga.tipo_vaga = request.POST.get('tipo_vaga', vaga.tipo_vaga)
+        vaga.modalidade = request.POST.get('modalidade', vaga.modalidade)
+        vaga.salario = request.POST.get('salario', vaga.salario)
+        vaga.data_publicacao = request.POST.get('data_publicacao') or vaga.data_publicacao
+        vaga.prazo_candidatura = request.POST.get('prazo_candidatura') or vaga.prazo_candidatura
+        vaga.descricao = request.POST.get('descricao', vaga.descricao)
+        vaga.cr = request.POST.get('cr', vaga.cr)
+
+        periodo_minimo = request.POST.get('periodo_minimo')
+        vaga.periodo_minimo = int(periodo_minimo) if periodo_minimo else None
+
+        periodo_maximo = request.POST.get('periodo_maximo')
+        vaga.periodo_maximo = int(periodo_maximo) if periodo_maximo else None
+
+        novo_arquivo = request.FILES.get('arquivo_vaga') or request.FILES.get('anexo')
+        if novo_arquivo:
+            vaga.arquivo_vaga = novo_arquivo
+
+        vaga.save()
+
+        ids_linguagens = request.POST.getlist('linguagens')
+        ids_tecnologias = request.POST.getlist('tecnologias')
+        ids_areas = request.POST.getlist('areas_atuacao') or request.POST.getlist('areas')
+
+        vaga.linguagens.set(ids_linguagens)
+        vaga.tecnologias.set(ids_tecnologias)
+        vaga.areas_atuacao.set(ids_areas)
+
+        return redirect('vagas_cadastradas')
+
+    linguagens = LinguagemProgramacao.objects.all().order_by('nome')
+    tecnologias = TecnologiaFramework.objects.all().order_by('nome')
+
+    areas_informatica = AreaAtuacao.objects.filter(categoria='Informatica').order_by('nome')
+    areas_exatas = AreaAtuacao.objects.filter(categoria='Exatas').order_by('nome')
+    areas_engenharia = AreaAtuacao.objects.filter(categoria='Engenharia').order_by('nome')
+
+    return render(request, 'usuarios/cadastro_vaga.html', {
+        'vaga': vaga,
+        'linguagens': linguagens,
+        'tecnologias': tecnologias,
+        'areas_informatica': areas_informatica,
+        'areas_exatas': areas_exatas,
+        'areas_engenharia': areas_engenharia,
+    })

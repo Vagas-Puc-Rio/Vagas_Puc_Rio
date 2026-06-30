@@ -1,0 +1,589 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vagas recomendadas - Vagas PUC-Rio</title>
+
+  <style>
+    :root {
+      --azul-puc: #0086A9;
+      --cinza-fundo-tela: #f7f5f2;
+      --borda-cor: #D8D4CC;
+      --texto-cor: #1A1A1A;
+      --cinza-texto-suave: #888780;
+      --branco: #ffffff;
+      --verde: #1E8E5A;
+      --laranja: #C77B17;
+      --vermelho: #C0392B;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+
+    body {
+      background: var(--cinza-fundo-tela);
+      color: var(--texto-cor);
+    }
+
+    .topbar {
+      background: var(--branco);
+      border-bottom: 1px solid var(--borda-cor);
+      padding: 14px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-voltar {
+      text-decoration: none;
+      color: var(--texto-cor);
+      font-size: 22px;
+    }
+
+    .topbar-logo {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: #555;
+    }
+
+    .topbar-icones {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .topbar-sino {
+      width: 22px;
+      height: 22px;
+      color: var(--cinza-texto-suave);
+    }
+
+    .topbar-foto {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    .header-page h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .header-page p {
+      font-size: 13px;
+      color: var(--cinza-texto-suave);
+      margin-bottom: 20px;
+    }
+
+    .filtros-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .filtro-pill {
+      text-decoration: none;
+      border: 1px solid var(--borda-cor);
+      background: var(--branco);
+      color: #555;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 999px;
+    }
+
+    .filtro-pill.ativo {
+      background: var(--azul-puc);
+      color: var(--branco);
+      border-color: var(--azul-puc);
+    }
+
+    .total-encontradas {
+      font-size: 12px;
+      color: var(--cinza-texto-suave);
+      margin-bottom: 18px;
+    }
+
+    .layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .lista-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-col {
+      width: 300px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--branco);
+      border: 1px solid var(--borda-cor);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .vaga-card {
+      display: grid;
+      grid-template-columns: 110px 1fr 230px;
+      gap: 20px;
+      align-items: center;
+      position: relative;
+    }
+
+    .anel-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .anel {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .anel-interno {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: var(--branco);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .anel-label {
+      font-size: 10px;
+      color: var(--cinza-texto-suave);
+      text-align: center;
+    }
+
+    .nivel-pill {
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 3px 10px;
+      margin-top: 4px;
+      text-align: center;
+    }
+
+    .nivel-pill.muito-alta { background: #DCEEE5; color: var(--verde); }
+    .nivel-pill.alta { background: #E4F2DC; color: #4C8C3A; }
+    .nivel-pill.media { background: #FBEAD2; color: var(--laranja); }
+    .nivel-pill.baixa { background: #F8DAD6; color: var(--vermelho); }
+
+    .vaga-badge-tipo {
+      display: inline-block;
+      background: #cfe9f2;
+      color: var(--azul-puc);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .vaga-badge-tipo.ic {
+      background: #e3d8f7;
+      color: #6E39B5;
+    }
+
+    .vaga-card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .vaga-empresa {
+      font-size: 12px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .vaga-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 11px;
+      color: var(--cinza-texto-suave);
+      margin-bottom: 8px;
+    }
+
+    .vaga-descricao {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .vaga-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .vaga-tags span {
+      background: #ececea;
+      color: #555;
+      border-radius: 999px;
+      padding: 3px 10px;
+      font-size: 10px;
+    }
+
+    .motivos-col {
+      font-size: 11px;
+    }
+
+    .motivos-titulo {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .motivo-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .motivo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .motivo-dot.combina { background: var(--verde); }
+    .motivo-dot.falta { background: #C8C4BC; }
+
+    .ver-detalhes-link {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--azul-puc);
+      text-decoration: none;
+      margin-top: 12px;
+    }
+
+    .btn-salvar-card {
+      position: absolute;
+      top: 0;
+      right: 0;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: var(--cinza-texto-suave);
+    }
+
+    /* SIDEBAR */
+    .side-col h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .side-col h4 {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 14px 0 8px;
+      color: #555;
+    }
+
+    .competencias-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .competencias-tags span {
+      background: var(--cinza-fundo-tela);
+      border: 1px solid var(--borda-cor);
+      color: #444;
+      border-radius: 999px;
+      padding: 4px 11px;
+      font-size: 11px;
+    }
+
+    .sobre-perfil-texto {
+      font-size: 12px;
+      color: var(--cinza-texto-suave);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .btn-perfil-completo,
+    .btn-sugestoes {
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      background: var(--azul-puc);
+      color: var(--branco);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 11px;
+      border-radius: 8px;
+    }
+
+    .faixa-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #444;
+      margin-bottom: 8px;
+    }
+
+    .faixa-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .estado-vazio {
+      background: var(--branco);
+      border: 1px solid var(--borda-cor);
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+      color: var(--cinza-texto-suave);
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .layout { flex-direction: column; }
+      .side-col { width: 100%; }
+      .vaga-card { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <a href="{% url 'vagas' %}" class="topbar-voltar">←</a>
+    <div class="topbar-logo">VAGAS PUC-RIO</div>
+    <div class="topbar-icones">
+      <svg class="topbar-sino" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5m6 0a3 3 0 0 1-6 0"/>
+      </svg>
+      <a class="topbar-foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="header-page">
+      <h1>Vagas recomendadas para você</h1>
+      <p>Encontramos vagas com base no seu perfil e nas suas competências</p>
+    </div>
+
+    <div class="filtros-row">
+      <a href="?filtro=compativeis" class="filtro-pill {% if filtro_atual == 'compativeis' or not filtro_atual %}ativo{% endif %}">Mais compatíveis</a>
+      <a href="?filtro=recentes" class="filtro-pill {% if filtro_atual == 'recentes' %}ativo{% endif %}">Mais recentes</a>
+      <a href="?filtro=estagio" class="filtro-pill {% if filtro_atual == 'estagio' %}ativo{% endif %}">Estágio</a>
+      <a href="?filtro=ic" class="filtro-pill {% if filtro_atual == 'ic' %}ativo{% endif %}">Iniciação Científica</a>
+    </div>
+
+    <div class="total-encontradas">{{ vagas_processadas|length }} vaga{{ vagas_processadas|length|pluralize }} encontrada{{ vagas_processadas|length|pluralize }}</div>
+
+    <div class="layout">
+      <div class="lista-col">
+        {% for item in vagas_processadas %}
+          <div class="card vaga-card">
+
+            <button class="btn-salvar-card" data-vaga-id="{{ item.vaga.id }}" aria-label="Salvar vaga">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M19 21 12 16 5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+              </svg>
+            </button>
+
+            <div class="anel-wrap">
+              <div class="anel" style="background: conic-gradient(
+                {% if item.nivel_classe == 'muito-alta' %}var(--verde){% elif item.nivel_classe == 'alta' %}#4C8C3A{% elif item.nivel_classe == 'media' %}var(--laranja){% else %}var(--vermelho){% endif %} {{ item.pct }}%,
+                #ECEAE4 0
+              );">
+                <div class="anel-interno">{{ item.pct }}%</div>
+              </div>
+              <div class="anel-label">Compatibilidade</div>
+              <div class="nivel-pill {{ item.nivel_classe }}">{{ item.nivel }}</div>
+            </div>
+
+            <div>
+              <span class="vaga-badge-tipo {% if 'Iniciação' in item.vaga.tipo_vaga or 'ic' in item.vaga.tipo_vaga|lower %}ic{% endif %}">{{ item.vaga.tipo_vaga }}</span>
+              <h2>{{ item.vaga.titulo }}</h2>
+              <div class="vaga-empresa">
+                {% if item.vaga.professor_responsavel %}
+                  Prof. {{ item.vaga.professor_responsavel.dados_usuario.nome }}
+                {% else %}
+                  Empresa Parceira
+                {% endif %}
+              </div>
+              <div class="vaga-meta">
+                {% if item.vaga.local %}<span>📍 {{ item.vaga.local }}</span>{% endif %}
+                {% if item.vaga.modalidade %}<span>🏠 {{ item.vaga.modalidade }}</span>{% endif %}
+                {% if item.vaga.salario %}<span>💰 {{ item.vaga.salario }}</span>{% endif %}
+              </div>
+              <p class="vaga-descricao">{{ item.vaga.descricao|truncatewords:18 }}</p>
+              <div class="vaga-tags">
+                {% for tag in item.vaga.linguagens.all %}<span>{{ tag.nome }}</span>{% endfor %}
+                {% for tag in item.vaga.tecnologias.all %}<span>{{ tag.nome }}</span>{% endfor %}
+                {% for tag in item.vaga.areas_atuacao.all %}<span>{{ tag.nome }}</span>{% endfor %}
+              </div>
+            </div>
+
+            <div class="motivos-col">
+              <div class="motivos-titulo">Por que esta vaga combina com você?</div>
+              
+              {% for item_tag in item.combinam %}
+                <div class="motivo-item">
+                  <span class="motivo-dot combina"></span>{{ item_tag.nome }}
+                </div>
+              {% endfor %}
+              
+              {% for item_tag in item.faltam %}
+                <div class="motivo-item">
+                  <span class="motivo-dot falta"></span>{{ item_tag.nome }}
+                </div>
+              {% endfor %}
+              
+              {% if not item.combinam and not item.faltam %}
+                <div class="motivo-item" style="color: var(--cinza-texto-suave);">Vaga sem requisitos específicos cadastrados.</div>
+              {% endif %}
+              <a href="{% url 'vaga_detalhe' item.vaga.id %}" class="ver-detalhes-link">Ver detalhes ›</a>
+            </div>
+
+          </div>
+        {% empty %}
+          <div class="estado-vazio">Nenhuma vaga encontrada para esse filtro.</div>
+        {% endfor %}
+      </div>
+
+      <div class="side-col">
+        <div class="card">
+          <h3>Seu perfil</h3>
+          <h4>Suas competências</h4>
+          <div class="competencias-tags">
+            {% for c in competencias_aluno %}
+              <span>{{ c.nome }}</span>
+            {% empty %}
+              <span>Nenhuma competência cadastrada</span>
+            {% endfor %}
+          </div>
+
+          <h4>Sobre o seu perfil</h4>
+          <p class="sobre-perfil-texto">Analisamos suas competências e experiências para encontrar as melhores oportunidades para você.</p>
+
+          <a href="{% url 'perfil_alunopronta' %}" class="btn-perfil-completo">Ver meu perfil completo</a>
+        </div>
+
+        <div class="card">
+          <h3>Entenda sua compatibilidade</h3>
+          <h4>Como calculamos?</h4>
+          <p class="sobre-perfil-texto" style="margin-bottom: 12px;">Comparamos suas competências com as exigidas na vaga. Quanto mais tags em comum, maior a compatibilidade.</p>
+
+          <div class="faixa-item"><span class="faixa-dot" style="background:var(--verde);"></span>80% ou mais: Compatibilidade muito alta</div>
+          <div class="faixa-item"><span class="faixa-dot" style="background:#4C8C3A;"></span>60% a 79%: Compatibilidade alta</div>
+          <div class="faixa-item"><span class="faixa-dot" style="background:var(--laranja);"></span>40% a 59%: Compatibilidade média</div>
+          <div class="faixa-item"><span class="faixa-dot" style="background:var(--vermelho);"></span>Abaixo de 40%: Compatibilidade baixa</div>
+        </div>
+
+        <div class="card">
+          <h3>Dicas para melhorar o seu match</h3>
+          <p class="sobre-perfil-texto">Adicione novas competências ao seu perfil para aumentar suas chances.</p>
+          <a href="{% url 'perfil_alunopronta' %}" class="btn-sugestoes">Editar minhas competências ›</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    document.querySelectorAll('.btn-salvar-card').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        const vagaId = this.dataset.vagaId;
+        const csrftoken = getCookie('csrftoken') || '';
+        
+        fetch(`/vagas/salvar/${vagaId}/`, {
+          method: 'POST',
+          headers: { 
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json'
+          },
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.salvo) {
+            this.style.color = "var(--azul-puc)";
+          } else {
+            this.style.color = "var(--cinza-texto-suave)";
+          }
+        })
+        .catch(() => alert('Erro ao salvar alteração.'));
+      });
+    });
+  </script>
+
+</body>
+</html>

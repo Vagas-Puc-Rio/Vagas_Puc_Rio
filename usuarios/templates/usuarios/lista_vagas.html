@@ -68,9 +68,11 @@
             border: 1px solid #D8D4CC;
             border-radius: 28px;
             min-height: 680px;
-            padding: 0 0 110px;
+            padding: 0 0 20px;
             position: relative;
             overflow: visible;
+            display: flex;
+            flex-direction: column;
         }
 
         /* FAIXA DE TOPO */
@@ -198,7 +200,10 @@
         }
 
         /* CONTEÚDO INTERNO */
-        .conteudo-interno { padding: 0 26px; }
+        .conteudo-interno { 
+            padding: 0 26px; 
+            flex: 1;
+        }
 
         .banner-busca {
             margin: 0 0 22px;
@@ -476,7 +481,6 @@
             transition: color 0.2s, fill 0.2s;
         }
 
-        /* Estado padrão: não salvo */
         .btn-favoritar .salvar-icon {
             color: #888780;
             fill: none;
@@ -484,12 +488,10 @@
             stroke-width: 2;
         }
 
-        /* Hover quando não salvo */
         .btn-favoritar:hover .salvar-icon {
             color: #008BA8;
         }
 
-        /* Estado salvo: preenchida em azul */
         .btn-favoritar.salvo .salvar-icon {
             fill: #008BA8;
             color: #008BA8;
@@ -545,11 +547,16 @@
             line-height: 1.5;
         }
 
+        .rodape-logo-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 16px 32px 0 0;
+            width: 100%;
+        }
+
         .logo-puc {
-            position: absolute;
-            right: 32px;
-            bottom: 26px;
             width: 88px;
+            height: auto;
         }
 
         svg { flex-shrink: 0; }
@@ -567,14 +574,16 @@
 
 <body>
 
-<!-- Toast global -->
 <div class="toast" id="toast"></div>
 
 <div class="pagina">
     <main class="caixa">
 
-        <a href="javascript:history.back()" class="btn-voltar">←</a>
-
+        {% if eh_professor %}
+            <a href="{% url 'primeiros_passos_professor' %}" class="btn-voltar">←</a>
+        {% else %}
+            <a href="{% url 'home' %}" class="btn-voltar">←</a>
+        {% endif %}
         <div class="topo-logo">
             <img src="{% static 'img/logo_vagas_pucrio1.png' %}" class="logo-vagas" alt="Logo Vagas PUC-Rio">
             <div class="nome-logo">VAGAS PUC-RIO</div>
@@ -589,7 +598,12 @@
                         <span></span><span></span><span></span>
                     </button>
                     <nav class="menu-lateral" id="menuLateral">
-                        <a href="{% url 'perfil_alunopronta' %}">Perfil</a>
+                        <a href="{% url 'vagas_recomendadas' %}">Recomendadas pra você</a>
+                        {% if eh_professor %}
+                            <a href="{% url 'perfil_professorpronto' %}">Perfil</a>
+                        {% else %}
+                            <a href="{% url 'perfil_alunopronta' %}">Perfil</a>
+                        {% endif %}
                         <a href="{% url 'vagas_salvas' %}">Vagas Salvas</a>
                         <a href="#">Publicar Vaga</a>
                         <a href="#">Candidaturas</a>
@@ -608,7 +622,11 @@
                     <div class="notificacao-box" id="notificacaoBox">
                         Você não possui notificações no momento.
                     </div>
-                    <a class="foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+                    {% if eh_professor %}
+                        <a class="foto" href="{% url 'perfil_professorpronto' %}" aria-label="Ir para perfil">
+                    {% else %}
+                        <a class="foto" href="{% url 'perfil_alunopronta' %}" aria-label="Ir para perfil">
+                    {% endif %}
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#888780" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
                             <circle cx="12" cy="13" r="4"/>
@@ -632,8 +650,9 @@
                     </form>
                 </section>
 
-                <section class="area-principal">
+                <div class="area-principal">
 
+                    <!-- SEÇÃO DE FILTROS 100% DINÂMICA VIA DJANGO URL -->
                     <aside class="filtros">
                         <div class="titulo-filtro">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -643,17 +662,17 @@
                         </div>
                         <div class="grupo-filtro">
                             <h3>Tipo de vaga</h3>
-                            <button class="opcao-filtro" type="button">Estágio</button>
-                            <button class="opcao-filtro" type="button">Trainee</button>
-                            <button class="opcao-filtro" type="button">Inic. Cient.</button>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if modalidade_atual %}modalidade={{ modalidade_atual }}&{% endif %}tipo=Estágio" class="opcao-filtro {% if tipo_atual == 'Estágio' %}ativo{% endif %}" style="text-decoration: none;">Estágio</a>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if modalidade_atual %}modalidade={{ modalidade_atual }}&{% endif %}tipo=Trainee" class="opcao-filtro {% if tipo_atual == 'Trainee' %}ativo{% endif %}" style="text-decoration: none;">Trainee</a>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if modalidade_atual %}modalidade={{ modalidade_atual }}&{% endif %}tipo=Iniciação Científica" class="opcao-filtro {% if tipo_atual == 'Iniciação Científica' %}ativo{% endif %}" style="text-decoration: none;">Inic. Cient.</a>
                         </div>
                         <div class="grupo-filtro">
                             <h3>Modalidade</h3>
-                            <button class="opcao-filtro" type="button">Remoto</button>
-                            <button class="opcao-filtro" type="button">Híbrido</button>
-                            <button class="opcao-filtro" type="button">Presencial</button>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if tipo_atual %}tipo={{ tipo_atual }}&{% endif %}modalidade=Remoto" class="opcao-filtro {% if modalidade_atual == 'Remoto' %}ativo{% endif %}" style="text-decoration: none;">Remoto</a>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if tipo_atual %}tipo={{ tipo_atual }}&{% endif %}modalidade=Híbrido" class="opcao-filtro {% if modalidade_atual == 'Híbrido' %}ativo{% endif %}" style="text-decoration: none;">Híbrido</a>
+                            <a href="?{% if q %}q={{ q }}&{% endif %}{% if tipo_atual %}tipo={{ tipo_atual }}&{% endif %}modalidade=Presencial" class="opcao-filtro {% if modalidade_atual == 'Presencial' %}ativo{% endif %}" style="text-decoration: none;">Presencial</a>
                         </div>
-                        <button class="limpar" id="limparFiltros" type="button">Limpar filtros</button>
+                        <a href="?" class="limpar" style="text-decoration: none; display: inline-block;">Limpar filtros</a>
                     </aside>
 
                     <section>
@@ -661,6 +680,7 @@
                             <div class="total-vagas">
                                 {% if vagas %}{{ vagas|length }} vagas encontradas{% else %}0 vagas encontradas{% endif %}
                             </div>
+                            <a href="{% url 'vagas_recomendadas' %}" style="text-decoration: none; background: #008BA8; color: white; border-radius: 999px; padding: 7px 16px; font-size: 11px; font-weight: 700;">✨ Recomendadas pra você</a>
                             <div class="ordenar">
                                 <button class="ordenar-botao" id="botaoOrdenar" type="button">
                                     Ordenar por: <strong id="textoOrdenacao">Mais recentes ↓</strong>
@@ -696,8 +716,8 @@
                                             <h2>{{ vaga.titulo }}</h2>
                                             <div class="empresa">PUC-Rio</div>
                                             <div class="meta">
-                                                <span>{{ vaga.local }}</span>
-                                                <span>{{ vaga.carga_horaria }}</span>
+                                                <span>📍 {{ vaga.local }}</span>
+                                                <span>🕒 {{ vaga.carga_horaria }}</span>
                                             </div>
                                             <p class="descricao">{{ vaga.descricao }}</p>
                                             <div class="mini-tags">
@@ -725,17 +745,18 @@
                         </div>
                     </section>
 
-                </section>
+                </div>
             </div>
 
-            <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
+            <div class="rodape-logo-container">
+                <img src="{% static 'img/image4.png' %}" class="logo-puc" alt="Logo PUC-Rio">
+            </div>
 
         </section>
     </main>
 </div>
 
 <script>
-    // ── Menus ──────────────────────────────────────────────
     const hamburguer = document.getElementById('hamburguer');
     const menuLateral = document.getElementById('menuLateral');
     const botaoNotificacao = document.getElementById('botaoNotificacao');
@@ -743,18 +764,13 @@
     const botaoOrdenar = document.getElementById('botaoOrdenar');
     const ordenarMenu = document.getElementById('ordenarMenu');
     const textoOrdenacao = document.getElementById('textoOrdenacao');
-    const limparFiltros = document.getElementById('limparFiltros');
-    const filtros = document.querySelectorAll('.opcao-filtro');
 
     hamburguer.addEventListener('click', e => { e.stopPropagation(); menuLateral.classList.toggle('aberto'); notificacaoBox.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
     botaoNotificacao.addEventListener('click', e => { e.stopPropagation(); notificacaoBox.classList.toggle('aberto'); menuLateral.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
     botaoOrdenar.addEventListener('click', e => { e.stopPropagation(); ordenarMenu.classList.toggle('aberto'); menuLateral.classList.remove('aberto'); notificacaoBox.classList.remove('aberto'); });
     ordenarMenu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { textoOrdenacao.textContent = b.dataset.ordem; ordenarMenu.classList.remove('aberto'); }));
-    filtros.forEach(f => f.addEventListener('click', () => f.classList.toggle('ativo')));
-    limparFiltros.addEventListener('click', () => filtros.forEach(f => f.classList.remove('ativo')));
     document.addEventListener('click', () => { menuLateral.classList.remove('aberto'); notificacaoBox.classList.remove('aberto'); ordenarMenu.classList.remove('aberto'); });
 
-    // ── Toast ──────────────────────────────────────────────
     const toast = document.getElementById('toast');
     let toastTimer;
 
@@ -765,7 +781,6 @@
         toastTimer = setTimeout(() => toast.classList.remove('visivel'), 2200);
     }
 
-    // ── Favoritar ──────────────────────────────────────────
     document.querySelectorAll('.btn-favoritar').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
