@@ -1,70 +1,72 @@
 # Vagas PUC-Rio
 
-Este repositório contém o código-fonte e a documentação do projeto desenvolvido em conjunto para as disciplinas de **Projetos Interativos** e **Interação Humano-Computador (IHC)** da PUC-Rio. 
+Plataforma web para centralizar oportunidades de **estágio** e **Iniciação Científica (IC)** na PUC-Rio, conectando alunos, professores e empresas em um único lugar. Desenvolvido para as disciplinas de Projetos Interativos e Interação Humano-Computador (IHC).
 
-O objetivo principal da aplicação é solucionar a falta de centralização de informações sobre vagas de estágio e Iniciação Científica (IC) dentro da universidade, conectando alunos, professores e empresas em uma única plataforma.
+## Funcionalidades técnicas implementadas
 
-## Objetivo e Contexto
+- **Algoritmo de matching aluno–vaga**: cálculo de compatibilidade entre o perfil do aluno e as vagas disponíveis (`calcular_detalhes_match`), usado na página de vagas recomendadas
+- **Página de vagas recomendadas** com visualização de compatibilidade
+- **Sistema de favoritos**: alunos podem salvar/marcar vagas de interesse
+- **Autenticação customizada** com fluxo de confirmação de cadastro por email (SMTP via Gmail, credenciais gerenciadas com `.env`)
+- **Painel administrativo** customizado no Django Admin
+- **Modelagem de dados**: modelo `Curso` e estrutura relacional para vagas, alunos e candidaturas
 
-O desenvolvimento do projeto envolveu um ciclo completo de Design e pesquisa, englobando:
-* **Pesquisa e Entrevistas:** Levantamento de requisitos e dores reais dos alunos e professores da PUC-Rio.
-* **Design e Prototipação:** Criação de interfaces no Figma, além de avaliações heurísticas e testes de usabilidade.
-* **Desenvolvimento Web:** Implementação do back-end e integração de banco de dados utilizando Python e Django.
+## Tecnologias
 
-## Tecnologias Utilizadas
+- **Back-end**: Python, Django
+- **Banco de dados**: gerenciado nativamente via ORM do Django
+- **Front-end**: templates Django (HTML/CSS a partir de protótipos do Figma)
+- **Autenticação/Email**: Django Auth + SMTP (Gmail)
 
-* **Back-end e Framework:** Python, Django
-* **Banco de Dados:** Gerenciado nativamente pelo ORM do Django
-* **Design de Interface:** Figma
+## Contexto do projeto
 
-## Perfis de Usuário e Status de Implementação
+Além da implementação, o projeto passou por um ciclo de design e pesquisa:
 
-O sistema foi modelado para atender três tipos principais de usuários, com os seguintes status de desenvolvimento no protótipo atual:
+- **Pesquisa e entrevistas**: levantamento de requisitos com alunos e professores da PUC-Rio
+- **Prototipação**: interfaces no Figma, avaliações heurísticas e testes de usabilidade
 
-| Perfil | Descrição e Permissões | Status |
-| :--- | :--- | :--- |
-| **Aluno** | Visualiza as oportunidades disponíveis (estágio e IC), busca vagas e gerencia seu perfil. | **Implementado** |
-| **Professor** | Divulga oportunidades de Iniciação Científica e gerencia as candidaturas dos alunos. |**Parcialmente Implementado** |
-| **Colaborador (Empresa)** | Representante externo que solicita o registro da empresa para postar vagas de estágio. | **Não Implementado (Trabalho Futuro)** |
+## Perfis de usuário e status
 
-## Como Executar o Projeto Localmente
+| Perfil | Descrição e permissões | Status |
+|---|---|---|
+| Aluno | Visualiza oportunidades, busca vagas, gerencia perfil e favoritos | Implementado |
+| Professor | Divulga oportunidades de IC e gerencia candidaturas | Parcialmente implementado |
+| Colaborador (Empresa) | Solicita registro da empresa e posta vagas de estágio | Não implementado (trabalho futuro) |
 
-Para rodar o projeto na sua máquina para testes ou desenvolvimento, siga os passos abaixo:
+## Como executar o projeto localmente
 
-**1. Clone o repositório**
+### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/vagas-puc-rio.git
+git clone https://github.com/SEU-USUARIO/vagas-puc-rio.git
 cd vagas-puc-rio
 ```
 
-**2. Crie e ative um ambiente virtual (recomendado)**
+### 2. Crie e ative um ambiente virtual (recomendado)
 ```bash
 python -m venv venv
-# No Windows: venv\Scripts\activate
-# No Linux/Mac: source venv/bin/activate
+# Windows: venv\Scripts\activate
+# Linux/Mac: source venv/bin/activate
 ```
 
-**3. Instale as dependências**
+### 3. Instale as dependências
 ```bash
 pip install django
 ```
 
-**4. Realize as migrações do Banco de Dados**
+### 4. Realize as migrações do banco de dados
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-**5. Inicie o servidor de desenvolvimento**
+### 5. Inicie o servidor de desenvolvimento
 ```bash
 python manage.py runserver
 ```
 
-Acesse a aplicação no seu navegador através do endereço `http://127.0.0.1:8000/`.
+Acesse a aplicação em `http://127.0.0.1:8000/`.
 
----
-
-Para criar um usuário administrador e acessar o painel do Django (`/admin`), utilize o comando:
+Para criar um usuário administrador e acessar o painel do Django (`/admin`):
 ```bash
 python manage.py createsuperuser
 ```
