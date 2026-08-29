@@ -37,7 +37,7 @@ Além da implementação, o projeto passou por um ciclo de design e pesquisa:
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/SEU-USUARIO/vagas-puc-rio.git
+git clone https://github.com/Vagas-Puc-Rio/Vagas_Puc_Rio.git
 cd vagas-puc-rio
 ```
 
