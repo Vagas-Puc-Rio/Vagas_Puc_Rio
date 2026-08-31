@@ -6,7 +6,7 @@ Plataforma web para centralizar oportunidades de **estágio** e **Iniciação Ci
 
 - **Algoritmo de matching aluno–vaga**: cálculo de compatibilidade entre o perfil do aluno e as vagas disponíveis (`calcular_detalhes_match`), usado na página de vagas recomendadas
 - **Página de vagas recomendadas** com visualização de compatibilidade
-- **Sistema de favoritos**: alunos podem salvar/marcar vagas de interesse
+- **Sistema de favoritos**: os alunos podem salvar/marcar vagas de interesse
 - **Autenticação customizada** com fluxo de confirmação de cadastro por email (SMTP via Gmail, credenciais gerenciadas com `.env`)
 - **Painel administrativo** customizado no Django Admin
 - **Modelagem de dados**: modelo `Curso` e estrutura relacional para vagas, alunos e candidaturas
