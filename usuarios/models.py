@@ -148,7 +148,7 @@ class Vaga(models.Model):
     def __str__(self):
         return self.titulo
 
-    @property
+    
     def status(self):
         if self.prazo_candidatura and self.prazo_candidatura < date.today():
             return 'Finalizada'
